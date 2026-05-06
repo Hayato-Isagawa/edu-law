@@ -1,0 +1,72 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = "EduLaw JP — 教師向け教育法ポータル",
+  description = "日本の小学校教員向けに、教育関連法と公式解説を法令別に整理するポータル。",
+} = Astro.props;
+const siteUrl = "https://law.edu-evidence.org";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- OGP -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="EduLaw JP" />
+    <meta property="og:locale" content="ja_JP" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="bg-[var(--color-bg)] text-[var(--color-ink)]">
+    <header class="border-b border-[var(--color-line)]">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <a href="/" class="font-black text-lg sm:text-xl tracking-tight">
+          EduLaw <span class="text-[var(--color-accent)]">JP</span>
+        </a>
+        <nav class="text-xs text-[var(--color-sub)]" aria-label="姉妹サイト">
+          <a href="https://edu-evidence.org" class="link-underline">EduEvidence JP</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 sm:px-6 pb-16 sm:pb-24">
+      <slot />
+    </main>
+
+    <footer class="border-t border-[var(--color-line)]">
+      <div
+        class="mx-auto max-w-3xl px-4 sm:px-6 py-8 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+      >
+        <p>
+          © 2026 EduLaw JP. コード MIT / 独自整理 CC BY-SA 4.0 / 公式解説の引用は政府標準利用規約に従う。
+        </p>
+        <p>
+          姉妹サイト:
+          <a href="https://edu-evidence.org" class="link-underline">EduEvidence JP</a> ・
+          <a href="https://news.edu-evidence.org" class="link-underline">EduWatch JP</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

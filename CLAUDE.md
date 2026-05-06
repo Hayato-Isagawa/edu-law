@@ -1,0 +1,70 @@
+# EduLaw JP
+
+日本の小学校教員向けに、教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を法令別に整理する静的ポータル。Astro 6 + React 19 + Tailwind 4 + TypeScript。
+
+## 設計の核
+
+- **自前の法解釈はしない。** サイトが提供するのは「法令本文への e-Gov リンク + 公式解説の見出し整理 + 公式 URL への誘導」のみ
+- 法解釈・現場助言は弁護士・行政書士の領域。本サイトはそれらへの**入口**を整理することに徹する
+- 引用は **政府標準利用規約 第 2.0 版** の範囲内に限り、出典・URL・取得日を必ず明記する(具体的な引用ルール ADR は別途起票)
+
+## ブランド
+
+- **モチーフ**: 根(root)。EduEvidence JP(葉)・EduWatch JP(双葉)と対になり、「足元から支える基盤」を象徴する
+- **アクセント色**: 茶 `#6b4423`(`--color-accent`、ロゴ実装 PR で具体値を再確定する余地あり)
+- **ロゴ実装**: 別 PR で `src/components/Logo.astro` に inline SVG + `currentColor` 継承で導入予定。現在は最小 favicon プレースホルダーのみ
+- 詳細は [`docs/BRAND.md`](docs/BRAND.md)(姉妹サイト共通、edu-evidence からミラー)
+
+## 環境
+
+Node.js 24 系を `.tool-versions` で固定。[mise](https://mise.jdx.dev/) を推奨。
+
+```bash
+mise install
+npm ci
+```
+
+`package.json` の `engines.node` は `>=24.0.0`。
+
+## ビルド・テスト
+
+```bash
+npm run dev      # 開発サーバー(localhost:4321)
+npm run build    # 本番ビルド
+npm run preview  # ビルド結果のプレビュー
+npm run check    # Astro 型チェック
+```
+
+## 初期スコープ — 6 法令
+
+現場照会頻度順に以下を対象とする:
+
+1. 学校教育法
+2. 教育職員免許法
+3. いじめ防止対策推進法
+4. 児童虐待防止法
+5. 著作権法 35 条
+6. 個人情報保護法(学校現場関連)
+
+第 2 期以降の追加候補: 教育基本法、教特法・地公法、学校保健安全法、児童福祉法、子どもの権利条約、判例。
+
+## ホスティング
+
+Cloudflare Pages(GitHub `main` ブランチ連携で自動デプロイ予定)。
+ドメイン: `law.edu-evidence.org`(`edu-evidence.org` サブドメイン)
+セキュリティヘッダー: `public/_headers`
+ボット設定: `public/robots.txt`
+
+## 連絡先
+
+`law@edu-evidence.org`(個人 Gmail に転送)。具体的な転送先アドレスは Cloudflare Email Routing 管理画面に保持し、リポジトリ・README・docs に記載しない(spam リスク回避)。
+
+## コンテキスト管理
+
+主要な決定と進行状態は会話ではなくファイルに残す:
+
+- **主要な意思決定** → [`docs/decisions/`](docs/decisions/)(ADR、不変)
+- **現在のセッションの作業状態** → `.claude/state/active.md`(生きたチェックポイント、git 追跡外)
+- **運用方針の全体** → [`docs/context-management.md`](docs/context-management.md)
+
+`.claude/hooks/pre-compact.sh` と `post-compact.sh` が圧縮時に active.md を dump / 再読込リマインダーを出すよう登録されている(`.claude/settings.json`)。
