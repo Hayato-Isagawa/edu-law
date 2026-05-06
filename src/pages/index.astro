@@ -1,0 +1,56 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const targetLaws = [
+  { name: "学校教育法", source: "中教審答申 / 生徒指導提要(改訂版)" },
+  { name: "教育職員免許法", source: "文科省 教員免許制度 Q&A / 更新制廃止関連通知" },
+  { name: "いじめ防止対策推進法", source: "文科省 基本方針 / 重大事態調査ガイドライン" },
+  { name: "児童虐待防止法", source: "文科省 学校・教育委員会等向け 虐待対応の手引き" },
+  { name: "著作権法 35 条", source: "文化庁 学校教育における著作権 Q&A / SARTRAS 運用指針" },
+  { name: "個人情報保護法", source: "文科省 教育データの利活用に係る留意事項" },
+];
+---
+
+<Layout
+  title="EduLaw JP — 教師向け教育法ポータル(準備中)"
+  description="教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を法令別に整理する教師向けポータル。準備中。"
+>
+  <section class="py-12 sm:py-20">
+    <p class="font-mono uppercase tracking-widest text-xs text-[var(--color-accent)] mb-4">
+      Coming soon
+    </p>
+    <h1 class="text-4xl sm:text-5xl font-black tracking-tight mb-6 leading-tight">
+      教師向け<br />教育法ポータル
+    </h1>
+    <p class="text-base sm:text-lg leading-relaxed text-[var(--color-sub)] mb-8">
+      教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を、教師の実務文脈で <strong class="text-[var(--color-ink)]">探しやすく</strong> 整理します。
+      自前の法解釈は加えず、各機関が公開している公式 Q&amp;A・通知・手引きへの <strong class="text-[var(--color-ink)]">入口</strong> に徹します。
+    </p>
+
+    <h2 class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mt-12 mb-4">
+      初期スコープ — 6 法令
+    </h2>
+    <ul class="border-t border-[var(--color-line)]">
+      {targetLaws.map((law) => (
+        <li class="border-b border-[var(--color-line)] py-3">
+          <div class="font-bold text-[var(--color-ink)]">{law.name}</div>
+          <div class="text-xs text-[var(--color-sub)] mt-1">主な公式解説: {law.source}</div>
+        </li>
+      ))}
+    </ul>
+
+    <h2 class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mt-12 mb-4">
+      姉妹サイト
+    </h2>
+    <ul class="space-y-2 text-sm">
+      <li>
+        <a href="https://edu-evidence.org" class="link-underline">EduEvidence JP</a>
+        <span class="text-[var(--color-sub)]"> — 教育エビデンスポータル(葉)</span>
+      </li>
+      <li>
+        <a href="https://news.edu-evidence.org" class="link-underline">EduWatch JP</a>
+        <span class="text-[var(--color-sub)]"> — 教育ニュース(双葉)</span>
+      </li>
+    </ul>
+  </section>
+</Layout>
