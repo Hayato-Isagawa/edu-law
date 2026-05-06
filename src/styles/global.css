@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #faf9f5;
+  --color-ink: #1a1a1a;
+  --color-sub: #6b6b66;
+  --color-line: #e5e3da;
+  --color-card: #ffffff;
+  --color-accent: #6b4423;
+}
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  line-height: 1.7;
+}
+
+.link-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--color-line);
+  transition: color 150ms, text-decoration-color 150ms;
+}
+.link-underline:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
