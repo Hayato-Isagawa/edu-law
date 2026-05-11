@@ -1,0 +1,38 @@
+---
+/**
+ * EduLaw JP brand mark — 根(root、左右対称)
+ *
+ * モチーフ: 中央の主根と 3 段の側根が地中に伸びる左右対称の構図で
+ * 「足元から支える基盤・目に見えない制度知識」を表現する。姉妹サイト
+ * EduEvidence JP の「成熟した葉」・EduWatch JP の「双葉」と対になり、
+ * 1 本の木の部位体系(BRAND.md §1)を完成させる。
+ *
+ * 色は currentColor を継承するので、呼び出し側で `color:` / Tailwind の
+ * text- クラスを指定すれば反映される。
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 120 120"
+  class={className}
+  aria-hidden="true"
+  fill="none"
+>
+  <!-- 茎の根本(地表との接点) -->
+  <line x1="60" y1="10" x2="60" y2="18" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+  <!-- 主根(中央軸、太く下に伸びる) -->
+  <line x1="60" y1="18" x2="60" y2="112" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+  <!-- 側根 上段 -->
+  <line x1="60" y1="38" x2="30" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="60" y1="38" x2="90" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+  <!-- 側根 中段 -->
+  <line x1="60" y1="62" x2="22" y2="76" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="60" y1="62" x2="98" y2="76" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+  <!-- 側根 下段 -->
+  <line x1="60" y1="86" x2="38" y2="108" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="60" y1="86" x2="82" y2="108" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+</svg>
