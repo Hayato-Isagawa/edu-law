@@ -82,6 +82,36 @@ Claude Code とのセッションは context window の上限に達すると圧�
 - 古いエントリは要点だけ残して圧縮するか、`docs/sessions/<date>.md` 側に移してリンクで参照
 - どこまで残すかはマシンの記憶ではなく、**次セッションの再開時に必要な情報量** で判断
 
+### サイズ管理とアーカイブ運用
+
+active.md がセッション履歴で肥大化すると、セッション開始時の読み込みコストが増え Lost-in-Multi-Turn のリスクが上がる。下記の閾値とフローで定期的に整理する。
+
+#### サイズの目安
+
+| 行数 | 目安トークン | 影響 |
+|---|---|---|
+| 〜500 行 | 〜30k | 推奨ゾーン |
+| 500〜1,500 行 | 30k〜90k | 体感影響なし |
+| 1,500〜3,000 行 | 90k〜180k | 読み込み時間増、検索精度低下 |
+| 3,000 行超 | 180k+ | Lost-in-Multi-Turn リスク域 |
+
+#### 自動感知
+
+`.claude/hooks/check-active-size.sh` が SessionStart hook として登録済(`.claude/settings.json`)。`wc -l` で行数を測り、**1,500 行**を超えるとセッション開始時に additionalContext へ警告を注入する。閾値を変えたい場合はスクリプト内 `THRESHOLD` を直接編集する。
+
+#### アーカイブ手順
+
+1. 切り出し位置を `grep -n '^# 直近の状態\|^## 直近の状態' .claude/state/active.md` で確認(本リポは 1 段見出しを使用)
+2. 残すブロックの境界となる「次に古いセッション開始行」を `TRIM_LINE` とする(その行の **前** までを残す)
+3. `mkdir -p .claude/state/archive` で archive ディレクトリ準備
+4. archive 作成: `{ printf 'header...'; sed -n "${TRIM_LINE},$p" active.md; } > archive/<NAME>.md`
+5. active 切り詰め: `{ sed -n "1,$((TRIM_LINE-1))p" active.md; printf '<!-- ヒント -->'; } > /tmp/t && mv /tmp/t active.md`
+6. 検証: `wc -l .claude/state/active.md` で推奨ゾーン内を確認
+
+#### 整理履歴
+
+- **2026-05-14 初回整理**: 整理対象外(461 行で推奨ゾーン内)。SessionStart hook で 1,500 行警告を自動感知するよう運用同期。
+
 ### 例外と運用の幅
 
 - 5 サブ節すべてが毎回必須ではない。短いセッションでは「本タスクで作成 / 変更」+「Next Action」だけでもよい
