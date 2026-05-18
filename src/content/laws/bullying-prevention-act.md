@@ -6,10 +6,10 @@ eGovUrl: https://laws.e-gov.go.jp/law/425AC1000000071/
 officialExplanations:
   - publisher: mext
     title: いじめの防止等のための基本的な方針(平成29年最終改定)
-    url: https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2018/03/19/1304156_02_2_1.pdf
+    url: https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2019/06/26/1400030_007.pdf
     publishedAt: "2017-03-14"
     format: pdf
-lastVerified: "2026-05-17"
+lastVerified: "2026-05-18"
 tags: []
 ---
 
@@ -25,7 +25,7 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 
 ## 公式解説
 
-- [いじめの防止等のための基本的な方針(平成29年最終改定)PDF](https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2018/03/19/1304156_02_2_1.pdf)(文部科学大臣決定、平成25年10月11日策定 / 平成29年3月14日最終改定)
+- [いじめの防止等のための基本的な方針(平成29年最終改定)PDF](https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2019/06/26/1400030_007.pdf)(文部科学大臣決定、平成25年10月11日策定 / 平成29年3月14日最終改定)
 - [平成29年3月16日「いじめの防止等のための基本的な方針」の改定及び「いじめの重大事態の調査に関するガイドライン」の策定について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1400142.htm)
 
 ## 関連法令
