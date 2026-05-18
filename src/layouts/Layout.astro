@@ -12,6 +12,9 @@ const {
 } = Astro.props;
 const siteUrl = "https://law.edu-evidence.org";
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+const path = Astro.url.pathname;
+const isLawsPage = path.startsWith("/laws");
+const isAboutPage = path.startsWith("/about");
 ---
 
 <!doctype html>
@@ -41,7 +44,7 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
   </head>
   <body class="bg-[var(--color-bg)] text-[var(--color-ink)]">
     <header class="border-b border-[var(--color-line)]">
-      <div class="mx-auto max-w-3xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         <a
           href="/"
           class="flex items-center gap-2 whitespace-nowrap font-black text-lg sm:text-xl tracking-tight"
@@ -51,19 +54,42 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
           </span>
           EduLaw <span class="text-[var(--color-accent)]">JP</span>
         </a>
-        <nav class="text-xs text-[var(--color-sub)]" aria-label="姉妹サイト">
-          <a href="https://edu-evidence.org" class="link-underline">EduEvidence JP</a>
+        <nav aria-label="メインナビゲーション">
+          <ul class="flex items-center gap-4 sm:gap-6 text-sm">
+            <li>
+              <a
+                href="/laws/"
+                class={isLawsPage
+                  ? "text-[var(--color-ink)] font-semibold"
+                  : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+                aria-current={isLawsPage ? "page" : undefined}
+              >
+                法令一覧
+              </a>
+            </li>
+            <li>
+              <a
+                href="/about/"
+                class={isAboutPage
+                  ? "text-[var(--color-ink)] font-semibold"
+                  : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+                aria-current={isAboutPage ? "page" : undefined}
+              >
+                サイトについて
+              </a>
+            </li>
+          </ul>
         </nav>
       </div>
     </header>
 
-    <main class="mx-auto max-w-3xl px-4 sm:px-6 pb-16 sm:pb-24">
+    <main class="mx-auto max-w-6xl px-4 sm:px-6 pb-16 sm:pb-24">
       <slot />
     </main>
 
     <footer class="border-t border-[var(--color-line)]">
       <div
-        class="mx-auto max-w-3xl px-4 sm:px-6 py-8 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+        class="mx-auto max-w-6xl px-4 sm:px-6 py-8 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
       >
         <p>
           © 2026 EduLaw JP. コード MIT / 独自整理 CC BY-SA 4.0 / 公式解説の引用は政府標準利用規約に従う。
