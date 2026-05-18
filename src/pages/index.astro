@@ -1,5 +1,10 @@
 ---
+import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
+
+const laws = (await getCollection("laws")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <Layout
@@ -28,27 +33,161 @@ import Layout from "../layouts/Layout.astro";
     </a>
   </section>
 
-  <section class="py-8" aria-labelledby="sister-heading">
+  <section
+    class="py-12 border-t border-[var(--color-line)]"
+    aria-labelledby="laws-showcase-heading"
+  >
+    <header class="mb-8 flex flex-wrap items-baseline justify-between gap-4">
+      <div>
+        <p
+          class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+        >
+          Laws — Showcase
+        </p>
+        <h2
+          id="laws-showcase-heading"
+          class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
+        >
+          整理対象の 6 法令
+        </h2>
+      </div>
+      <a
+        href="/laws/"
+        class="link-underline text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+      >
+        一覧へ <span aria-hidden="true">→</span>
+      </a>
+    </header>
+
+    <ul class="grid gap-4 sm:grid-cols-2">
+      {
+        laws.map((law) => (
+          <li>
+            <a
+              href={`/laws/${law.id}/`}
+              class="group block h-full border border-[var(--color-line)] p-5 hover:border-[var(--color-accent)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+            >
+              <h3 class="text-lg font-black tracking-tight leading-snug group-hover:text-[var(--color-accent)] transition">
+                {law.data.title}
+              </h3>
+              <p class="mt-2 text-sm text-[var(--color-sub)] leading-relaxed">
+                {law.data.summary}
+              </p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section
+    class="py-12 border-t border-[var(--color-line)]"
+    aria-labelledby="stance-heading"
+  >
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Our Stance
+    </p>
+    <h2
+      id="stance-heading"
+      class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
+    >
+      本サイトの立場
+    </h2>
+    <div
+      class="mt-6 space-y-5 text-sm sm:text-base leading-relaxed text-[var(--color-sub)] max-w-2xl"
+    >
+      <p>
+        <strong class="text-[var(--color-ink)]"
+          >自前の法解釈は加えません。</strong
+        >
+        法解釈・現場助言は弁護士や行政書士の領域です。本サイトは判断材料を整える役割に徹し、解釈の代行はしません。
+      </p>
+      <p>
+        <strong class="text-[var(--color-ink)]"
+          >公式 URL への入口に徹します。</strong
+        >
+        提供するのは「法令本文の e-Gov リンク」「所管省庁の公式解説 URL」「公式 PDF
+        の見出し整理」のみで、サイト独自の助言は載せません。
+      </p>
+      <p>
+        <strong class="text-[var(--color-ink)]"
+          >引用は政府標準利用規約に従います。</strong
+        >
+        引用は<a
+          href="https://www.kantei.go.jp/jp/singi/it2/cio/dai55/siryou3-2.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-underline"
+          >政府標準利用規約 第 2.0 版</a
+        >の範囲内に限り、出典・URL・取得日を必ず明記します。
+      </p>
+      <p class="text-sm">
+        <a
+          href="/about/"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          >→ 引用ルールとサイトの立場(About)</a
+        >
+      </p>
+    </div>
+  </section>
+
+  <section
+    class="py-12 border-t border-[var(--color-line)]"
+    aria-labelledby="sister-heading"
+  >
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Sister Sites
+    </p>
     <h2
       id="sister-heading"
-      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+      class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
     >
       姉妹サイト
     </h2>
-    <ul class="space-y-2 text-sm">
+    <ul class="mt-6 grid gap-4 sm:grid-cols-2">
       <li>
-        <a href="https://edu-evidence.org" class="link-underline"
-          >EduEvidence JP</a
+        <a
+          href="https://edu-evidence.org"
+          class="group block h-full border border-[var(--color-line)] p-5 hover:border-[var(--color-accent)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
         >
-        <span class="text-[var(--color-sub)]">
-          — 教育エビデンスポータル(葉)</span
-        >
+          <p
+            class="font-mono text-xs uppercase tracking-widest text-[var(--color-sub)]"
+          >
+            葉
+          </p>
+          <h3
+            class="mt-1 text-lg font-black tracking-tight group-hover:text-[var(--color-accent)] transition"
+          >
+            EduEvidence JP
+          </h3>
+          <p class="mt-2 text-sm text-[var(--color-sub)] leading-relaxed">
+            研究エビデンスを実務に橋渡しする教育エビデンスポータル。
+          </p>
+        </a>
       </li>
       <li>
-        <a href="https://news.edu-evidence.org" class="link-underline"
-          >EduWatch JP</a
+        <a
+          href="https://news.edu-evidence.org"
+          class="group block h-full border border-[var(--color-line)] p-5 hover:border-[var(--color-accent)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
         >
-        <span class="text-[var(--color-sub)]"> — 教育ニュース(双葉)</span>
+          <p
+            class="font-mono text-xs uppercase tracking-widest text-[var(--color-sub)]"
+          >
+            双葉
+          </p>
+          <h3
+            class="mt-1 text-lg font-black tracking-tight group-hover:text-[var(--color-accent)] transition"
+          >
+            EduWatch JP
+          </h3>
+          <p class="mt-2 text-sm text-[var(--color-sub)] leading-relaxed">
+            教育ニュースを週次で整理するエディトリアル・ダイジェスト。
+          </p>
+        </a>
       </li>
     </ul>
   </section>
