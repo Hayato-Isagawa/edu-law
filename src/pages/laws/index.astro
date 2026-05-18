@@ -65,7 +65,12 @@ function formatLabel(format?: "pdf" | "html"): string {
                 {String(i + 1).padStart(2, "0")} / {String(laws.length).padStart(2, "0")}
               </p>
               <h3 class="text-2xl md:text-3xl font-black tracking-tight leading-tight">
-                {law.data.title}
+                <a
+                  href={`/laws/${law.id}/`}
+                  class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+                >
+                  {law.data.title}
+                </a>
               </h3>
               <p class="text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
                 {law.data.summary}
