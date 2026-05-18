@@ -1,0 +1,98 @@
+name: Stale Check
+
+on:
+  schedule:
+    # Every Monday at 10:00 JST (01:00 UTC Monday), one hour after Link Check
+    - cron: "0 1 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: stale-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check lastVerified freshness
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Check lastVerified and create issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          THRESHOLD_DAYS: "90"
+        run: |
+          set -euo pipefail
+
+          # Ensure labels exist (idempotent)
+          for label in automated stale-check needs-human-review; do
+            gh label create "$label" --force >/dev/null 2>&1 || true
+          done
+
+          today_ts=$(date -u +%s)
+          stale_count=0
+
+          for file in src/content/laws/*.md; do
+            slug=$(basename "$file" .md)
+            lastVerified=$(grep -E '^lastVerified:' "$file" \
+              | sed -E 's/^lastVerified:[[:space:]]*"?([0-9]{4}-[0-9]{2}-[0-9]{2})"?[[:space:]]*$/\1/')
+
+            if [ -z "$lastVerified" ]; then
+              echo "::warning file=$file::lastVerified not found or unparseable"
+              continue
+            fi
+
+            lastVerified_ts=$(date -u -d "$lastVerified" +%s)
+            diff_days=$(( (today_ts - lastVerified_ts) / 86400 ))
+
+            if [ "$diff_days" -lt "$THRESHOLD_DAYS" ]; then
+              echo "$slug: $diff_days days (OK, threshold=$THRESHOLD_DAYS)"
+              continue
+            fi
+
+            echo "$slug: $diff_days days (STALE, threshold=$THRESHOLD_DAYS)"
+
+            # Skip if an open Issue already tracks this slug
+            existing=$(gh issue list \
+              --label stale-check \
+              --state open \
+              --limit 100 \
+              --json number,title \
+              --jq ".[] | select(.title | startswith(\"[auto] stale-check: $slug\")) | .number" \
+              | head -n1)
+
+            if [ -n "$existing" ]; then
+              echo "Existing open stale-check Issue #$existing for $slug. Skipping."
+              continue
+            fi
+
+            {
+              echo "\`src/content/laws/$slug.md\` の \`lastVerified\` (\`$lastVerified\`) から $diff_days 日経過しました(閾値 $THRESHOLD_DAYS 日)。"
+              echo ""
+              echo "## 確認する項目"
+              echo ""
+              echo "- e-Gov 法令検索の本文 URL が有効か(リンク切れ・移動先誤り)"
+              echo "- 公式解説 PDF / HTML の URL が有効か"
+              echo "- 公式解説に新版・改訂版が出ていないか(発行年月・改訂版番号の確認)"
+              echo "- 通知・通達の追加発出がないか"
+              echo ""
+              echo "## 対応"
+              echo ""
+              echo "内容確認後、\`src/content/laws/$slug.md\` の \`lastVerified\` を本日日付に更新する PR を起票してください。"
+              echo ""
+              echo "本 issue は \`.github/workflows/stale-check.yml\` が自動起票しました(ADR 0002 \`lastVerified\` 運用予約)。"
+            } > issue-body.md
+
+            gh issue create \
+              --title "[auto] stale-check: $slug ($diff_days days)" \
+              --body-file issue-body.md \
+              --label "automated,stale-check,needs-human-review"
+
+            stale_count=$((stale_count + 1))
+          done
+
+          echo "Created issues for $stale_count stale law page(s)"
