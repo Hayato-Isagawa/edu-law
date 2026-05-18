@@ -1,0 +1,266 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const pageTitle = "サイトについて — EduLaw JP";
+const pageDescription =
+  "EduLaw JP の立場(自前の法解釈を加えない)、引用の根拠(政府標準利用規約 第 2.0 版・著作権法 13 条)、誤りの報告窓口(24 時間以内対応)を明示するページ。";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li>
+        <a
+          href="/"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          >ホーム</a
+        >
+      </li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >このサイトについて</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      About
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      EduLaw JP <span class="text-[var(--color-accent)]">について</span>
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        EduLaw JP は、教師の実務文脈で参照頻度の高い<strong
+          class="text-[var(--color-ink)]">教育関連法と公式解説</strong
+        >を、法令別に整理する静的ポータルです。
+      </p>
+      <p>
+        本ページではサイトの<strong class="text-[var(--color-ink)]">立場</strong
+        >・<strong class="text-[var(--color-ink)]">引用の根拠</strong>・<strong
+          class="text-[var(--color-ink)]">誤りの報告窓口</strong
+        >を明示します(運用方針は ADR 0002 引用ルールと運用ポリシーに準拠)。
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-12" aria-labelledby="stance-heading">
+    <h2
+      id="stance-heading"
+      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+    >
+      1. サイトの立場 — 自前の法解釈は加えない
+    </h2>
+    <div
+      class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+    >
+      <p>
+        EduLaw JP が提供するのは、<strong class="text-[var(--color-ink)]"
+          >法令本文への e-Gov 法令検索リンク</strong
+        > + <strong class="text-[var(--color-ink)]">公式解説の見出し整理</strong
+        > + <strong class="text-[var(--color-ink)]"
+          >所管省庁の公式 URL への誘導</strong
+        >の 3 点のみです。
+      </p>
+      <p>
+        サイト本文に独自の法解釈・現場助言・実務アドバイスは加えません。法解釈・現場助言は弁護士・行政書士・教育委員会の領域として明確に切り離し、本サイトはそれらへの入口を整理することに徹します。
+      </p>
+
+      <div class="mt-6 space-y-2">
+        <p
+          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+        >
+          許容する記述
+        </p>
+        <ul class="space-y-1.5 pl-5 list-disc">
+          <li>
+            「文部科学省『○○解説』第 ○ 章では、本条文に関して〜と説明されている(該当
+            PDF へのリンク)」
+          </li>
+          <li>「第 ○ 条第 ○ 項 — e-Gov で本文を読む(リンク)」</li>
+          <li>公式解説の見出し構造を整理して並べる(本文は引用せず公式 PDF へ誘導する)</li>
+          <li>関連法令同士の参照関係を矢印で示す(解釈は加えない)</li>
+        </ul>
+      </div>
+
+      <div class="mt-4 space-y-2">
+        <p
+          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+        >
+          加えない記述
+        </p>
+        <ul class="space-y-1.5 pl-5 list-disc">
+          <li>「この条文は○○を意味する」</li>
+          <li>「現場では○○と運用される」</li>
+          <li>「裁判所は○○と判断する可能性が高い」</li>
+          <li>「したがって学校はこうすべきである」</li>
+        </ul>
+      </div>
+
+      <p class="mt-4">
+        判断に迷う表現があれば、本ページ §3 の窓口へお知らせください。受領後 24 時間以内に該当箇所を訂正・削除・非表示にします。
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-12" aria-labelledby="citation-basis-heading">
+    <h2
+      id="citation-basis-heading"
+      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+    >
+      2. 引用の根拠 — 政府標準利用規約 第 2.0 版・著作権法 13 条
+    </h2>
+    <div
+      class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+    >
+      <p>
+        EduLaw JP が扱う引用元には、性格の異なる 2 種類が混在します。
+      </p>
+
+      <div class="mt-2 space-y-2">
+        <p
+          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+        >
+          法令本文(条文)
+        </p>
+        <p>
+          著作権法第 13 条により著作権の対象外で、複製・改変は自由です。本サイトは出典として<strong
+            class="text-[var(--color-ink)]">「e-Gov 法令検索」</strong
+          >を明示し、該当法令の e-Gov ページへ直リンクします。
+        </p>
+      </div>
+
+      <div class="mt-2 space-y-2">
+        <p
+          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+        >
+          公式解説(文科省・文化庁・厚労省 等の PDF / HTML)
+        </p>
+        <p>
+          <a
+            href="https://www.kantei.go.jp/jp/singi/it2/cio/dai55/siryou3-2.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          >
+            政府標準利用規約 第 2.0 版
+            <span aria-hidden="true" class="text-[var(--color-sub)] text-xs"
+              >↗</span
+            >
+          </a>
+          に従って引用します。同規約は、出典記載・編集加工表示・第三者権利確認・国家標章不使用・規約への参照表示の
+          5 条件を満たせば、複製・翻訳・改変・商用利用を認めています。
+        </p>
+      </div>
+
+      <div class="mt-4 space-y-2">
+        <p
+          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+        >
+          サイト側での実装
+        </p>
+        <ul class="space-y-1.5 pl-5 list-disc">
+          <li>
+            出典・URL・最終確認日(<code>lastVerified</code>)を各法令ページの本文外で固定表示
+          </li>
+          <li>
+            公式解説を要約・抜粋した箇所には「文部科学省『○○解説』を加工して作成」を近傍に注記
+          </li>
+          <li>
+            公式解説中の図表・写真は二次利用可否が個別規定のため転載せず、「公式
+            PDF をご確認ください」のリンクのみとする
+          </li>
+          <li>
+            日本国紋章・各省庁ロゴ・国旗をサイト UI の装飾用途に使用しない
+          </li>
+        </ul>
+      </div>
+
+      <p class="mt-4">
+        コード(MIT License)と独自整理部分(CC BY-SA 4.0)の取り扱いは <a
+          href="https://github.com/Hayato-Isagawa/edu-law/blob/main/LICENSE"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          >LICENSE<span aria-hidden="true" class="text-[var(--color-sub)] text-xs"
+            >↗</span
+          ></a
+        >
+        を参照してください。
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-12" aria-labelledby="error-report-heading">
+    <h2
+      id="error-report-heading"
+      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+    >
+      3. 誤りの報告窓口 — law@edu-evidence.org
+    </h2>
+    <div
+      class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+    >
+      <p>
+        以下のいずれかを見つけた場合、<a
+          href="mailto:law@edu-evidence.org"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          >law@edu-evidence.org</a
+        > へご連絡ください。
+      </p>
+
+      <ul class="space-y-1.5 pl-5 list-disc">
+        <li>公式解説リンクの誤り(リンク切れ・移動先誤り)</li>
+        <li>
+          自前の法解釈が混入している箇所(本ページ §1
+          「加えない記述」の例に該当する文)
+        </li>
+        <li>条文・条数・項番号の誤転記</li>
+        <li>出典・最終確認日の表示漏れ</li>
+      </ul>
+
+      <p class="mt-4">
+        報告受領後、<strong class="text-[var(--color-ink)]"
+          >24 時間以内</strong
+        >に該当箇所を訂正・削除・非表示にします。
+      </p>
+      <p>
+        休暇等で 24 時間以内対応が困難な期間は、本ページ上部で告知します。
+      </p>
+    </div>
+  </section>
+
+  <footer
+    class="mt-12 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="about-footer-heading"
+  >
+    <h2 id="about-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページの内容は <a
+        href="https://github.com/Hayato-Isagawa/edu-law/blob/main/docs/decisions/0002-citation-rules-and-policy.md"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+        >ADR 0002 引用ルールと運用ポリシー<span
+          aria-hidden="true"
+          class="text-[var(--color-sub)] text-xs">↗</span
+        ></a
+      > に基づきます。
+    </p>
+    <p>
+      コード MIT / 独自整理 CC BY-SA 4.0 / 公式解説の引用は政府標準利用規約 第
+      2.0 版に従う。
+    </p>
+  </footer>
+</Layout>
