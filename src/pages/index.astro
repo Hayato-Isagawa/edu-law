@@ -1,11 +1,5 @@
 ---
-import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import { PUBLISHER_LABELS } from "../data/publishers";
-
-const laws = (await getCollection("laws")).sort(
-  (a, b) => a.data.order - b.data.order,
-);
 ---
 
 <Layout
@@ -19,17 +13,10 @@ const laws = (await getCollection("laws")).sort(
       教師向け<br />教育法ポータル
     </h1>
     <p
-      class="text-base sm:text-lg leading-relaxed text-[var(--color-sub)] mb-4"
+      class="text-base sm:text-lg leading-relaxed text-[var(--color-sub)] mb-8"
     >
       教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を、教師の実務文脈で
       <strong class="text-[var(--color-ink)]">探しやすく</strong> 整理します。
-    </p>
-    <p
-      class="text-base sm:text-lg leading-relaxed text-[var(--color-sub)] mb-8"
-    >
-      自前の法解釈は加えず、各機関が公開している公式 Q&amp;A・通知・手引きへの
-      <strong class="text-[var(--color-ink)]">入口</strong>
-      に徹します(政府標準利用規約 第 2.0 版に準拠)。
     </p>
 
     <a
@@ -39,65 +26,6 @@ const laws = (await getCollection("laws")).sort(
       6 法令の入口を見る
       <span aria-hidden="true">→</span>
     </a>
-  </section>
-
-  <section class="py-8" aria-labelledby="stance-heading">
-    <h2
-      id="stance-heading"
-      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
-    >
-      サイトの立場
-    </h2>
-    <ul class="space-y-3 text-sm leading-relaxed text-[var(--color-sub)]">
-      <li>
-        <strong class="text-[var(--color-ink)]">自前の法解釈はしません。</strong
-        > 提供するのは「法令本文への e-Gov リンク + 公式解説の見出し整理 + 公式
-        URL への誘導」のみです。
-      </li>
-      <li>
-        <strong class="text-[var(--color-ink)]"
-          >引用は政府標準利用規約 第 2.0 版の範囲内</strong
-        > に限り、出典・URL・取得日を必ず明記します。
-      </li>
-      <li>
-        <strong class="text-[var(--color-ink)]"
-          >法解釈・現場助言は弁護士・行政書士の領域</strong
-        > です。本サイトはそれらへの入口を整理することに徹します。
-      </li>
-    </ul>
-  </section>
-
-  <section class="py-8" aria-labelledby="scope-heading">
-    <h2
-      id="scope-heading"
-      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
-    >
-      初期スコープ — 6 法令
-    </h2>
-    <ul class="border-t border-[var(--color-line)]">
-      {
-        laws.map((law) => {
-          const firstExp = law.data.officialExplanations[0];
-          const publisherLabel =
-            PUBLISHER_LABELS[firstExp.publisher] ?? firstExp.publisher;
-          return (
-            <li class="border-b border-[var(--color-line)] py-3">
-              <div class="font-bold text-[var(--color-ink)]">
-                {law.data.title}
-              </div>
-              <div class="text-xs text-[var(--color-sub)] mt-1">
-                主な公式解説: {publisherLabel}『{firstExp.title}』
-              </div>
-            </li>
-          );
-        })
-      }
-    </ul>
-    <p class="mt-4 text-sm">
-      <a href="/laws/" class="link-underline"
-        >→ すべての法令と公式解説を見る</a
-      >
-    </p>
   </section>
 
   <section class="py-8" aria-labelledby="sister-heading">
