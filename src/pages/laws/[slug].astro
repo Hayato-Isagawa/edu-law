@@ -1,0 +1,190 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { PUBLISHER_LABELS } from "../../data/publishers";
+
+export async function getStaticPaths() {
+  const laws = await getCollection("laws");
+  return laws.map((law) => ({
+    params: { slug: law.id },
+    props: { law },
+  }));
+}
+
+interface Props {
+  law: CollectionEntry<"laws">;
+}
+
+const { law } = Astro.props;
+const { Content } = await render(law);
+
+const dayFormatter = new Intl.DateTimeFormat("ja-JP", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "Asia/Tokyo",
+});
+function formatDay(iso: string): string {
+  return dayFormatter.format(new Date(`${iso}T00:00:00+09:00`));
+}
+
+function formatLabel(format?: "pdf" | "html"): string {
+  if (format === "pdf") return "(PDF)";
+  if (format === "html") return "(HTML)";
+  return "";
+}
+
+const pageTitle = `${law.data.title} — EduLaw JP`;
+---
+
+<Layout title={pageTitle} description={law.data.summary}>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li>
+        <a
+          href="/"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          >ホーム</a
+        >
+      </li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <a
+          href="/laws/"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          >法令一覧</a
+        >
+      </li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >{law.data.title}</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Laws — Detail
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      {law.data.title}
+    </h1>
+    <p
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base"
+    >
+      {law.data.summary}
+    </p>
+  </section>
+
+  <section
+    class="mb-12 rounded-md border border-[var(--color-line)] bg-[var(--color-card)] p-6 sm:p-8 space-y-6"
+    aria-labelledby="entry-points-heading"
+  >
+    <h2 id="entry-points-heading" class="sr-only">公式情報源への入口</h2>
+
+    <div class="space-y-2 text-sm">
+      <p
+        class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+      >
+        法令本文
+      </p>
+      <a
+        href={law.data.eGovUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+      >
+        e-Gov 法令検索で本文を読む
+        <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+      </a>
+    </div>
+
+    <div class="space-y-2 text-sm">
+      <p
+        class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+      >
+        公式解説
+      </p>
+      <ul class="space-y-2">
+        {
+          law.data.officialExplanations.map((exp) => {
+            const publisherLabel =
+              PUBLISHER_LABELS[exp.publisher] ?? exp.publisher;
+            const fmt = formatLabel(exp.format);
+            return (
+              <li>
+                <a
+                  href={exp.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+                >
+                  <span>
+                    {publisherLabel}『{exp.title}』{fmt}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    class="text-[var(--color-sub)] text-xs"
+                  >
+                    ↗
+                  </span>
+                </a>
+                {exp.publishedAt && (
+                  <span class="ml-2 text-xs text-[var(--color-sub)]">
+                    <time datetime={exp.publishedAt}>
+                      {formatDay(exp.publishedAt)}
+                    </time>
+                  </span>
+                )}
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="law-body mb-12">
+    <Content />
+  </section>
+
+  <footer
+    class="mt-12 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="source-policy-heading"
+  >
+    <h2 id="source-policy-heading" class="sr-only">出典と運用ポリシー</h2>
+    <p>
+      最終確認:{" "}
+      <time datetime={law.data.lastVerified}
+        >{formatDay(law.data.lastVerified)}</time
+      >
+    </p>
+    <p>
+      公式解説の引用は政府標準利用規約 第 2.0 版に従う(コード MIT / 独自整理 CC BY-SA 4.0)。
+    </p>
+    <p>
+      誤りの報告:{" "}
+      <a href="mailto:law@edu-evidence.org" class="link-underline"
+        >law@edu-evidence.org</a
+      >
+    </p>
+  </footer>
+
+  <p class="mt-8 mb-16 text-sm">
+    <a
+      href="/laws/"
+      class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+    >
+      <span aria-hidden="true">←</span>
+      法令一覧へ戻る
+    </a>
+  </p>
+</Layout>
