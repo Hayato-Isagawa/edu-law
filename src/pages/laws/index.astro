@@ -1,0 +1,133 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { PUBLISHER_LABELS } from "../../data/publishers";
+
+const laws = (await getCollection("laws")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const dayFormatter = new Intl.DateTimeFormat("ja-JP", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "Asia/Tokyo",
+});
+function formatDay(iso: string): string {
+  return dayFormatter.format(new Date(`${iso}T00:00:00+09:00`));
+}
+
+function formatLabel(format?: "pdf" | "html"): string {
+  if (format === "pdf") return "(PDF)";
+  if (format === "html") return "(HTML)";
+  return "";
+}
+---
+
+<Layout
+  title="法令一覧 — EduLaw JP"
+  description="教師の実務文脈で参照頻度の高い 6 法令について、e-Gov 法令検索の本文と所管省庁の公式解説への入口を整理しています。"
+>
+  <section class="pt-10 sm:pt-14 md:pt-20 pb-8 sm:pb-12">
+    <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]">
+      Laws — Index
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      法令<span class="text-[var(--color-accent)]">一覧</span>
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        教師の実務文脈で参照頻度の高い 6 法令について、<strong
+          class="text-[var(--color-ink)]">e-Gov 法令検索の本文</strong
+        >と<strong class="text-[var(--color-ink)]">所管省庁の公式解説</strong
+        >への入口を整理しています。
+      </p>
+      <p>
+        EduLaw JP は<strong class="text-[var(--color-ink)]"
+          >自前の法解釈を加えず</strong
+        >、公式 URL への誘導に徹します(ADR 0002 引用ルールと運用ポリシー)。
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-24" aria-labelledby="laws-list-heading">
+    <h2 id="laws-list-heading" class="sr-only">6 法令の入口一覧</h2>
+    <ul class="border-t border-[var(--color-line)]">
+      {
+        laws.map((law, i) => (
+          <li class="border-b border-[var(--color-line)] py-8 space-y-4">
+            <header class="space-y-2">
+              <p class="font-mono text-xs text-[var(--color-sub)]">
+                {String(i + 1).padStart(2, "0")} / {String(laws.length).padStart(2, "0")}
+              </p>
+              <h3 class="text-2xl md:text-3xl font-black tracking-tight leading-tight">
+                {law.data.title}
+              </h3>
+              <p class="text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
+                {law.data.summary}
+              </p>
+            </header>
+
+            <div class="space-y-2 text-sm">
+              <p class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]">
+                法令本文
+              </p>
+              <a
+                href={law.data.eGovUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+              >
+                e-Gov 法令検索で本文を読む
+                <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                  ↗
+                </span>
+              </a>
+            </div>
+
+            <div class="space-y-2 text-sm">
+              <p class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]">
+                公式解説
+              </p>
+              <ul class="space-y-1.5">
+                {law.data.officialExplanations.map((exp) => {
+                  const publisherLabel =
+                    PUBLISHER_LABELS[exp.publisher] ?? exp.publisher;
+                  const fmt = formatLabel(exp.format);
+                  return (
+                    <li>
+                      <a
+                        href={exp.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+                      >
+                        <span>
+                          {publisherLabel}『{exp.title}』{fmt}
+                        </span>
+                        <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                          ↗
+                        </span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            <p class="text-xs text-[var(--color-sub)]">
+              最終確認:{" "}
+              <time datetime={law.data.lastVerified}>
+                {formatDay(law.data.lastVerified)}
+              </time>
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Layout>
