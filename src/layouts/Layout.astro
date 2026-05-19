@@ -1,21 +1,45 @@
 ---
 import "../styles/global.css";
-import Logo from "../components/Logo.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
 
 interface Props {
   title?: string;
   description?: string;
+  ogImagePath?: string;
+  breadcrumbJsonLd?: object;
 }
 const {
   title = "EduLaw JP — 教師向け教育法ポータル",
   description = "日本の小学校教員向けに、教育関連法と公式解説を法令別に整理するポータル。",
+  ogImagePath,
+  breadcrumbJsonLd,
 } = Astro.props;
 const siteUrl = "https://law.edu-evidence.org";
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
-const path = Astro.url.pathname;
-const isLawsPage = path.startsWith("/laws");
-const isAboutPage = path.startsWith("/about");
+const ogImage = new URL(ogImagePath ?? "/og-default.png", siteUrl).href;
+const rssUrl = new URL("/rss.xml", siteUrl).href;
+
+const escapeLd = (obj: object): string =>
+  JSON.stringify(obj).replace(/</g, "\\u003c");
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "EduLaw JP",
+  url: siteUrl,
+  description,
+  inLanguage: "ja",
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "EduLaw JP",
+  url: siteUrl,
+  logo: new URL("/favicon.svg", siteUrl).href,
+  sameAs: ["https://edu-evidence.org", "https://news.edu-evidence.org"],
+};
 ---
 
 <!doctype html>
@@ -49,105 +73,79 @@ const isAboutPage = path.startsWith("/about");
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="EduLaw JP" />
     <meta property="og:locale" content="ja_JP" />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- RSS -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="EduLaw JP 更新フィード"
+      href={rssUrl}
+    />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={escapeLd(websiteJsonLd)} />
+    <script type="application/ld+json" set:html={escapeLd(organizationJsonLd)} />
+    {breadcrumbJsonLd && (
+      <script type="application/ld+json" set:html={escapeLd(breadcrumbJsonLd)} />
+    )}
   </head>
-  <body class="bg-[var(--color-bg)] text-[var(--color-ink)]">
-    <header class="border-b border-[var(--color-line)]">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        <a
-          href="/"
-          class="flex items-center gap-2 whitespace-nowrap font-black text-lg sm:text-xl tracking-tight"
-        >
-          <span class="text-[var(--color-accent)] inline-flex shrink-0">
-            <Logo class="w-8 h-8" />
-          </span>
-          EduLaw <span class="text-[var(--color-accent)]">JP</span>
-        </a>
-        <nav aria-label="メインナビゲーション">
-          <ul class="flex items-center gap-4 sm:gap-6 text-sm">
-            <li>
-              <a
-                href="/laws/"
-                class={isLawsPage
-                  ? "text-[var(--color-ink)] font-semibold"
-                  : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
-                aria-current={isLawsPage ? "page" : undefined}
-              >
-                法令一覧
-              </a>
-            </li>
-            <li>
-              <a
-                href="/about/"
-                class={isAboutPage
-                  ? "text-[var(--color-ink)] font-semibold"
-                  : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
-                aria-current={isAboutPage ? "page" : undefined}
-              >
-                サイトについて
-              </a>
-            </li>
-            <li><ThemeToggle /></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+  <body
+    class="bg-[var(--color-bg)] text-[var(--color-ink)]"
+    data-menu="closed"
+  >
+    <SiteHeader />
 
     <main class="mx-auto max-w-6xl px-4 sm:px-6 pb-16 sm:pb-24">
       <slot />
     </main>
 
-    <footer class="border-t border-[var(--color-line)]">
-      <div
-        class="mx-auto max-w-6xl px-4 sm:px-6 py-8 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
-      >
-        <p>
-          © 2026 EduLaw JP. コード MIT / 独自整理 CC BY-SA 4.0 / 公式解説の引用は政府標準利用規約に従う。
-        </p>
-        <p>
-          <a href="/about/" class="link-underline">サイトについて(立場・引用根拠・誤りの報告窓口)</a>
-        </p>
-        <p>
-          姉妹サイト:
-          <a href="https://edu-evidence.org" class="link-underline">EduEvidence JP</a> ・
-          <a href="https://news.edu-evidence.org" class="link-underline">EduWatch JP</a>
-        </p>
-      </div>
-    </footer>
+    <SiteFooter />
 
     <script is:inline>
       (function () {
-        const btn = document.getElementById("theme-toggle");
-        if (!btn) return;
+        const buttons = [
+          document.getElementById("theme-toggle"),
+          document.getElementById("theme-toggle-mobile"),
+        ].filter(Boolean);
+        if (buttons.length === 0) return;
         const root = document.documentElement;
         const apply = (theme) => {
           root.setAttribute("data-theme", theme);
           const isDark = theme === "dark";
-          btn.setAttribute("aria-pressed", String(isDark));
-          btn.setAttribute(
-            "aria-label",
-            isDark ? "ライトモードに切り替え" : "ダークモードに切り替え",
-          );
+          const label = isDark
+            ? "ライトモードに切り替え"
+            : "ダークモードに切り替え";
+          for (const btn of buttons) {
+            btn.setAttribute("aria-pressed", String(isDark));
+            btn.setAttribute("aria-label", label);
+          }
         };
         apply(root.getAttribute("data-theme") || "light");
-        btn.addEventListener("click", () => {
-          const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-          apply(next);
-          try {
-            localStorage.setItem("theme", next);
-          } catch {
-            // localStorage unavailable (private browsing) — apply for session only
-          }
-        });
+        for (const btn of buttons) {
+          btn.addEventListener("click", () => {
+            const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+            apply(next);
+            try {
+              localStorage.setItem("theme", next);
+            } catch {
+              // localStorage unavailable (private browsing) — apply for session only
+            }
+          });
+        }
         const media = window.matchMedia("(prefers-color-scheme: dark)");
         media.addEventListener("change", (e) => {
           let saved = null;
