@@ -1,0 +1,72 @@
+---
+import Logo from "./Logo.astro";
+---
+
+<footer class="border-t border-[var(--color-line)] mt-16">
+  <div
+    class="mx-auto max-w-6xl px-4 sm:px-6 py-12 grid md:grid-cols-3 gap-8 text-xs text-[var(--color-sub)] leading-relaxed"
+  >
+    <div class="space-y-4">
+      <div class="font-black text-base text-[var(--color-ink)] flex items-center gap-2">
+        <span class="text-[var(--color-accent)] inline-flex">
+          <Logo class="w-5 h-5" />
+        </span>
+        EduLaw <span class="text-[var(--color-accent)]">JP</span>
+      </div>
+      <p class="leading-relaxed">
+        日本の小学校教員向けに、教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を法令別に整理する静的ポータル。<br />
+        自前の法解釈は加えず、法令本文と公式解説への入口を整理することに徹します。
+      </p>
+    </div>
+
+    <section aria-labelledby="footer-site" class="space-y-3">
+      <h2
+        id="footer-site"
+        class="font-mono uppercase tracking-widest text-[var(--color-ink)] text-xs"
+      >
+        Site — サイト内
+      </h2>
+      <ul class="space-y-1.5">
+        <li><a href="/laws/" class="link-underline">法令一覧</a></li>
+        <li><a href="/about/" class="link-underline">サイトについて</a></li>
+        <li>
+          <a href="/about/#citation-basis-heading" class="link-underline">引用ポリシー</a>
+        </li>
+        <li><a href="/rss.xml" class="link-underline">RSS フィード</a></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="footer-sister-legal" class="space-y-3">
+      <h2
+        id="footer-sister-legal"
+        class="font-mono uppercase tracking-widest text-[var(--color-ink)] text-xs"
+      >
+        Sister Sites & Legal
+      </h2>
+      <ul class="space-y-1.5">
+        <li>
+          <a href="https://edu-evidence.org" class="link-underline">EduEvidence JP</a>
+        </li>
+        <li>
+          <a href="https://news.edu-evidence.org" class="link-underline">EduWatch JP</a>
+        </li>
+        <li>
+          <span aria-current="page" class="text-[var(--color-ink)]">EduLaw JP(このサイト)</span>
+        </li>
+      </ul>
+      <ul class="space-y-1.5 pt-2">
+        <li>コード MIT / 独自整理 CC BY-SA 4.0</li>
+        <li>公式解説の引用は政府標準利用規約 第 2.0 版に従う</li>
+        <li>
+          連絡先:
+          <a href="mailto:law@edu-evidence.org" class="link-underline">law@edu-evidence.org</a>
+        </li>
+      </ul>
+    </section>
+  </div>
+  <div
+    class="mx-auto max-w-6xl px-4 sm:px-6 pb-8 text-[10px] text-[var(--color-sub)] leading-relaxed"
+  >
+    © 2026 EduLaw JP.
+  </div>
+</footer>

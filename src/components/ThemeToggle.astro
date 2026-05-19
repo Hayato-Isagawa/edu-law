@@ -1,10 +1,16 @@
 ---
+interface Props {
+  id?: string;
+  class?: string;
+}
+
+const { id = "theme-toggle", class: className = "" } = Astro.props;
 ---
 
 <button
-  id="theme-toggle"
+  id={id}
   type="button"
-  class="theme-toggle relative flex items-center justify-center w-8 h-8 text-[var(--color-sub)] hover:text-[var(--color-ink)] transition-colors"
+  class={`theme-toggle relative flex items-center justify-center w-8 h-8 text-[var(--color-sub)] hover:text-[var(--color-ink)] transition-colors ${className}`}
   aria-label="ダークモードに切り替え"
   aria-pressed="false"
 >
