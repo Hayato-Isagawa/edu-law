@@ -1,15 +1,30 @@
 ---
 title: 著作権法
 order: 5
-summary: 著作物の保護と教育現場での利用(第35条)を定める法律。授業目的公衆送信補償金制度に関する運用指針が文化庁から提供。
+summary: 著作物の保護と教育現場での利用(第35条)を定める法律。改正著作権法第35条運用指針(著作物の教育利用に関する関係者フォーラム)と授業目的公衆送信補償金制度の公式情報を整理。
 eGovUrl: https://laws.e-gov.go.jp/law/345AC0000000048/
 officialExplanations:
   - publisher: bunkacho
-    title: 改正著作権法第35条運用指針(令和2(2020)年度版)
-    url: https://www.bunka.go.jp/seisaku/chosakuken/pdf/92223601_11.pdf
-    publishedAt: "2020-04-16"
+    title: 授業目的公衆送信補償金に係る指定管理団体の指定について
+    url: https://www.bunka.go.jp/seisaku/chosakuken/1413647.html
+    publishedAt: "2019-02-15"
+    format: html
+  - publisher: bunkacho
+    title: 授業目的公衆送信補償金の額の認可について
+    url: https://www.bunka.go.jp/seisaku/chosakuken/92728101.html
+    publishedAt: "2020-12-18"
+    format: html
+  - publisher: bunkacho
+    title: 授業目的公衆送信補償金制度の概要(令和2年12月)
+    url: https://www.bunka.go.jp/seisaku/chosakuken/pdf/92728101_03.pdf
+    publishedAt: "2020-12"
     format: pdf
-lastVerified: "2026-05-17"
+  - publisher: bunkacho
+    title: 授業目的公衆送信補償金制度の現状と留意点(令和6年度教職員著作権講習会資料)
+    url: https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/seminar/2024/pdf/94089902_01.pdf
+    publishedAt: "2024"
+    format: pdf
+lastVerified: "2026-05-19"
 tags: []
 ---
 
@@ -25,8 +40,19 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 
 ## 公式解説
 
-- [改正著作権法第35条運用指針(令和2(2020)年度版)PDF](https://www.bunka.go.jp/seisaku/chosakuken/pdf/92223601_11.pdf)(著作物の教育利用に関する関係者フォーラム、令和2(2020)年4月16日、1.9MB)
-- [授業目的公衆送信補償金制度の早期施行について(文化庁案内ページ)](https://www.bunka.go.jp/seisaku/chosakuken/92169601.html)
+### 運用指針(著作物の教育利用に関する関係者フォーラム策定)
+
+- [改正著作権法第35条運用指針(令和3(2021)年度版)PDF](https://sartras.or.jp/wp-content/uploads/unyoshishin_20201221)(著作物の教育利用に関する関係者フォーラム、令和3(2021)年度版)
+- [同 令和3(2021)年度初等中等教育における特別活動に関する追補版 PDF](https://sartras.or.jp/wp-content/uploads/unyoshishintsuiho_20211109.pdf)(令和3(2021)年11月)
+
+運用指針本体は、著作物の教育利用に関する関係者フォーラム(教育関係者・権利者・有識者で構成)が策定し、指定管理団体である一般社団法人授業目的公衆送信補償金等管理協会(SARTRAS、文化庁長官指定)が公開しています。
+
+### 制度関連の文化庁公式情報
+
+- [授業目的公衆送信補償金に係る指定管理団体の指定について(文化庁)](https://www.bunka.go.jp/seisaku/chosakuken/1413647.html)
+- [授業目的公衆送信補償金の額の認可について(文化庁)](https://www.bunka.go.jp/seisaku/chosakuken/92728101.html)
+- [授業目的公衆送信補償金制度の概要(令和2年12月、文化庁)PDF](https://www.bunka.go.jp/seisaku/chosakuken/pdf/92728101_03.pdf)
+- [授業目的公衆送信補償金制度の現状と留意点(令和6年度教職員著作権講習会資料、文化庁)PDF](https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/seminar/2024/pdf/94089902_01.pdf)
 
 ## 関連法令
 
@@ -35,4 +61,5 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 ## 出典
 
 - 法令本文: [e-Gov 法令検索](https://laws.e-gov.go.jp/law/345AC0000000048/)
-- 公式解説: 著作物の教育利用に関する関係者フォーラム『改正著作権法第35条運用指針(令和2(2020)年度版)』令和2(2020)年4月16日(取得日: 2026-05-17)
+- 公式解説: 著作物の教育利用に関する関係者フォーラム『改正著作権法第35条運用指針(令和3(2021)年度版)』(一般社団法人授業目的公衆送信補償金等管理協会 公開、取得日: 2026-05-19)
+- 制度関連情報: 文化庁「授業目的公衆送信補償金制度」関連ページ(取得日: 2026-05-19)
