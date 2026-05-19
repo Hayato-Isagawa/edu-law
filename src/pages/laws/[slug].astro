@@ -35,9 +35,39 @@ function formatLabel(format?: "pdf" | "html"): string {
 }
 
 const pageTitle = `${law.data.title} — EduLaw JP`;
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "ホーム",
+      item: siteUrl,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "法令一覧",
+      item: new URL("/laws/", siteUrl).href,
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: law.data.title,
+      item: new URL(`/laws/${law.id}/`, siteUrl).href,
+    },
+  ],
+};
 ---
 
-<Layout title={pageTitle} description={law.data.summary}>
+<Layout
+  title={pageTitle}
+  description={law.data.summary}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">
     <ol
       class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"

@@ -1,0 +1,147 @@
+---
+import Logo from "./Logo.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+
+const path = Astro.url.pathname;
+const isLawsPage = path.startsWith("/laws");
+const isAboutPage = path.startsWith("/about");
+---
+
+<header class="site-header">
+  <div
+    class="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4"
+  >
+    <a
+      href="/"
+      class="flex items-center gap-2 whitespace-nowrap font-black text-lg sm:text-xl tracking-tight shrink-0"
+    >
+      <span class="text-[var(--color-accent)] inline-flex shrink-0">
+        <Logo class="w-8 h-8" />
+      </span>
+      EduLaw <span class="text-[var(--color-accent)]">JP</span>
+    </a>
+
+    <nav class="hidden lg:flex items-center gap-6 text-sm" aria-label="メインナビゲーション">
+      <a
+        href="/laws/"
+        class={isLawsPage
+          ? "text-[var(--color-ink)] font-semibold"
+          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+        aria-current={isLawsPage ? "page" : undefined}
+      >
+        法令一覧
+      </a>
+      <a
+        href="/about/"
+        class={isAboutPage
+          ? "text-[var(--color-ink)] font-semibold"
+          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+        aria-current={isAboutPage ? "page" : undefined}
+      >
+        サイトについて
+      </a>
+      <ThemeToggle id="theme-toggle" />
+    </nav>
+
+    <button
+      id="menu-toggle"
+      type="button"
+      class="lg:hidden relative flex flex-col justify-center items-center gap-1.5 w-10 h-10 -mr-2 shrink-0"
+      aria-label="メニューを開く"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <span class="block w-6 h-[2px] bg-[var(--color-ink)] transition-transform duration-200 origin-center"></span>
+      <span class="block w-6 h-[2px] bg-[var(--color-ink)] transition-opacity duration-200"></span>
+      <span class="block w-6 h-[2px] bg-[var(--color-ink)] transition-transform duration-200 origin-center"></span>
+    </button>
+  </div>
+
+  <div
+    id="mobile-menu"
+    data-state="closed"
+    class="mobile-menu lg:hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-label="モバイルナビゲーション"
+    inert
+  >
+    <div class="mobile-menu-inner">
+      <nav class="mobile-menu-nav" aria-label="サイトナビゲーション">
+        <section class="mobile-menu-section">
+          <h2 class="mobile-menu-section-title">Explore — 法令を見る</h2>
+          <ul>
+            <li>
+              <a href="/" aria-current={path === "/" ? "page" : undefined}>ホーム</a>
+            </li>
+            <li>
+              <a href="/laws/" aria-current={isLawsPage ? "page" : undefined}>法令一覧</a>
+            </li>
+          </ul>
+        </section>
+
+        <section class="mobile-menu-section">
+          <h2 class="mobile-menu-section-title">About — このサイトについて</h2>
+          <ul>
+            <li>
+              <a href="/about/" aria-current={isAboutPage ? "page" : undefined}>このサイトについて</a>
+            </li>
+            <li>
+              <a href="/rss.xml">RSS フィード</a>
+            </li>
+          </ul>
+        </section>
+
+        <section class="mobile-menu-section">
+          <h2 class="mobile-menu-section-title">Display — 表示</h2>
+          <ThemeToggle
+            id="theme-toggle-mobile"
+            class="mobile-menu-theme-toggle"
+          />
+        </section>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (function () {
+    const toggle = document.getElementById("menu-toggle");
+    const menu = document.getElementById("mobile-menu");
+    if (!toggle || !menu) return;
+    const bars = toggle.querySelectorAll("span");
+    let isOpen = false;
+    const setOpen = (open) => {
+      isOpen = open;
+      menu.dataset.state = open ? "open" : "closed";
+      document.body.dataset.menu = open ? "open" : "closed";
+      if (open) menu.removeAttribute("inert");
+      else menu.setAttribute("inert", "");
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "メニューを閉じる" : "メニューを開く");
+      if (bars.length === 3) {
+        bars[0].style.transform = open ? "translateY(8px) rotate(45deg)" : "";
+        bars[1].style.opacity = open ? "0" : "";
+        bars[2].style.transform = open ? "translateY(-8px) rotate(-45deg)" : "";
+      }
+      if (open) {
+        const firstLink = menu.querySelector("a");
+        if (firstLink) {
+          window.setTimeout(
+            () => firstLink.focus({ preventScroll: true }),
+            50,
+          );
+        }
+      } else {
+        toggle.focus({ preventScroll: true });
+      }
+    };
+    toggle.addEventListener("click", () => setOpen(!isOpen));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isOpen) setOpen(false);
+    });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 1024 && isOpen) setOpen(false);
+    });
+  })();
+</script>
