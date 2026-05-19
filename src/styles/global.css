@@ -4,6 +4,8 @@
   --breakpoint-xs: 30rem;
 }
 
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   --color-bg: #faf9f5;
   --color-ink: #1a1a1a;
@@ -18,8 +20,20 @@
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
 }
 
+[data-theme="dark"] {
+  --color-bg: #16181d;
+  --color-ink: #f0f6fc;
+  --color-sub: #9ba1a8;
+  --color-line: #30363d;
+  --color-card: #1f2328;
+  --color-accent: #c89a7a;
+  --color-accent-hover: color-mix(in oklab, var(--color-accent) 85%, white);
+}
+
 html {
   font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -110,4 +124,22 @@ body {
   background-color: var(--color-line);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
+}
+
+.theme-toggle .theme-icon-sun {
+  display: none;
+}
+.theme-toggle .theme-icon-moon {
+  display: block;
+}
+[data-theme="dark"] .theme-toggle .theme-icon-sun {
+  display: block;
+}
+[data-theme="dark"] .theme-toggle .theme-icon-moon {
+  display: none;
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
