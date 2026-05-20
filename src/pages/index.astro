@@ -10,7 +10,7 @@ const laws = (await getCollection("laws")).sort(
 const scenarios = [
   {
     title: "いじめ対応",
-    summary: "いじめ防止対策推進法 / 学校教育法(懲戒・体罰)",
+    summary: "いじめ防止対策推進法 / 学校教育法(出席停止・懲戒)",
     href: "/laws/bullying-prevention-act/",
   },
   {
@@ -90,7 +90,7 @@ const sisterSites = [
     badge: "root" as const,
     title: "EduLaw JP",
     summary: "教育関連法と公式解説を法令別に整理する教師向けポータル。",
-    href: "#",
+    href: "https://law.edu-evidence.org/",
     isCurrent: true,
   },
 ] as const;
@@ -98,28 +98,36 @@ const sisterSites = [
 
 <Layout
   title="EduLaw JP — 教師向け教育法ポータル"
-  description="教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を法令別に整理する教師向けポータル。自前の法解釈は加えず、公式 URL への入口に徹します。"
+  description="公式に立ち返り、教師の判断を支える教育法ポータル。教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を法令別に整理し、自前の法解釈は加えず、公式 URL への入口に徹します。"
 >
-  <section class="py-12 sm:py-20">
-    <h1
-      class="text-4xl sm:text-5xl font-black tracking-tight mb-6 leading-tight"
+  <section class="pt-10 sm:pt-14 md:pt-20 lg:pt-28 pb-10 sm:pb-14 md:pb-20">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
     >
-      教師向け<br />教育法ポータル
+      Statutes and official commentary, one path
+    </p>
+    <p class="mt-1 text-xs text-[var(--color-sub)]">
+      小学校教員のための教育法ポータル
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.15] tracking-tight"
+    >
+      <span class="text-[var(--color-accent)]">条文</span>と<span
+        class="text-[var(--color-accent)]">公式解説</span
+      >を、<br />
+      教師の判断へ。
     </h1>
     <p
-      class="text-base sm:text-lg leading-relaxed text-[var(--color-sub)] mb-8"
+      class="mt-6 max-w-2xl text-[var(--color-ink)] font-bold text-base sm:text-lg leading-snug"
+    >
+      判断の前に、原典を一度。
+    </p>
+    <p
+      class="mt-4 max-w-2xl text-base sm:text-lg leading-relaxed text-[var(--color-sub)]"
     >
       教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を、教師の実務文脈で
       <strong class="text-[var(--color-ink)]">探しやすく</strong> 整理します。
     </p>
-
-    <a
-      href="/laws/"
-      class="inline-flex items-baseline gap-2 px-5 py-3 rounded-md bg-[var(--color-accent)] text-white font-bold text-sm tracking-wide hover:opacity-90 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
-    >
-      7 法令の入口を見る
-      <span aria-hidden="true">→</span>
-    </a>
   </section>
 
   <section
