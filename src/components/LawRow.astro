@@ -1,7 +1,6 @@
 ---
 interface Props {
   index: number;
-  total: number;
   href: string;
   title: string;
   summary?: string;
@@ -13,7 +12,6 @@ interface Props {
 
 const {
   index,
-  total,
   href,
   title,
   summary,
@@ -23,26 +21,30 @@ const {
   isCurrent = false,
 } = Astro.props;
 
-const num = `${String(index).padStart(2, "0")}/${String(total).padStart(2, "0")}`;
+const num = String(index).padStart(2, "0");
 
 const publisherBadgeConfig = {
   mext: {
     label: "MEXT",
+    fullLabel: "文部科学省",
     style:
       "text-[var(--badge-mext)] border-[var(--badge-mext)]/40 bg-[var(--badge-mext)]/10",
   },
   cfa: {
     label: "CFA",
+    fullLabel: "こども家庭庁",
     style:
       "text-[var(--badge-cfa)] border-[var(--badge-cfa)]/40 bg-[var(--badge-cfa)]/10",
   },
   bunkacho: {
     label: "BUNKACHO",
+    fullLabel: "文化庁",
     style:
       "text-[var(--badge-bunkacho)] border-[var(--badge-bunkacho)]/40 bg-[var(--badge-bunkacho)]/10",
   },
   egov: {
     label: "E-GOV",
+    fullLabel: "e-Gov 法令検索",
     style:
       "text-[var(--badge-egov)] border-[var(--badge-egov)]/40 bg-[var(--badge-egov)]/10",
   },
@@ -113,6 +115,8 @@ const arrow = isCurrent ? "◉" : "→";
           {badge && isPublisherBadge(badge) && (
             <span
               class={`font-mono text-[10px] tracking-widest uppercase border rounded-full px-2 py-0.5 leading-none inline-flex items-center h-5 ${publisherBadgeConfig[badge].style}`}
+              title={publisherBadgeConfig[badge].fullLabel}
+              aria-label={publisherBadgeConfig[badge].fullLabel}
             >
               {publisherBadgeConfig[badge].label}
             </span>

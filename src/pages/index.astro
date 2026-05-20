@@ -177,7 +177,6 @@ const sisterSites = [
         scenarios.map((scenario, i) => (
           <LawRow
             index={i + 1}
-            total={scenarios.length}
             href={scenario.href}
             title={scenario.title}
             summary={scenario.summary}
@@ -219,7 +218,6 @@ const sisterSites = [
         laws.map((law, i) => (
           <LawRow
             index={i + 1}
-            total={laws.length}
             href={`/laws/${law.id}/`}
             title={law.data.title}
             summary={law.data.summary}
@@ -250,6 +248,27 @@ const sisterSites = [
       <p class="mt-3 text-sm text-[var(--color-sub)] leading-relaxed max-w-2xl">
         所管省庁の代表的な公式解説を、対応する法令ページへの入口として並べます。
       </p>
+      <dl
+        class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-[var(--color-sub)]"
+        aria-label="所管省庁ラベルの凡例"
+      >
+        <div class="inline-flex items-baseline gap-1.5">
+          <dt class="font-mono uppercase tracking-widest text-[var(--badge-mext)]">MEXT</dt>
+          <dd>文部科学省</dd>
+        </div>
+        <div class="inline-flex items-baseline gap-1.5">
+          <dt class="font-mono uppercase tracking-widest text-[var(--badge-cfa)]">CFA</dt>
+          <dd>こども家庭庁</dd>
+        </div>
+        <div class="inline-flex items-baseline gap-1.5">
+          <dt class="font-mono uppercase tracking-widest text-[var(--badge-bunkacho)]">BUNKACHO</dt>
+          <dd>文化庁</dd>
+        </div>
+        <div class="inline-flex items-baseline gap-1.5">
+          <dt class="font-mono uppercase tracking-widest text-[var(--badge-egov)]">E-GOV</dt>
+          <dd>e-Gov 法令検索</dd>
+        </div>
+      </dl>
     </header>
 
     <div>
@@ -257,7 +276,6 @@ const sisterSites = [
         highlights.map((h, i) => (
           <LawRow
             index={i + 1}
-            total={highlights.length}
             href={h.href}
             title={h.title}
             summary={h.summary}
@@ -354,7 +372,6 @@ const sisterSites = [
         sisterSites.map((s, i) => (
           <LawRow
             index={i + 1}
-            total={sisterSites.length}
             href={s.href}
             title={s.title}
             summary={s.summary}
