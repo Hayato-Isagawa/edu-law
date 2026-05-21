@@ -4,6 +4,7 @@ import ThemeToggle from "./ThemeToggle.astro";
 
 const path = Astro.url.pathname;
 const isLawsPage = path.startsWith("/laws");
+const isGuidesPage = path.startsWith("/guides");
 const isAboutPage = path.startsWith("/about");
 ---
 
@@ -30,6 +31,15 @@ const isAboutPage = path.startsWith("/about");
         aria-current={isLawsPage ? "page" : undefined}
       >
         法令一覧
+      </a>
+      <a
+        href="/guides/legal-hierarchy/"
+        class={isGuidesPage
+          ? "text-[var(--color-ink)] font-semibold"
+          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+        aria-current={isGuidesPage ? "page" : undefined}
+      >
+        ガイド
       </a>
       <a
         href="/about/"
@@ -76,6 +86,9 @@ const isAboutPage = path.startsWith("/about");
             </li>
             <li>
               <a href="/laws/" aria-current={isLawsPage ? "page" : undefined}>法令一覧</a>
+            </li>
+            <li>
+              <a href="/guides/legal-hierarchy/" aria-current={isGuidesPage ? "page" : undefined}>ガイド — 法令階層</a>
             </li>
           </ul>
         </section>

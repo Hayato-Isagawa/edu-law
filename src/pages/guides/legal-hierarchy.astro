@@ -1,0 +1,241 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const pageTitle = "日本の法令階層 — EduLaw JP";
+const pageDescription =
+  "憲法・法律・政令・省令・告示・通知/通達の制定主体と根拠条文を、e-Gov 法令検索の公式条文に基づいて整理するガイド。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    { "@type": "ListItem", position: 3, name: "日本の法令階層", item: `${siteUrl}/guides/legal-hierarchy/` },
+  ],
+};
+
+const eGovConstitution = "https://laws.e-gov.go.jp/law/321CONSTITUTION";
+const eGovGovOrgAct = "https://laws.e-gov.go.jp/law/323AC0000000120";
+const eGovCabinetOfficeAct = "https://laws.e-gov.go.jp/law/411AC0000000089";
+
+const overview = [
+  { level: "01", name: "憲法", subject: "国の最高法規", basis: "憲法 98 条 1 項" },
+  { level: "02", name: "法律", subject: "国会の議決", basis: "憲法 41 条 / 59 条 1 項" },
+  { level: "03", name: "政令", subject: "内閣の制定", basis: "憲法 73 条 6 号" },
+  { level: "04", name: "省令 / 府令", subject: "各省大臣 / 内閣総理大臣の命令", basis: "国家行政組織法 12 条 1 項 / 内閣府設置法 7 条 3 項" },
+  { level: "05", name: "規則", subject: "各委員会・各庁の長官の命令", basis: "国家行政組織法 13 条 1 項" },
+  { level: "06", name: "告示", subject: "公示の形式", basis: "国家行政組織法 14 条 1 項" },
+  { level: "07", name: "通知・通達(訓令)", subject: "所管機関・職員への命令 / 示達", basis: "国家行政組織法 14 条 2 項" },
+];
+
+const accent = (s: string) => `<strong class="text-[var(--color-ink)]">「${s}」</strong>`;
+
+const details = [
+  {
+    id: "rank-constitution-heading",
+    number: "2.1",
+    title: "憲法",
+    subject: "国民(改正手続は国会の発議と国民の承認、憲法 96 条 1 項)。",
+    basis: "憲法 98 条 1 項(最高法規)",
+    descriptionHtml: `憲法 98 条 1 項は、憲法を ${accent("国の最高法規")} と規定し、これに反する法律・命令の ${accent("効力を有しない")} 旨を定めています。`,
+    links: [{ label: "日本国憲法", url: eGovConstitution }],
+  },
+  {
+    id: "rank-law-heading",
+    number: "2.2",
+    title: "法律",
+    subject: "国会(両議院の可決による、憲法 59 条 1 項)。",
+    basis: "憲法 41 条(国会の地位)/ 憲法 59 条 1 項(法律の成立)",
+    descriptionHtml: `憲法 41 条は、国会を ${accent("国権の最高機関")} かつ ${accent("国の唯一の立法機関")} と規定しています。`,
+    links: [{ label: "日本国憲法", url: eGovConstitution }],
+  },
+  {
+    id: "rank-cabinet-order-heading",
+    number: "2.3",
+    title: "政令",
+    subject: "内閣(憲法 73 条 6 号)。",
+    basis: "憲法 73 条 6 号(内閣の事務 — 政令の制定)",
+    descriptionHtml: `憲法 73 条 6 号は、内閣が ${accent("この憲法及び法律の規定を実施するため")} に政令を制定することができる旨を定めています。`,
+    links: [{ label: "日本国憲法", url: eGovConstitution }],
+  },
+  {
+    id: "rank-ministerial-order-heading",
+    number: "2.4",
+    title: "省令 / 府令",
+    subject: "各省大臣(省令、国家行政組織法 12 条 1 項)/ 内閣総理大臣(内閣府令、内閣府設置法 7 条 3 項)。",
+    basis: "国家行政組織法 12 条 1 項(省令)/ 内閣府設置法 7 条 3 項(内閣府令)",
+    descriptionHtml: `両条文は、各省大臣・内閣総理大臣が ${accent("法律若しくは政令を施行するため")} または ${accent("法律若しくは政令の特別の委任に基づいて")} 省令・内閣府令を発することができる旨を定めています。`,
+    links: [
+      { label: "国家行政組織法", url: eGovGovOrgAct },
+      { label: "内閣府設置法", url: eGovCabinetOfficeAct },
+    ],
+  },
+  {
+    id: "rank-rule-heading",
+    number: "2.5",
+    title: "規則",
+    subject: "各委員会及び各庁の長官(国家行政組織法 13 条 1 項)。",
+    basis: "国家行政組織法 13 条 1 項",
+    descriptionHtml: `国家行政組織法 13 条 1 項は、各委員会及び各庁の長官が ${accent("別に法律の定めるところにより")}、${accent("政令及び省令以外の規則その他の特別の命令")} を自ら発することができる旨を定めています。`,
+    links: [{ label: "国家行政組織法", url: eGovGovOrgAct }],
+  },
+  {
+    id: "rank-notice-heading",
+    number: "2.6",
+    title: "告示",
+    subject: "各省大臣、各委員会及び各庁の長官(国家行政組織法 14 条 1 項)。",
+    basis: "国家行政組織法 14 条 1 項",
+    descriptionHtml: `国家行政組織法 14 条 1 項は、その機関の所掌事務について ${accent("公示を必要とする場合")} において、${accent("告示を発することができる")} 旨を定めています。`,
+    links: [{ label: "国家行政組織法", url: eGovGovOrgAct }],
+  },
+  {
+    id: "rank-directive-heading",
+    number: "2.7",
+    title: "通知・通達(訓令)",
+    subject: "各省大臣、各委員会及び各庁の長官(国家行政組織法 14 条 2 項)。",
+    basis: "国家行政組織法 14 条 2 項",
+    descriptionHtml: `国家行政組織法 14 条 2 項は、その機関の所掌事務について ${accent("命令又は示達")} するため、${accent("所管の諸機関及び職員に対し")}、${accent("訓令又は通達を発することができる")} 旨を定めています。`,
+    links: [{ label: "国家行政組織法", url: eGovGovOrgAct }],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+const labelClass =
+  "font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]";
+const h2Class =
+  "font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]">
+      <li><a href="/" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><span class="text-[var(--color-sub)]">ガイド</span></li>
+      <li aria-hidden="true">/</li>
+      <li><span aria-current="page" class="text-[var(--color-ink)]">日本の法令階層</span></li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]">Guide</p>
+    <h1 class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight">
+      日本の法令<span class="text-[var(--color-accent)]">階層</span>
+    </h1>
+    <div class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3">
+      <p>
+        教師が学校教育法や著作権法 35 条の条文に触れる前段として、<strong class="text-[var(--color-ink)]"
+          >憲法・法律・政令・省令・告示・通知</strong
+        >がそれぞれ誰の手によって作られ、どの法令を根拠としているのかを整理します。
+      </p>
+      <p>
+        本ページは <a href="https://laws.e-gov.go.jp/" target="_blank" rel="noopener noreferrer" class={linkClass}>
+          e-Gov 法令検索<span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+        </a> の公式条文を一次ソースとし、本サイトは自前の法解釈を加えません(<a href="/about/" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>サイトの立場</a>)。
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-12" aria-labelledby="overview-heading">
+    <h2 id="overview-heading" class={h2Class}>1. 階層の全体像</h2>
+    <div class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose">
+      <p>
+        以下は上位から下位へ並べた 7 種別です。下位の規範は、上位の法令の<strong class="text-[var(--color-ink)]">実施</strong>または<strong class="text-[var(--color-ink)]">委任</strong>を根拠として定められます。
+      </p>
+      <ol class="mt-6 space-y-4 border-l-2 border-[var(--color-line)] pl-5">
+        {overview.map((r) => (
+          <li class="space-y-1">
+            <p class={labelClass}>Lv. {r.level}</p>
+            <p class="text-[var(--color-ink)] font-semibold">{r.name} — {r.subject}</p>
+            <p class="text-xs text-[var(--color-sub)]">根拠: {r.basis}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="pb-12" aria-labelledby="details-heading">
+    <h2 id="details-heading" class={h2Class}>2. 各種別の制定主体と根拠条文</h2>
+    <div class="space-y-12">
+      {details.map((d) => (
+        <article aria-labelledby={d.id} class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose">
+          <h3 id={d.id} class="text-xl sm:text-2xl font-black text-[var(--color-ink)]">
+            {d.number} {d.title}
+          </h3>
+          <div class="space-y-1">
+            <p class={labelClass}>制定主体</p>
+            <p>{d.subject}</p>
+          </div>
+          <div class="space-y-1">
+            <p class={labelClass}>根拠条文</p>
+            <p>{d.basis}</p>
+          </div>
+          <div class="space-y-1">
+            <p class={labelClass}>条文の主要語</p>
+            <p set:html={d.descriptionHtml} />
+          </div>
+          <div class="space-y-1">
+            <p class={labelClass}>e-Gov 法令検索</p>
+            {d.links.length === 1 ? (
+              <a href={d.links[0].url} target="_blank" rel="noopener noreferrer" class={linkClass}>
+                {d.links[0].label}
+                <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+              </a>
+            ) : (
+              <ul class="space-y-1.5">
+                {d.links.map((link) => (
+                  <li>
+                    <a href={link.url} target="_blank" rel="noopener noreferrer" class={linkClass}>
+                      {link.label}
+                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="pb-12" aria-labelledby="practice-heading">
+    <h2 id="practice-heading" class={h2Class}>3. 教師が現場で出会う文書(参考整理)</h2>
+    <div class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose">
+      <p>学校に届く文書のうち、本ガイドの階層に対応するものを、文書名から階層番号へ引き当てる形で整理します。</p>
+      <ul class="space-y-2 pl-5 list-disc">
+        <li>
+          <span class="text-[var(--color-ink)] font-semibold">「○○省令」「○○府令」</span>
+          — Lv. 04(<a href="#rank-ministerial-order-heading" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>2.4 省令 / 府令</a>)
+        </li>
+        <li>
+          <span class="text-[var(--color-ink)] font-semibold">「学習指導要領」「○○告示」</span>
+          — Lv. 06(<a href="#rank-notice-heading" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>2.6 告示</a>)。本サイトは学習指導要領の法的拘束力に関する学説対立には立ち入りません。
+        </li>
+        <li>
+          <span class="text-[var(--color-ink)] font-semibold">「○○通知」「○○事務連絡」「○○通達」「○○訓令」</span>
+          — Lv. 07(<a href="#rank-directive-heading" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>2.7 通知・通達(訓令)</a>)
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="mt-12 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2" aria-labelledby="guide-footer-heading">
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページの記述は、すべて <a href="https://laws.e-gov.go.jp/" target="_blank" rel="noopener noreferrer" class={linkClass}>
+        e-Gov 法令検索<span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+      </a> 上で公開されている公式条文に基づきます。
+    </p>
+    <p>
+      引用ルールは <a href="/about/#citation-basis-heading" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>引用の根拠 — 政府標準利用規約 第 2.0 版</a> を参照してください。
+    </p>
+  </footer>
+</Layout>
