@@ -287,12 +287,6 @@ body[data-menu="open"] {
 .law-row:focus-visible::before {
   transform: scaleY(1);
 }
-.law-row[data-current="true"] {
-  background: var(--color-card);
-}
-.law-row[data-current="true"]::before {
-  transform: scaleY(1);
-}
 @media (prefers-reduced-motion: reduce) {
   .law-row::before {
     transition: none;
