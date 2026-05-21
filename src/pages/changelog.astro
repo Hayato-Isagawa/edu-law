@@ -1,0 +1,66 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const entries = [
+  {
+    date: "2026-05-21",
+    items: [
+      {
+        type: "add",
+        text: "「日本の法令階層」ガイドページを公開。法律から告示・通達までの 7 種別を、制定主体・根拠条文・e-Gov 法令検索リンクとあわせて整理。教師が現場で出会う通知・指針・指導要領が法体系のどこに位置するかを確認できる",
+      },
+    ],
+  },
+];
+
+const typeLabel: Record<string, { label: string; color: string }> = {
+  add: { label: "追加", color: "text-emerald-700" },
+  update: { label: "更新", color: "text-amber-700" },
+  fix: { label: "修正", color: "text-rose-700" },
+  remove: { label: "削除", color: "text-[var(--color-sub)]" },
+};
+---
+
+<Layout title="更新履歴 — EduLaw JP">
+  <section class="pt-10 sm:pt-14 md:pt-20 lg:pt-28 pb-10 sm:pb-14 md:pb-20 border-b border-[var(--color-line)]">
+    <p class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-accent)]">
+      Changelog
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.15] tracking-tight"
+    >
+      更新履歴
+    </h1>
+    <p class="mt-6 text-[var(--color-sub)] text-sm sm:text-base leading-loose max-w-2xl">
+      サイトの機能追加・公式解説の更新・修正を時系列で記録しています。
+    </p>
+  </section>
+
+  <section class="pb-24">
+    {
+      entries.map((entry) => (
+        <div class="border-t border-[var(--color-line)] py-10 space-y-4">
+          <div class="font-mono text-sm text-[var(--color-accent)]">
+            {entry.date}
+          </div>
+          <ul class="space-y-3">
+            {entry.items.map((item) => {
+              const t = typeLabel[item.type] ?? typeLabel.add;
+              return (
+                <li class="flex gap-3 items-baseline text-sm leading-relaxed">
+                  <span
+                    class={`font-mono text-xs uppercase tracking-widest shrink-0 ${t.color}`}
+                  >
+                    {t.label}
+                  </span>
+                  <span>{item.text}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))
+    }
+    <div class="border-t border-[var(--color-line)]"></div>
+  </section>
+</Layout>
