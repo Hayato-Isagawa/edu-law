@@ -6,6 +6,7 @@ const path = Astro.url.pathname;
 const isLawsPage = path.startsWith("/laws");
 const isGuidesPage = path.startsWith("/guides");
 const isAboutPage = path.startsWith("/about");
+const isChangelogPage = path.startsWith("/changelog");
 ---
 
 <header class="site-header">
@@ -98,6 +99,9 @@ const isAboutPage = path.startsWith("/about");
           <ul>
             <li>
               <a href="/about/" aria-current={isAboutPage ? "page" : undefined}>このサイトについて</a>
+            </li>
+            <li>
+              <a href="/changelog/" aria-current={isChangelogPage ? "page" : undefined}>更新履歴</a>
             </li>
             <li>
               <a href="/rss.xml">RSS フィード</a>
