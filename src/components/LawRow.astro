@@ -4,10 +4,9 @@ interface Props {
   href: string;
   title: string;
   summary?: string;
-  badge?: "mext" | "cfa" | "bunkacho" | "egov" | "leaf" | "sprout" | "root";
+  badge?: "mext" | "cfa" | "bunkacho" | "egov";
   meta?: string;
-  variant?: "law" | "scenario" | "highlight" | "sister";
-  isCurrent?: boolean;
+  variant?: "law" | "scenario" | "highlight";
 }
 
 const {
@@ -18,7 +17,6 @@ const {
   badge,
   meta,
   variant = "law",
-  isCurrent = false,
 } = Astro.props;
 
 const num = String(index).padStart(2, "0");
@@ -49,99 +47,40 @@ const publisherBadgeConfig = {
       "text-[var(--badge-egov)] border-[var(--badge-egov)]/40 bg-[var(--badge-egov)]/10",
   },
 } as const;
-
-const sisterBadgeConfig = {
-  leaf: { label: "葉" },
-  sprout: { label: "双葉" },
-  root: { label: "根" },
-} as const;
-
-type PublisherKey = keyof typeof publisherBadgeConfig;
-type SisterKey = keyof typeof sisterBadgeConfig;
-
-const isPublisherBadge = (b: typeof badge): b is PublisherKey =>
-  b === "mext" || b === "cfa" || b === "bunkacho" || b === "egov";
-const isSisterBadge = (b: typeof badge): b is SisterKey =>
-  b === "leaf" || b === "sprout" || b === "root";
-
-const arrow = isCurrent ? "◉" : "→";
 ---
 
-{
-  isCurrent ? (
-    <div
-      class="law-row"
-      data-variant={variant}
-      data-current="true"
-      aria-current="page"
-    >
-      <div class="col-span-2 sm:col-span-1 font-mono text-sm text-[var(--color-sub)]" data-num>
-        {num}
-      </div>
-      <div class="col-span-10 sm:col-span-8 space-y-1">
-        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h3 class="text-lg sm:text-xl font-black tracking-tight leading-snug text-[var(--color-ink)]">
-            {title}
-          </h3>
-          {badge && isSisterBadge(badge) && (
-            <span class="font-mono text-[10px] tracking-widest uppercase text-[var(--color-sub)]">
-              {sisterBadgeConfig[badge].label}
-            </span>
-          )}
-        </div>
-        {summary && (
-          <p class="text-sm text-[var(--color-sub)] leading-relaxed">
-            {summary}
-          </p>
-        )}
-      </div>
-      <div class="col-span-12 sm:col-span-3 sm:text-right font-mono text-xs text-[var(--color-sub)] flex sm:justify-end items-center gap-2">
-        {meta && <span>{meta}</span>}
-        <span aria-hidden="true" class="text-base">
-          {arrow}
-        </span>
-      </div>
-    </div>
-  ) : (
-    <a class="law-row group" href={href} data-variant={variant}>
-      <div class="col-span-2 sm:col-span-1 font-mono text-sm text-[var(--color-sub)]" data-num>
-        {num}
-      </div>
-      <div class="col-span-10 sm:col-span-8 space-y-1">
-        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h3 class="text-lg sm:text-xl font-black tracking-tight leading-snug text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
-            {title}
-          </h3>
-          {badge && isPublisherBadge(badge) && (
-            <span
-              class={`font-mono text-[10px] tracking-widest uppercase border rounded-full px-2 py-0.5 leading-none inline-flex items-center h-5 ${publisherBadgeConfig[badge].style}`}
-              title={publisherBadgeConfig[badge].fullLabel}
-              aria-label={publisherBadgeConfig[badge].fullLabel}
-            >
-              {publisherBadgeConfig[badge].label}
-            </span>
-          )}
-          {badge && isSisterBadge(badge) && (
-            <span class="font-mono text-[10px] tracking-widest uppercase text-[var(--color-sub)]">
-              {sisterBadgeConfig[badge].label}
-            </span>
-          )}
-        </div>
-        {summary && (
-          <p class="text-sm text-[var(--color-sub)] leading-relaxed">
-            {summary}
-          </p>
-        )}
-      </div>
-      <div class="col-span-12 sm:col-span-3 sm:text-right font-mono text-xs text-[var(--color-sub)] flex sm:justify-end items-center gap-2">
-        {meta && <span>{meta}</span>}
+<a class="law-row group" href={href} data-variant={variant}>
+  <div class="col-span-2 sm:col-span-1 font-mono text-sm text-[var(--color-sub)]" data-num>
+    {num}
+  </div>
+  <div class="col-span-10 sm:col-span-8 space-y-1">
+    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <h3 class="text-lg sm:text-xl font-black tracking-tight leading-snug text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
+        {title}
+      </h3>
+      {badge && (
         <span
-          aria-hidden="true"
-          class="text-base transition group-hover:translate-x-1"
+          class={`font-mono text-[10px] tracking-widest uppercase border rounded-full px-2 py-0.5 leading-none inline-flex items-center h-5 ${publisherBadgeConfig[badge].style}`}
+          title={publisherBadgeConfig[badge].fullLabel}
+          aria-label={publisherBadgeConfig[badge].fullLabel}
         >
-          {arrow}
+          {publisherBadgeConfig[badge].label}
         </span>
-      </div>
-    </a>
-  )
-}
+      )}
+    </div>
+    {summary && (
+      <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+        {summary}
+      </p>
+    )}
+  </div>
+  <div class="col-span-12 sm:col-span-3 sm:text-right font-mono text-xs text-[var(--color-sub)] flex sm:justify-end items-center gap-2">
+    {meta && <span>{meta}</span>}
+    <span
+      aria-hidden="true"
+      class="text-base transition group-hover:translate-x-1"
+    >
+      →
+    </span>
+  </div>
+</a>
