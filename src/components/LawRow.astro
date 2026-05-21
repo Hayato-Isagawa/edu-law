@@ -75,10 +75,10 @@ const arrow = isCurrent ? "◉" : "→";
       data-current="true"
       aria-current="page"
     >
-      <div class="col-span-2 font-mono text-sm text-[var(--color-sub)]" data-num>
+      <div class="col-span-2 sm:col-span-1 font-mono text-sm text-[var(--color-sub)]" data-num>
         {num}
       </div>
-      <div class="col-span-10 sm:col-span-7 space-y-1">
+      <div class="col-span-10 sm:col-span-8 space-y-1">
         <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h3 class="text-lg sm:text-xl font-black tracking-tight leading-snug text-[var(--color-ink)]">
             {title}
@@ -104,10 +104,10 @@ const arrow = isCurrent ? "◉" : "→";
     </div>
   ) : (
     <a class="law-row group" href={href} data-variant={variant}>
-      <div class="col-span-2 font-mono text-sm text-[var(--color-sub)]" data-num>
+      <div class="col-span-2 sm:col-span-1 font-mono text-sm text-[var(--color-sub)]" data-num>
         {num}
       </div>
-      <div class="col-span-10 sm:col-span-7 space-y-1">
+      <div class="col-span-10 sm:col-span-8 space-y-1">
         <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h3 class="text-lg sm:text-xl font-black tracking-tight leading-snug text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
             {title}
