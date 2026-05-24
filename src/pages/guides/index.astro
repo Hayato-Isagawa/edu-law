@@ -15,33 +15,53 @@ const breadcrumbJsonLd = {
   ],
 };
 
-type Guide = { title: string; description: string; href: string };
+type Guide = {
+  title: string;
+  description: string;
+  href: string;
+  category: "foundation" | "teacher";
+};
 const guides: Guide[] = [
   {
     title: "日本の法令階層",
     description:
       "憲法・法律・政令・省令・告示・通知が、それぞれ誰の手で作られ、どの法令を根拠とするのかを整理します。",
     href: "/guides/legal-hierarchy/",
+    category: "foundation",
   },
   {
     title: "保護者対応をめぐる公的な支援と相談先",
     description:
       "保護者からの過剰な苦情や不当な要求について、文部科学省・教育委員会・スクールロイヤー等の公的な支援と相談先の所在を整理します。",
     href: "/guides/parent-response/",
+    category: "teacher",
   },
   {
     title: "教員のメンタルヘルスと休職・復職をめぐる公的な支援と相談先",
     description:
       "教員の心の不調による休職・復職や公務災害の認定について、文部科学省・厚生労働省・地方公務員災害補償基金等の公的な支援と相談先の所在を整理します。",
     href: "/guides/teacher-mental-health/",
+    category: "teacher",
   },
   {
     title: "教員の長時間労働と働き方改革をめぐる国の方針と公式資料",
     description:
       "教員の長時間勤務の是正と働き方改革について、文部科学省の方針・勤務時間の上限に関する指針・給特法等の公的な方針と資料の所在を整理します。",
     href: "/guides/work-style-reform/",
+    category: "teacher",
   },
 ];
+
+const guideGroups = [
+  {
+    label: "読む前の基礎",
+    items: guides.filter((g) => g.category === "foundation"),
+  },
+  {
+    label: "教師を守る",
+    items: guides.filter((g) => g.category === "teacher"),
+  },
+] as const;
 
 const linkClass =
   "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
@@ -82,23 +102,30 @@ const linkClass =
     </p>
   </section>
 
-  <div class="border-t border-[var(--color-line)]">
-    {
-      guides.map((guide) => (
-        <article class="py-6 border-b border-[var(--color-line)]">
-          <h2 class="text-xl sm:text-2xl font-black text-[var(--color-ink)]">
-            <a href={guide.href} class={linkClass}>
-              {guide.title}
-            </a>
-          </h2>
-          <p class="mt-2 max-w-2xl text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
-            {guide.description}
-          </p>
-          <a href={guide.href} class={`${linkClass} mt-3 inline-block text-sm`}>
-            開く <span aria-hidden="true">→</span>
-          </a>
-        </article>
-      ))
-    }
-  </div>
+  {
+    guideGroups.map((group) => (
+      <section class="mt-12 first:mt-0">
+        <h2 class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]">
+          {group.label}
+        </h2>
+        <div class="mt-4 border-t border-[var(--color-line)]">
+          {group.items.map((guide) => (
+            <article class="py-6 border-b border-[var(--color-line)]">
+              <h3 class="text-xl sm:text-2xl font-black text-[var(--color-ink)]">
+                <a href={guide.href} class={linkClass}>
+                  {guide.title}
+                </a>
+              </h3>
+              <p class="mt-2 max-w-2xl text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
+                {guide.description}
+              </p>
+              <a href={guide.href} class={`${linkClass} mt-3 inline-block text-sm`}>
+                開く <span aria-hidden="true">→</span>
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))
+  }
 </Layout>
