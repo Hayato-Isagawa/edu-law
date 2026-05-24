@@ -1,0 +1,229 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const pageTitle =
+  "教員の懲戒・分限処分と不服申立てをめぐる公的な情報 — EduLaw JP";
+const pageDescription =
+  "教員の懲戒処分・分限処分と、不利益処分を受けたときの審査請求について、文部科学省・総務省・人事委員会・e-Gov など公的な情報の所在を整理するガイド。本サイトは制度の評価や個別の該当性の判断を加えず、公式情報への入口のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "懲戒・分限処分と不服申立て",
+      item: `${siteUrl}/guides/disciplinary-disposition/`,
+    },
+  ],
+};
+
+type GuideLink = { label: string; publisher: string; url: string; format?: "pdf" };
+type GuideSection = {
+  id: string;
+  number: string;
+  title: string;
+  lead: string;
+  links: GuideLink[];
+};
+
+const sections: GuideSection[] = [
+  {
+    id: "dd-status-heading",
+    number: "1",
+    title: "国(文部科学省)が公表する状況",
+    lead: "文部科学省は毎年度「公立学校教職員の人事行政状況調査」を公表しており、懲戒処分・分限処分の状況などがまとめられています。最新は令和6年度版です。動きのある領域のため、最新年度は公式サイトでご確認ください。",
+    links: [
+      {
+        label: "令和6年度 公立学校教職員の人事行政状況調査について",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/shotou/jinji/1411820_00009.htm",
+      },
+    ],
+  },
+  {
+    id: "dd-types-heading",
+    number: "2",
+    title: "処分の種類と全国の状況",
+    lead: "総務省は、地方公務員(教員を含む)の懲戒処分・分限処分等の状況を毎年度公表しています。これらの公的資料では、懲戒処分として免職・停職・減給・戒告、分限処分として免職・休職・降任・降給が示されています。",
+    links: [
+      {
+        label: "令和6年度における地方公務員の懲戒処分等の状況",
+        publisher: "総務省",
+        url: "https://www.soumu.go.jp/menu_news/s-news/01gyosei11_02000253.html",
+      },
+    ],
+  },
+  {
+    id: "dd-standards-heading",
+    number: "3",
+    title: "各自治体の懲戒処分の基準",
+    lead: "懲戒処分の基準は、各任命権者(都道府県・指定都市の教育委員会等)が定め、公表しています。文部科学省は、各自治体の懲戒処分等の基準の作成・公表状況をまとめています。自分の自治体の基準は、ここから探せます。",
+    links: [
+      {
+        label: "都道府県・指定都市の懲戒処分等の基準",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/shotou/jinji/1399900.htm",
+      },
+    ],
+  },
+  {
+    id: "dd-appeal-heading",
+    number: "4",
+    title: "不利益処分を受けたときの審査請求",
+    lead: "懲戒処分・分限処分などの不利益処分を受けた職員は、人事委員会(または公平委員会)に審査請求をすることができます。たとえば東京都人事委員会は、対象となる処分・期限・手続きの流れを案内しており、期限を「処分があったことを知った日の翌日から起算して3月以内」「処分があった日の翌日から起算して1年を経過すると審査請求できない」としています。請求先は、任命権者が属する都道府県・指定都市の人事委員会です。実際の請求にあたっては、自分の勤務先の自治体の人事委員会で最新の案内をご確認ください(国家公務員の場合は人事院が扱います)。",
+    links: [
+      {
+        label: "不利益処分についての審査請求(地方公務員の例)",
+        publisher: "東京都人事委員会",
+        url: "https://www.saiyou.metro.tokyo.lg.jp/sinsaka/furieki",
+      },
+      {
+        label: "不利益処分審査請求(国家公務員の場合)",
+        publisher: "人事院",
+        url: "https://www.jinji.go.jp/seisaku/kouheisinsa/furiekisyobun.html",
+      },
+    ],
+  },
+  {
+    id: "dd-laws-heading",
+    number: "5",
+    title: "参考 — 懲戒・分限処分に関わる法令",
+    lead: "懲戒・分限処分や不服申立てに関わる法令です。本サイトは解釈を加えず、e-Gov 法令検索の本文への入口のみを示します。",
+    links: [
+      {
+        label: "地方公務員法",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/325AC0000000261/",
+      },
+      {
+        label: "教育公務員特例法",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/324AC0000000001/",
+      },
+    ],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+const breadcrumbLinkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >懲戒・分限処分と不服申立て</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Guide
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      懲戒・分限処分と<br />不服申立てをめぐる<span
+        class="text-[var(--color-accent)]">公的な情報</span
+      >
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        教員が懲戒処分・分限処分などの<strong class="text-[var(--color-ink)]"
+          >不利益な処分</strong
+        >を受けたとき、制度の所在と、その処分に対して申し立てができる公的な窓口があります。このページは、それらがどこにあるかを整理します。
+      </p>
+      <p>
+        本サイトは処分の当否や個別の該当性を判断しません(<a
+          href="/about/"
+          class={breadcrumbLinkClass}>サイトの立場</a
+        >)。示すのは公式情報の所在のみです。具体的な対応は、所管庁・人事委員会・弁護士等にご確認ください。
+      </p>
+    </div>
+  </section>
+
+  <div class="space-y-12 pb-12">
+    {
+      sections.map((section) => (
+        <section
+          aria-labelledby={section.id}
+          class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+        >
+          <h2
+            id={section.id}
+            class="text-xl sm:text-2xl font-black text-[var(--color-ink)]"
+          >
+            <span class="text-[var(--color-accent)] font-mono text-base sm:text-lg">
+              {section.number}
+            </span>{" "}
+            {section.title}
+          </h2>
+          <p>{section.lead}</p>
+          <ul class="space-y-3">
+            {section.links.map((link) => (
+              <li class="space-y-0.5">
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class={linkClass}
+                >
+                  {link.label}
+                  {link.format === "pdf" ? "(PDF)" : ""}
+                  <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                    ↗
+                  </span>
+                </a>
+                <span class="block text-xs text-[var(--color-sub)]">
+                  {link.publisher}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <footer
+    class="mt-4 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="guide-footer-heading"
+  >
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページが案内する公式情報は、取得日 2026-05-24
+      時点で各公式サイトに公開されているものです。リンク先の最新の内容は、各公式サイトでご確認ください。
+    </p>
+    <p>
+      引用ルールは <a
+        href="/about/#citation-basis-heading"
+        class={breadcrumbLinkClass}
+        >引用の根拠 — 政府標準利用規約 第 2.0 版</a
+      > を参照してください。
+    </p>
+  </footer>
+</Layout>
