@@ -1,0 +1,230 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const pageTitle =
+  "教員の長時間労働と働き方改革をめぐる国の方針と公式資料 — EduLaw JP";
+const pageDescription =
+  "教員の長時間労働の是正と働き方改革について、文部科学省の方針・勤務時間の上限に関する指針・給特法など、公的な方針と資料の所在を整理するガイド。本サイトは制度の評価や助言を加えず、公式情報への入口のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "教員の働き方改革",
+      item: `${siteUrl}/guides/work-style-reform/`,
+    },
+  ],
+};
+
+type GuideLink = { label: string; publisher: string; url: string; format?: "pdf" };
+type GuideSection = {
+  id: string;
+  number: string;
+  title: string;
+  lead: string;
+  links: GuideLink[];
+};
+
+const sections: GuideSection[] = [
+  {
+    id: "wsr-mext-heading",
+    number: "1",
+    title: "国(文部科学省)の取組",
+    lead: "文部科学省は「学校における働き方改革」を、勤務時間の管理・業務の役割分担と適正化・体制整備にわたる施策として進めています。取組の全体像と関連資料が公開されています。動きのある領域のため、最新の内容は公式情報でご確認ください。",
+    links: [
+      {
+        label: "学校における働き方改革について",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/shotou/hatarakikata/index.htm",
+      },
+    ],
+  },
+  {
+    id: "wsr-guideline-heading",
+    number: "2",
+    title: "勤務時間の上限に関する指針",
+    lead: "教師の在校等時間には上限が定められています。当初の「公立学校の教師の勤務時間の上限に関するガイドライン」は、給特法の改正により、法律に根拠を持つ指針(令和2年文部科学省告示第1号)に位置づけられました。指針は、時間外在校等時間の上限を、原則として1か月について45時間以内、1年について360時間以内としています。",
+    links: [
+      {
+        label: "公立学校の教師の勤務時間の上限に関するガイドライン",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/shotou/hatarakikata/1412983.htm",
+      },
+      {
+        label: "「教育職員の業務量の適切な管理…に関する指針」の告示等について(通知)",
+        publisher: "文部科学省(令和2年1月17日)",
+        url: "https://www.mext.go.jp/a_menu/shotou/uneishien/detail/1407520_00004.htm",
+      },
+    ],
+  },
+  {
+    id: "wsr-examples-heading",
+    number: "3",
+    title: "取り組み事例・業務の見直し",
+    lead: "業務の役割分担・適正化や働き方改革の具体的な進め方について、文部科学省が全国の取り組み事例を集約・公開しています。",
+    links: [
+      {
+        label: "学校における働き方改革取り組み事例集",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/shotou/hatarakikata/mext_00008.html",
+      },
+    ],
+  },
+  {
+    id: "wsr-recent-heading",
+    number: "4",
+    title: "制度改正の最新動向",
+    lead: "教員の処遇や勤務をめぐる制度は見直しが続いています。中央教育審議会の答申や給特法の改正など、最新の動向が公開されています。動きのある領域のため、最新の内容は各公式情報でご確認ください。",
+    links: [
+      {
+        label:
+          "「令和の日本型学校教育」を担う質の高い教師の確保のための環境整備に関する総合的な方策について(答申)",
+        publisher: "中央教育審議会(令和6年8月27日)",
+        url: "https://www.mext.go.jp/b_menu/shingi/chukyo/chukyo3/099/mext_00013.html",
+      },
+    ],
+  },
+  {
+    id: "wsr-laws-heading",
+    number: "5",
+    title: "参考 — 教師の勤務条件に関わる法令",
+    lead: "働き方や勤務時間に関わる法令です。本サイトは解釈を加えず、e-Gov 法令検索の本文への入口のみを示します。",
+    links: [
+      {
+        label: "公立の義務教育諸学校等の教育職員の給与等に関する特別措置法(給特法)",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/346AC0000000077/",
+      },
+      {
+        label: "労働基準法",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/322AC0000000049/",
+      },
+    ],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+const breadcrumbLinkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >教員の働き方改革</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Guide
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      長時間労働と<br />働き方改革をめぐる<span
+        class="text-[var(--color-accent)]">国の方針</span
+      >
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        教員の長時間勤務の是正には、<strong class="text-[var(--color-ink)]"
+          >国・自治体による方針や勤務時間の上限に関する指針</strong
+        >といった公的な枠組みがあります。このページは、それらがどこにあるかを整理します。
+      </p>
+      <p>
+        本サイトは制度の評価や個別の働き方の助言を判断しません(<a
+          href="/about/"
+          class={breadcrumbLinkClass}>サイトの立場</a
+        >)。示すのは公式情報の所在のみです。具体的な勤務条件は、所管庁・教育委員会・各学校の規程でご確認ください。
+      </p>
+    </div>
+  </section>
+
+  <div class="space-y-12 pb-12">
+    {
+      sections.map((section) => (
+        <section
+          aria-labelledby={section.id}
+          class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+        >
+          <h2
+            id={section.id}
+            class="text-xl sm:text-2xl font-black text-[var(--color-ink)]"
+          >
+            <span class="text-[var(--color-accent)] font-mono text-base sm:text-lg">
+              {section.number}
+            </span>{" "}
+            {section.title}
+          </h2>
+          <p>{section.lead}</p>
+          <ul class="space-y-3">
+            {section.links.map((link) => (
+              <li class="space-y-0.5">
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class={linkClass}
+                >
+                  {link.label}
+                  {link.format === "pdf" ? "(PDF)" : ""}
+                  <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                    ↗
+                  </span>
+                </a>
+                <span class="block text-xs text-[var(--color-sub)]">
+                  {link.publisher}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <footer
+    class="mt-4 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="guide-footer-heading"
+  >
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページが案内する公式情報は、取得日 2026-05-24
+      時点で各公式サイトに公開されているものです。リンク先の最新の内容は、各公式サイトでご確認ください。
+    </p>
+    <p>
+      引用ルールは <a
+        href="/about/#citation-basis-heading"
+        class={breadcrumbLinkClass}
+        >引用の根拠 — 政府標準利用規約 第 2.0 版</a
+      > を参照してください。
+    </p>
+  </footer>
+</Layout>
