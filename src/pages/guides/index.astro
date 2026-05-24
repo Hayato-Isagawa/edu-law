@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 
 const pageTitle = "ガイド — EduLaw JP";
 const pageDescription =
-  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、長時間労働と働き方改革をめぐる公的な情報の所在。";
+  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、長時間労働と働き方改革、懲戒・分限処分と不服申立てをめぐる公的な情報の所在。";
 
 const siteUrl = "https://law.edu-evidence.org";
 const breadcrumbJsonLd = {
@@ -48,6 +48,13 @@ const guides: Guide[] = [
     description:
       "教員の長時間勤務の是正と働き方改革について、文部科学省の方針・勤務時間の上限に関する指針・給特法等の公的な方針と資料の所在を整理します。",
     href: "/guides/work-style-reform/",
+    category: "teacher",
+  },
+  {
+    title: "教員の懲戒・分限処分と不服申立てをめぐる公的な情報",
+    description:
+      "教員の懲戒処分・分限処分と、不利益処分を受けたときの審査請求について、文部科学省・総務省・人事委員会等の公的な情報の所在を整理します。",
+    href: "/guides/disciplinary-disposition/",
     category: "teacher",
   },
 ];
