@@ -12,46 +12,55 @@ const scenarios = [
     title: "いじめ対応",
     summary: "いじめ防止対策推進法 / 学校教育法(出席停止・懲戒)",
     href: "/laws/bullying-prevention-act/",
+    group: "child",
   },
   {
     title: "教材コピー(著作物の授業利用)",
     summary: "著作権法 35 条 / 授業目的公衆送信補償金制度",
     href: "/laws/copyright-act/",
+    group: "child",
   },
   {
     title: "保護者からの開示請求",
     summary: "個人情報の保護に関する法律 / 教育データの利活用に係る留意事項",
     href: "/laws/personal-information-protection-act/",
+    group: "child",
   },
   {
     title: "児童虐待の発見・通告",
     summary: "児童虐待防止法 / 児童福祉法 / 学校教育法",
     href: "/laws/child-abuse-prevention-act/",
+    group: "child",
   },
   {
     title: "教員免許の確認・更新",
     summary: "教育職員免許法 / 文部科学省「教員免許状に関する Q&A」",
     href: "/laws/teacher-license-act/",
+    group: "child",
   },
   {
     title: "体罰・懲戒の境界",
     summary: "学校教育法第 11 条 / 生徒指導提要(改訂版)",
     href: "/laws/school-education-act/",
+    group: "child",
   },
   {
     title: "保護者からの過剰な苦情・不当要求",
     summary: "保護者対応をめぐる公的な支援と相談先(ガイド)",
     href: "/guides/parent-response/",
+    group: "teacher",
   },
   {
     title: "教職員のメンタルヘルス・休職",
     summary: "メンタルヘルスと休職・復職をめぐる公的な支援と相談先(ガイド)",
     href: "/guides/teacher-mental-health/",
+    group: "teacher",
   },
   {
     title: "教員の長時間労働・働き方改革",
     summary: "長時間労働と働き方改革をめぐる国の方針(ガイド)",
     href: "/guides/work-style-reform/",
+    group: "teacher",
   },
 ] as const;
 
@@ -145,19 +154,83 @@ const highlights = [
 
   <section
     class="py-12 border-t border-[var(--color-line)]"
-    aria-labelledby="scenarios-heading"
+    aria-labelledby="entrances-heading"
   >
     <header class="mb-6">
       <p
         class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
       >
-        Scenarios — 現場の典型場面
+        Entrances — 2 つの入口
       </p>
       <h2
-        id="scenarios-heading"
+        id="entrances-heading"
         class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
       >
-        典型シナリオから関連法令へ
+        何をお探しですか
+      </h2>
+      <p class="mt-3 text-sm text-[var(--color-sub)] leading-relaxed max-w-2xl">
+        目的から入口を選べます。本サイトは判断を示さず、所管法令と公的な支援の場所のみを示します。
+      </p>
+    </header>
+
+    <nav aria-label="2 つの入口" class="grid gap-3 sm:grid-cols-2">
+      <a
+        href="#scenarios-child"
+        class="group block border border-[var(--color-line)] p-5 transition hover:border-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+      >
+        <span class="flex items-baseline justify-between gap-2">
+          <span
+            class="text-lg sm:text-xl font-black tracking-tight text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors"
+            >子供への指導・対応</span
+          >
+          <span
+            aria-hidden="true"
+            class="text-base text-[var(--color-sub)] transition group-hover:translate-x-1"
+            >→</span
+          >
+        </span>
+        <span class="mt-2 block text-sm text-[var(--color-sub)] leading-relaxed">
+          児童生徒への対応の法的根拠
+        </span>
+      </a>
+      <a
+        href="#scenarios-teacher"
+        class="group block border border-[var(--color-line)] p-5 transition hover:border-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+      >
+        <span class="flex items-baseline justify-between gap-2">
+          <span
+            class="text-lg sm:text-xl font-black tracking-tight text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors"
+            >教師を守る</span
+          >
+          <span
+            aria-hidden="true"
+            class="text-base text-[var(--color-sub)] transition group-hover:translate-x-1"
+            >→</span
+          >
+        </span>
+        <span class="mt-2 block text-sm text-[var(--color-sub)] leading-relaxed">
+          教師自身の立場と公的な支援
+        </span>
+      </a>
+    </nav>
+  </section>
+
+  <section
+    id="scenarios-child"
+    class="py-12 border-t border-[var(--color-line)] scroll-mt-20"
+    aria-labelledby="scenarios-child-heading"
+  >
+    <header class="mb-6">
+      <p
+        class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+      >
+        Children — 子供への指導・対応
+      </p>
+      <h2
+        id="scenarios-child-heading"
+        class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
+      >
+        児童生徒への対応の法的根拠
       </h2>
       <p class="mt-3 text-sm text-[var(--color-sub)] leading-relaxed max-w-2xl">
         場面ごとに関連法令への入口を整理します。本サイトは判断を示さず、所管法令の場所のみを示します。
@@ -166,15 +239,56 @@ const highlights = [
 
     <div>
       {
-        scenarios.map((scenario, i) => (
-          <LawRow
-            index={i + 1}
-            href={scenario.href}
-            title={scenario.title}
-            summary={scenario.summary}
-            variant="scenario"
-          />
-        ))
+        scenarios
+          .filter((scenario) => scenario.group === "child")
+          .map((scenario, i) => (
+            <LawRow
+              index={i + 1}
+              href={scenario.href}
+              title={scenario.title}
+              summary={scenario.summary}
+              variant="scenario"
+            />
+          ))
+      }
+    </div>
+  </section>
+
+  <section
+    id="scenarios-teacher"
+    class="py-12 border-t border-[var(--color-line)] scroll-mt-20"
+    aria-labelledby="scenarios-teacher-heading"
+  >
+    <header class="mb-6">
+      <p
+        class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+      >
+        Teachers — 教師を守る
+      </p>
+      <h2
+        id="scenarios-teacher-heading"
+        class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
+      >
+        教師自身の立場と公的な支援
+      </h2>
+      <p class="mt-3 text-sm text-[var(--color-sub)] leading-relaxed max-w-2xl">
+        不当な要求・心身の不調・長時間労働に直面したときの、公的な支援と相談先の所在を整理します。
+      </p>
+    </header>
+
+    <div>
+      {
+        scenarios
+          .filter((scenario) => scenario.group === "teacher")
+          .map((scenario, i) => (
+            <LawRow
+              index={i + 1}
+              href={scenario.href}
+              title={scenario.title}
+              summary={scenario.summary}
+              variant="scenario"
+            />
+          ))
       }
     </div>
   </section>
