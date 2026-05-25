@@ -4,7 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 const pageTitle =
   "教員のメンタルヘルスと休職・復職をめぐる公的な支援と相談先 — EduLaw JP";
 const pageDescription =
-  "教員の心の不調や、それに伴う休職・復職、公務災害の認定について、文部科学省・厚生労働省・地方公務員災害補償基金など公的な支援と相談先の所在を整理するガイド。本サイトは可否を判断せず、公式情報への入口のみを示します。";
+  "教員の心の不調や、それに伴う休職・復職について、文部科学省・厚生労働省など公的な支援と相談先の所在を整理するガイド。公務災害の認定と補償は専用ガイドに案内します。本サイトは可否を判断せず、公式情報への入口のみを示します。";
 
 const siteUrl = "https://law.edu-evidence.org";
 const breadcrumbJsonLd = {
@@ -87,17 +87,12 @@ const sections: GuideSection[] = [
     id: "mh-compensation-heading",
     number: "4",
     title: "公務災害の認定(精神疾患)",
-    lead: "公務に起因する精神疾患等の災害補償は、地方公務員災害補償基金が扱います。認定の可否は個別の判断であり、本サイトは判断しません。制度と相談の入口を示します。",
+    lead: "公務に起因する精神疾患等の災害補償は、地方公務員災害補償基金が扱います。認定の可否は個別の判断であり、本サイトは判断しません。補償の種類・認定基準・請求手続を含む公務災害の全体は、専用のガイドに整理しています。",
     links: [
       {
-        label: "地方公務員災害補償基金",
-        publisher: "地方公務員災害補償基金",
-        url: "https://www.chikousai.go.jp/",
-      },
-      {
-        label: "通達(認定)",
-        publisher: "地方公務員災害補償基金",
-        url: "https://www.chikousai.go.jp/reiki/tuutatu-nintei/tuutatu-nintei.php",
+        label: "公務災害の認定と補償(ガイド)",
+        publisher: "EduLaw JP",
+        url: "/guides/occupational-injury/",
       },
     ],
   },
@@ -197,25 +192,30 @@ const breadcrumbLinkClass =
           </h2>
           <p>{section.lead}</p>
           <ul class="space-y-3">
-            {section.links.map((link) => (
-              <li class="space-y-0.5">
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class={linkClass}
-                >
-                  {link.label}
-                  {link.format === "pdf" ? "(PDF)" : ""}
-                  <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
-                    ↗
+            {section.links.map((link) => {
+              const isInternal = link.url.startsWith("/");
+              return (
+                <li class="space-y-0.5">
+                  <a
+                    href={link.url}
+                    target={isInternal ? undefined : "_blank"}
+                    rel={isInternal ? undefined : "noopener noreferrer"}
+                    class={linkClass}
+                  >
+                    {link.label}
+                    {link.format === "pdf" ? "(PDF)" : ""}
+                    {!isInternal && (
+                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                        ↗
+                      </span>
+                    )}
+                  </a>
+                  <span class="block text-xs text-[var(--color-sub)]">
+                    {link.publisher}
                   </span>
-                </a>
-                <span class="block text-xs text-[var(--color-sub)]">
-                  {link.publisher}
-                </span>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </section>
       ))

@@ -1,0 +1,246 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const pageTitle = "公務災害の認定と補償をめぐる公的な情報 — EduLaw JP";
+const pageDescription =
+  "公立学校教員の公務上の負傷や過労による疾患の公務災害認定、補償の種類、認定請求の手続について、地方公務員災害補償基金・e-Gov など公的な情報の所在を整理するガイド。本サイトは認定の可否や個別の該当性を判断せず、公式情報への入口のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "公務災害の認定と補償",
+      item: `${siteUrl}/guides/occupational-injury/`,
+    },
+  ],
+};
+
+type GuideLink = { label: string; publisher: string; url: string; format?: "pdf" };
+type GuideSection = {
+  id: string;
+  number: string;
+  title: string;
+  lead: string;
+  links: GuideLink[];
+};
+
+const sections: GuideSection[] = [
+  {
+    id: "oi-scope-heading",
+    number: "1",
+    title: "公務災害とは — だれが補償するか",
+    lead: "公立学校の教員(地方公務員)が公務上の災害または通勤による災害を受けたときの補償は、地方公務員災害補償基金が、被災職員の所属する地方公共団体等に代わって実施します。私立学校の教員など公務員以外は、労働者災害補償保険(労災保険)の対象となり、扱いが異なります。本サイトは制度の所在のみを示します。",
+    links: [
+      {
+        label: "地方公務員災害補償基金",
+        publisher: "地方公務員災害補償基金",
+        url: "https://www.chikousai.go.jp/",
+      },
+      {
+        label: "補償及び福祉事業の概要",
+        publisher: "地方公務員災害補償基金",
+        url: "https://www.chikousai.go.jp/gyoumu/hosyou/hosyou-gaiyou.php",
+      },
+    ],
+  },
+  {
+    id: "oi-types-heading",
+    number: "2",
+    title: "補償の種類",
+    lead: "基金が行う補償には、療養補償、休業補償(1日につき平均給与額の60%)、傷病補償年金、障害補償、介護補償、遺族補償、葬祭補償などがあります。種類と内容は、下記の公式ページにまとめられています。",
+    links: [
+      {
+        label: "補償の種類",
+        publisher: "地方公務員災害補償基金",
+        url: "https://www.chikousai.go.jp/gyoumu/hosyou/hosyou-list.php",
+      },
+    ],
+  },
+  {
+    id: "oi-standards-heading",
+    number: "3",
+    title: "過重労働等による疾患の認定基準",
+    lead: "公務に起因する精神疾患や、脳血管疾患・心臓疾患(過労死等)が公務上の災害にあたるかどうかの認定基準は、基金が通達として定めています。認定の可否は個別の判断であり、本サイトは判断しません。基準の所在を示します。心の不調による休職・復職の支援は、メンタルヘルスのガイドもあわせてご覧ください。",
+    links: [
+      {
+        label: "精神疾患等の公務災害の認定について(平成24年3月16日 地基補第61号)",
+        publisher: "地方公務員災害補償基金",
+        url: "https://www.chikousai.go.jp/reiki/pdf/h24ho61.pdf",
+        format: "pdf",
+      },
+      {
+        label:
+          "心・血管疾患及び脳血管疾患の公務上の災害の認定について(令和3年9月15日 地基補第260号)",
+        publisher: "地方公務員災害補償基金",
+        url: "https://www.chikousai.go.jp/reiki/pdf/r3ho260.pdf",
+        format: "pdf",
+      },
+      {
+        label: "通達(認定)",
+        publisher: "地方公務員災害補償基金",
+        url: "https://www.chikousai.go.jp/reiki/tuutatu-nintei/tuutatu-nintei.php",
+      },
+      {
+        label: "メンタルヘルスと休職・復職をめぐる公的な支援(ガイド)",
+        publisher: "EduLaw JP",
+        url: "/guides/teacher-mental-health/",
+      },
+    ],
+  },
+  {
+    id: "oi-procedure-heading",
+    number: "4",
+    title: "認定請求から補償までの手続",
+    lead: "公務上・通勤による災害の認定請求と補償請求は、被災職員またはその遺族が、任命権者を経由して基金(支部長)に対して行います。支部長が公務上・通勤による災害かどうかを認定し、認定された場合に補償が決定・支給されます(傷病補償年金は基金が職権で決定します)。具体的な手続は、所属を通じてご確認ください。",
+    links: [
+      {
+        label: "認定・補償等の手続",
+        publisher: "地方公務員災害補償基金",
+        url: "https://www.chikousai.go.jp/gyoumu/hosyou/hosyou-tetuduki.php",
+      },
+    ],
+  },
+  {
+    id: "oi-laws-heading",
+    number: "5",
+    title: "参考 — 公務災害に関わる法令",
+    lead: "公務災害の補償に関わる法令です。本サイトは解釈を加えず、e-Gov 法令検索の本文への入口のみを示します。",
+    links: [
+      {
+        label: "地方公務員災害補償法",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/342AC0000000121/",
+      },
+    ],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+const breadcrumbLinkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >公務災害の認定と補償</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Guide
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      公務災害の認定と<br />補償をめぐる<span
+        class="text-[var(--color-accent)]">公的な情報</span
+      >
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        教員が公務上の負傷や、過重な公務による疾患を負ったとき、その<strong
+          class="text-[var(--color-ink)]">認定と補償</strong
+        >を担う公的な制度と窓口があります。このページは、それらがどこにあるかを整理します。
+      </p>
+      <p>
+        本サイトは認定の可否や個別の該当性を判断しません(<a
+          href="/about/"
+          class={breadcrumbLinkClass}>サイトの立場</a
+        >)。示すのは公式情報の所在のみです。具体的な対応は、所属(任命権者)・地方公務員災害補償基金・医療機関等にご確認ください。
+      </p>
+    </div>
+  </section>
+
+  <div class="space-y-12 pb-12">
+    {
+      sections.map((section) => (
+        <section
+          aria-labelledby={section.id}
+          class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+        >
+          <h2
+            id={section.id}
+            class="text-xl sm:text-2xl font-black text-[var(--color-ink)]"
+          >
+            <span class="text-[var(--color-accent)] font-mono text-base sm:text-lg">
+              {section.number}
+            </span>{" "}
+            {section.title}
+          </h2>
+          <p>{section.lead}</p>
+          <ul class="space-y-3">
+            {section.links.map((link) => {
+              const isInternal = link.url.startsWith("/");
+              return (
+                <li class="space-y-0.5">
+                  <a
+                    href={link.url}
+                    target={isInternal ? undefined : "_blank"}
+                    rel={isInternal ? undefined : "noopener noreferrer"}
+                    class={linkClass}
+                  >
+                    {link.label}
+                    {link.format === "pdf" ? "(PDF)" : ""}
+                    {!isInternal && (
+                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                        ↗
+                      </span>
+                    )}
+                  </a>
+                  <span class="block text-xs text-[var(--color-sub)]">
+                    {link.publisher}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <footer
+    class="mt-4 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="guide-footer-heading"
+  >
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページが案内する公式情報は、取得日 2026-05-25
+      時点で各公式サイトに公開されているものです。リンク先の最新の内容は、各公式サイトでご確認ください。
+    </p>
+    <p>
+      引用ルールは <a
+        href="/about/#citation-basis-heading"
+        class={breadcrumbLinkClass}
+        >引用の根拠 — 政府標準利用規約 第 2.0 版</a
+      > を参照してください。
+    </p>
+  </footer>
+</Layout>

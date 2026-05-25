@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 
 const pageTitle = "ガイド — EduLaw JP";
 const pageDescription =
-  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、長時間労働と働き方改革、懲戒・分限処分と不服申立てをめぐる公的な情報の所在。";
+  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、公務災害の認定と補償、長時間労働と働き方改革、懲戒・分限処分と不服申立てをめぐる公的な情報の所在。";
 
 const siteUrl = "https://law.edu-evidence.org";
 const breadcrumbJsonLd = {
@@ -39,8 +39,15 @@ const guides: Guide[] = [
   {
     title: "教員のメンタルヘルスと休職・復職をめぐる公的な支援と相談先",
     description:
-      "教員の心の不調による休職・復職や公務災害の認定について、文部科学省・厚生労働省・地方公務員災害補償基金等の公的な支援と相談先の所在を整理します。",
+      "教員の心の不調による休職・復職について、文部科学省・厚生労働省等の公的な支援と相談先の所在を整理します。公務災害の認定と補償は専用ガイドに案内します。",
     href: "/guides/teacher-mental-health/",
+    category: "teacher",
+  },
+  {
+    title: "教員の公務災害(認定と補償)をめぐる公的な情報",
+    description:
+      "公務上の負傷や過労による疾患(精神疾患・脳血管疾患・心臓疾患)の公務災害認定と、補償の種類・認定請求の手続について、地方公務員災害補償基金・e-Gov 等の公的な情報の所在を整理します。",
+    href: "/guides/occupational-injury/",
     category: "teacher",
   },
   {
