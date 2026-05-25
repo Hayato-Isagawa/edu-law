@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 
 const pageTitle = "サイトについて — EduLaw JP";
 const pageDescription =
-  "EduLaw JP の立場(自前の法解釈を加えない)、引用の根拠(政府標準利用規約 第 2.0 版・著作権法 13 条)、誤りの報告窓口(24 時間以内対応)を明示するページ。";
+  "EduLaw JP の立場(自前の法解釈を加えない)、引用の根拠(公共データ利用規約 第 1.0 版・著作権法 13 条)、誤りの報告窓口(24 時間以内対応)を明示するページ。";
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
@@ -119,7 +119,7 @@ const pageDescription =
       id="citation-basis-heading"
       class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
     >
-      2. 引用の根拠 — 政府標準利用規約 第 2.0 版・著作権法 13 条
+      2. 引用の根拠 — 公共データ利用規約 第 1.0 版・著作権法 13 条
     </h2>
     <div
       class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
@@ -149,18 +149,17 @@ const pageDescription =
         </p>
         <p>
           <a
-            href="https://www.kantei.go.jp/jp/singi/it2/cio/dai55/siryou3-2.pdf"
+            href="https://www.digital.go.jp/resources/open_data/public_data_license_v1.0"
             target="_blank"
             rel="noopener noreferrer"
             class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
           >
-            政府標準利用規約 第 2.0 版
+            公共データ利用規約 第 1.0 版
             <span aria-hidden="true" class="text-[var(--color-sub)] text-xs"
               >↗</span
             >
           </a>
-          に従って引用します。同規約は、出典記載・編集加工表示・第三者権利確認・国家標章不使用・規約への参照表示の
-          5 条件を満たせば、複製・翻訳・改変・商用利用を認めています。
+          に従って引用します。同規約は、出典の記載・編集加工した場合のその旨の表示・第三者が権利を持つ部分の確認といった条件のもとで、複製・翻訳・改変・商用利用を認めており、クリエイティブ・コモンズ表示 4.0 国際(CC BY 4.0)とも互換です。
         </p>
       </div>
 
@@ -259,8 +258,8 @@ const pageDescription =
       > に基づきます。
     </p>
     <p>
-      コード MIT / 独自整理 CC BY-SA 4.0 / 公式解説の引用は政府標準利用規約 第
-      2.0 版に従う。
+      コード MIT / 独自整理 CC BY-SA 4.0 / 公式解説の引用は公共データ利用規約 第
+      1.0 版に従う。
     </p>
   </footer>
 </Layout>

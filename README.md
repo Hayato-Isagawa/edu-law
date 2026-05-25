@@ -8,7 +8,7 @@
 
 - **自前の法解釈はしない。** サイトが提供するのは「法令本文への e-Gov リンク + 公式解説の見出し整理 + 公式 URL への誘導」のみ
 - 法解釈・現場助言は弁護士・行政書士の領域。本サイトはそれらへの **入口** を整理することに徹する
-- 引用は **政府標準利用規約 第 2.0 版** の範囲内に限り、出典・URL・取得日を必ず明記する
+- 引用は **公共データ利用規約 第 1.0 版** の範囲内に限り、出典・URL・取得日を必ず明記する
 
 ## 初期スコープ — 7 法令
 
@@ -81,7 +81,7 @@ public/
 
 - コード: [MIT](LICENSE)
 - 独自整理コンテンツ: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.ja)
-- 公式解説引用部分: [政府標準利用規約 第 2.0 版](https://www.kantei.go.jp/jp/singi/it2/cio/dai55/siryou3-2.pdf) に従う
+- 公式解説引用部分: [公共データ利用規約 第 1.0 版](https://www.digital.go.jp/resources/open_data/public_data_license_v1.0) に従う
 
 ## 著者
 
