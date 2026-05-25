@@ -1,0 +1,239 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const pageTitle = "学校管理下の事故の補償と責任をめぐる公的な情報 — EduLaw JP";
+const pageDescription =
+  "学校の管理下で児童生徒等が事故にあったときの災害共済給付(日本スポーツ振興センター)、文部科学省の学校事故対応指針、関わる法令について、公的な情報の所在を整理するガイド。本サイトは個別の責任や賠償の有無を判断せず、公式情報への入口のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "学校管理下の事故と補償",
+      item: `${siteUrl}/guides/school-accident/`,
+    },
+  ],
+};
+
+type GuideLink = { label: string; publisher: string; url: string; format?: "pdf" };
+type GuideSection = {
+  id: string;
+  number: string;
+  title: string;
+  lead: string;
+  links: GuideLink[];
+};
+
+const sections: GuideSection[] = [
+  {
+    id: "sa-jsc-heading",
+    number: "1",
+    title: "学校管理下の事故と災害共済給付",
+    lead: "学校の管理下で児童生徒等が負傷・疾病・障害・死亡などの災害を受けたとき、学校の設置者が加入する災害共済給付(日本スポーツ振興センター)が、その災害に対して給付を行います。給付の対象は児童生徒等であり、教職員に対する補償ではありません。部活動中の事故も、学校の管理下に含まれます。給付の対象となるかどうかは個別に判断されるもので、本サイトは判断せず、制度の所在を示します。",
+    links: [
+      {
+        label: "災害共済給付制度について",
+        publisher: "日本スポーツ振興センター",
+        url: "https://www.jpnsport.go.jp/anzen/saigai/seido/tabid/76/default.aspx",
+      },
+      {
+        label: "給付対象範囲",
+        publisher: "日本スポーツ振興センター",
+        url: "https://www.jpnsport.go.jp/anzen/saigai/seido/tabid/84/default.aspx",
+      },
+    ],
+  },
+  {
+    id: "sa-benefits-heading",
+    number: "2",
+    title: "災害共済給付の内容",
+    lead: "災害共済給付には、医療費、障害見舞金、死亡見舞金などがあります。給付の内容と請求の流れは、下記の公式ページにまとめられています。",
+    links: [
+      {
+        label: "請求と給付",
+        publisher: "日本スポーツ振興センター",
+        url: "https://www.jpnsport.go.jp/anzen/saigai/seido/tabid/86/Default.aspx",
+      },
+    ],
+  },
+  {
+    id: "sa-response-heading",
+    number: "3",
+    title: "事故が起きたときの学校の対応",
+    lead: "学校の管理下で事故が起きたときの初期対応・調査・報告・再発防止について、文部科学省が「学校事故対応に関する指針【改訂版】(令和6年3月)」を示しています。本サイトは指針の所在を示します。",
+    links: [
+      {
+        label: "学校事故対応に関する指針【改訂版】(令和6年3月)",
+        publisher: "文部科学省",
+        url: "https://anzenkyouiku.mext.go.jp/guideline-jikotaiou/index.html",
+      },
+      {
+        label:
+          "「学校事故対応に関する指針」の改訂について(通知)(令和6年3月26日 5文科教第1980号)",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/kenko/anzen/1417343_00034.htm",
+      },
+    ],
+  },
+  {
+    id: "sa-cases-heading",
+    number: "4",
+    title: "重大事故の事例と未然防止",
+    lead: "学校の管理下で起きた重大事故の事例は、再発防止と未然防止のために共有されています。なお、個別の事故で誰がどのような責任を負うかは、弁護士などの専門家が判断する領域です。スクールロイヤーをはじめとする相談先は、保護者対応のガイドもあわせてご覧ください。",
+    links: [
+      {
+        label: "学校管理下における重大事故事例",
+        publisher: "文部科学省",
+        url: "https://anzenkyouiku.mext.go.jp/guideline-jikotaiou/jirei.html",
+      },
+      {
+        label: "保護者対応をめぐる公的な支援と相談先(ガイド)",
+        publisher: "EduLaw JP",
+        url: "/guides/parent-response/",
+      },
+    ],
+  },
+  {
+    id: "sa-laws-heading",
+    number: "5",
+    title: "参考 — 学校事故・責任に関わる法令",
+    lead: "学校事故や賠償責任に関わる法令です。本サイトは解釈を加えず、e-Gov 法令検索の本文への入口のみを示します。",
+    links: [
+      {
+        label: "国家賠償法",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/322AC0000000125/",
+      },
+    ],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+const breadcrumbLinkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >学校管理下の事故と補償</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Guide
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      学校で起きた事故の<br />補償と責任をめぐる<span
+        class="text-[var(--color-accent)]">公的な情報</span
+      >
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        学校の管理下で児童生徒等が事故にあったとき、その<strong
+          class="text-[var(--color-ink)]">補償</strong
+        >を担う公的な制度(災害共済給付)と、学校の対応の指針があります。このページは、それらがどこにあるかを整理します。
+      </p>
+      <p>
+        本サイトは個別の責任や賠償の有無を判断しません(<a
+          href="/about/"
+          class={breadcrumbLinkClass}>サイトの立場</a
+        >)。示すのは公式情報の所在のみです。具体的な対応は、所属・学校の設置者・日本スポーツ振興センター・専門家等にご確認ください。
+      </p>
+    </div>
+  </section>
+
+  <div class="space-y-12 pb-12">
+    {
+      sections.map((section) => (
+        <section
+          aria-labelledby={section.id}
+          class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+        >
+          <h2
+            id={section.id}
+            class="text-xl sm:text-2xl font-black text-[var(--color-ink)]"
+          >
+            <span class="text-[var(--color-accent)] font-mono text-base sm:text-lg">
+              {section.number}
+            </span>{" "}
+            {section.title}
+          </h2>
+          <p>{section.lead}</p>
+          <ul class="space-y-3">
+            {section.links.map((link) => {
+              const isInternal = link.url.startsWith("/");
+              return (
+                <li class="space-y-0.5">
+                  <a
+                    href={link.url}
+                    target={isInternal ? undefined : "_blank"}
+                    rel={isInternal ? undefined : "noopener noreferrer"}
+                    class={linkClass}
+                  >
+                    {link.label}
+                    {link.format === "pdf" ? "(PDF)" : ""}
+                    {!isInternal && (
+                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                        ↗
+                      </span>
+                    )}
+                  </a>
+                  <span class="block text-xs text-[var(--color-sub)]">
+                    {link.publisher}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <footer
+    class="mt-4 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="guide-footer-heading"
+  >
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページが案内する公式情報は、取得日 2026-05-25
+      時点で各公式サイトに公開されているものです。リンク先の最新の内容は、各公式サイトでご確認ください。
+    </p>
+    <p>
+      引用ルールは <a
+        href="/about/#citation-basis-heading"
+        class={breadcrumbLinkClass}
+        >引用の根拠 — 政府標準利用規約 第 2.0 版</a
+      > を参照してください。
+    </p>
+  </footer>
+</Layout>
