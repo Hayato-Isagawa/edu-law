@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 
 const pageTitle = "ガイド — EduLaw JP";
 const pageDescription =
-  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、公務災害の認定と補償、長時間労働と働き方改革、懲戒・分限処分と不服申立てをめぐる公的な情報の所在。";
+  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、公務災害の認定と補償、長時間労働と働き方改革、懲戒・分限処分と不服申立て、学校管理下の事故の補償と責任をめぐる公的な情報の所在。";
 
 const siteUrl = "https://law.edu-evidence.org";
 const breadcrumbJsonLd = {
@@ -62,6 +62,13 @@ const guides: Guide[] = [
     description:
       "教員の懲戒処分・分限処分と、不利益処分を受けたときの審査請求について、文部科学省・総務省・人事委員会等の公的な情報の所在を整理します。",
     href: "/guides/disciplinary-disposition/",
+    category: "teacher",
+  },
+  {
+    title: "学校管理下の事故の補償と責任をめぐる公的な情報",
+    description:
+      "学校管理下で児童生徒等が事故にあったときの災害共済給付、文部科学省の学校事故対応指針、関わる法令について、日本スポーツ振興センター・e-Gov 等の公的な情報の所在を整理します。",
+    href: "/guides/school-accident/",
     category: "teacher",
   },
 ];
