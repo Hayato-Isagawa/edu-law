@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 
 const pageTitle = "ガイド — EduLaw JP";
 const pageDescription =
-  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、公務災害の認定と補償、長時間労働と働き方改革、懲戒・分限処分と不服申立て、学校管理下の事故の補償と責任をめぐる公的な情報の所在。";
+  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、公務災害の認定と補償、長時間労働と働き方改革、懲戒・分限処分と不服申立て、学校管理下の事故の補償と責任、妊娠・出産・育児と仕事の両立をめぐる公的な情報の所在。";
 
 const siteUrl = "https://law.edu-evidence.org";
 const breadcrumbJsonLd = {
@@ -69,6 +69,13 @@ const guides: Guide[] = [
     description:
       "学校管理下で児童生徒等が事故にあったときの災害共済給付、文部科学省の学校事故対応指針、関わる法令について、日本スポーツ振興センター・e-Gov 等の公的な情報の所在を整理します。",
     href: "/guides/school-accident/",
+    category: "teacher",
+  },
+  {
+    title: "教員の妊娠・出産・育児と仕事の両立をめぐる公的な情報",
+    description:
+      "教員(地方公務員)の妊娠・出産・育児と仕事の両立について、産前産後休暇・育児休業・部分休業などの制度と、総務省『地方公務員 両立支援パスポート』・e-Gov 等の公的な情報の所在を整理します。",
+    href: "/guides/childcare-work-balance/",
     category: "teacher",
   },
 ];
