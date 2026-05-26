@@ -1,0 +1,251 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const pageTitle =
+  "非正規の教員(臨時的任用・会計年度任用)の任用と勤務条件をめぐる公的な情報 — EduLaw JP";
+const pageDescription =
+  "公立学校の臨時的任用職員・会計年度任用職員(いわゆる非正規の教員、臨時講師・非常勤講師など)の任用と勤務条件について、総務省『会計年度任用職員制度の運用に係る事務処理マニュアル』・文部科学省・e-Gov など公的な情報の所在を整理するガイド。本サイトは個別の任用や処遇の当否を判断せず、公式情報への入口のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "非正規の教員の任用と勤務条件",
+      item: `${siteUrl}/guides/non-regular-teachers/`,
+    },
+  ],
+};
+
+type GuideLink = { label: string; publisher: string; url: string; format?: "pdf" };
+type GuideSection = {
+  id: string;
+  number: string;
+  title: string;
+  lead: string;
+  links: GuideLink[];
+};
+
+const sections: GuideSection[] = [
+  {
+    id: "nr-scope-heading",
+    number: "1",
+    title: "だれが対象か — 任用根拠による区分",
+    lead: "公立学校の教員(地方公務員)には、正規に任用される常勤の教員のほかに、任用の根拠が異なる職員がいます。総務省は、地方公共団体の臨時・非常勤職員を、臨時的任用職員・会計年度任用職員・特別職非常勤職員に整理し、その任用や勤務条件の運用に係る事務処理マニュアルを示しています。任用や勤務条件の具体は、各地方公共団体(任命権者)が地方公務員法等に基づき条例・規則で定めます。本サイトは制度の所在のみを示します。",
+    links: [
+      {
+        label: "会計年度任用職員制度",
+        publisher: "総務省",
+        url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/kaikeinendo_ninyou.html",
+      },
+      {
+        label: "会計年度任用職員制度の運用に係る事務処理マニュアル(令和8年3月)",
+        publisher: "総務省自治行政局公務員部",
+        url: "https://www.soumu.go.jp/main_content/001064810.pdf",
+        format: "pdf",
+      },
+    ],
+  },
+  {
+    id: "nr-fiscal-year-heading",
+    number: "2",
+    title: "会計年度任用職員 — 任用と勤務条件",
+    lead: "会計年度任用職員は、平成29年の地方公務員法改正で創設された一般職の非常勤職員で、一会計年度を超えない範囲で置かれます。1週間あたりの勤務時間に応じてフルタイムとパートタイムに分かれ、給付などの取扱いが異なります。募集・任用・勤務条件・人事評価・再度の任用などの留意事項は、事務処理マニュアルに整理されています。報酬や勤務時間の具体は各地方公共団体の条例によります。",
+    links: [
+      {
+        label:
+          "会計年度任用職員制度の運用に係る事務処理マニュアル(令和8年3月) — 会計年度任用職員制度の整備",
+        publisher: "総務省自治行政局公務員部",
+        url: "https://www.soumu.go.jp/main_content/001064810.pdf",
+        format: "pdf",
+      },
+    ],
+  },
+  {
+    id: "nr-temporary-heading",
+    number: "3",
+    title: "臨時的任用職員(常時勤務を要する職)",
+    lead: "臨時的任用は、常時勤務を要する職に欠員を生じた場合に、緊急のとき・臨時の職に関する場合・採用候補者名簿がない場合のいずれかに該当し、正規の任用の手続を経るいとまがないときに、特例として認められる任用です。平成29年の改正で要件が厳格化されました。臨時的任用職員はフルタイムで常勤職員が行うべき業務に従事するもので、一会計年度を超えない範囲で置かれる会計年度任用職員(非常勤)とは、任用の根拠も要件も異なります。本サイトは要件の該当性を判断せず、規定と公式解説の所在のみを示します。",
+    links: [
+      {
+        label:
+          "会計年度任用職員制度の運用に係る事務処理マニュアル(令和8年3月) — 臨時的任用の適正確保ほか",
+        publisher: "総務省自治行政局公務員部",
+        url: "https://www.soumu.go.jp/main_content/001064810.pdf",
+        format: "pdf",
+      },
+      {
+        label: "地方公務員法",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/325AC0000000261/",
+      },
+    ],
+  },
+  {
+    id: "nr-conditions-heading",
+    number: "4",
+    title: "給付・休暇・社会保険・公務災害",
+    lead: "会計年度任用職員には、労働基準法・地方公務員育児休業法・労働安全衛生法などが、適用要件に応じて適用されます。給付(給料・報酬・期末手当・勤勉手当)、勤務時間・休暇、健康診断、社会保険・労働保険、公務災害補償などの取扱いは、事務処理マニュアルに整理されています。令和5年の改正で、会計年度任用職員への勤勉手当の支給が可能になりました。公務上の災害に対する補償の取扱いもあわせて整理されています。公務災害の認定と補償については、専用のガイドもご覧ください。",
+    links: [
+      {
+        label:
+          "会計年度任用職員制度の運用に係る事務処理マニュアル(令和8年3月) — 勤務条件・社会保険等",
+        publisher: "総務省自治行政局公務員部",
+        url: "https://www.soumu.go.jp/main_content/001064810.pdf",
+        format: "pdf",
+      },
+      {
+        label: "教員の公務災害(認定と補償)をめぐる公的な情報(ガイド)",
+        publisher: "EduLaw JP",
+        url: "/guides/occupational-injury/",
+      },
+    ],
+  },
+  {
+    id: "nr-laws-heading",
+    number: "5",
+    title: "参考 — 関係法令・実態調査",
+    lead: "非正規の教員の任用や勤務条件に関わる法令と、関連する公的な調査です。本サイトは解釈を加えず、本文・資料への入口のみを示します。",
+    links: [
+      {
+        label: "地方公務員法",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/325AC0000000261/",
+      },
+      {
+        label: "令和7年度「教師不足」に関する実態調査",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/shotou/kyoin/mext_00018.html",
+      },
+    ],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+const breadcrumbLinkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >非正規の教員の任用と勤務条件</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Guide
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      臨時的任用・会計年度任用の<br />教員をめぐる<span
+        class="text-[var(--color-accent)]">公的な情報</span
+      >
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        公立学校には、正規に任用される常勤の教員のほかに、<strong
+          class="text-[var(--color-ink)]">臨時的任用や会計年度任用</strong
+        >といった、任用の根拠が異なる教員がいます。このページは、それらの任用と勤務条件について、公的な情報がどこにあるかを整理します。
+      </p>
+      <p>
+        本サイトは個別の任用や処遇の当否を判断しません(<a
+          href="/about/"
+          class={breadcrumbLinkClass}>サイトの立場</a
+        >)。示すのは公式情報の所在のみです。具体的な扱いは、所属(任命権者)・各地方公共団体の人事担当・総務省などにご確認ください。
+      </p>
+    </div>
+  </section>
+
+  <div class="space-y-12 pb-12">
+    {
+      sections.map((section) => (
+        <section
+          aria-labelledby={section.id}
+          class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+        >
+          <h2
+            id={section.id}
+            class="text-xl sm:text-2xl font-black text-[var(--color-ink)]"
+          >
+            <span class="text-[var(--color-accent)] font-mono text-base sm:text-lg">
+              {section.number}
+            </span>{" "}
+            {section.title}
+          </h2>
+          <p>{section.lead}</p>
+          <ul class="space-y-3">
+            {section.links.map((link) => {
+              const isInternal = link.url.startsWith("/");
+              return (
+                <li class="space-y-0.5">
+                  <a
+                    href={link.url}
+                    target={isInternal ? undefined : "_blank"}
+                    rel={isInternal ? undefined : "noopener noreferrer"}
+                    class={linkClass}
+                  >
+                    {link.label}
+                    {link.format === "pdf" ? "(PDF)" : ""}
+                    {!isInternal && (
+                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                        ↗
+                      </span>
+                    )}
+                  </a>
+                  <span class="block text-xs text-[var(--color-sub)]">
+                    {link.publisher}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <footer
+    class="mt-4 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="guide-footer-heading"
+  >
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページが案内する公式情報は、取得日 2026-05-26
+      時点で各公式サイトに公開されているものです。リンク先の最新の内容は、各公式サイトでご確認ください。
+    </p>
+    <p>
+      引用ルールは <a
+        href="/about/#citation-basis-heading"
+        class={breadcrumbLinkClass}
+        >引用の根拠 — 公共データ利用規約 第 1.0 版</a
+      > を参照してください。
+    </p>
+  </footer>
+</Layout>
