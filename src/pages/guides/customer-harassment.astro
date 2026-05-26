@@ -1,0 +1,231 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const pageTitle =
+  "教職員へのカスタマーハラスメント対策と雇用主の措置義務をめぐる公的な情報 — EduLaw JP";
+const pageDescription =
+  "教職員を不当な要求やカスタマーハラスメントから守ることは、雇用主である学校の設置者(教育委員会等)の雇用管理上の責任です。労働施策総合推進法のハラスメント防止措置義務、2026年10月施行予定のカスタマーハラスメント対策の義務化について、厚生労働省・総務省・e-Gov など公的な情報の所在を整理するガイド。本サイトは個別の事案や対応の当否を判断せず、公式情報への入口のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "教職員へのカスタマーハラスメント対策と雇用主の措置義務",
+      item: `${siteUrl}/guides/customer-harassment/`,
+    },
+  ],
+};
+
+type GuideLink = { label: string; publisher: string; url: string; format?: "pdf" };
+type GuideSection = {
+  id: string;
+  number: string;
+  title: string;
+  lead: string;
+  links: GuideLink[];
+};
+
+const sections: GuideSection[] = [
+  {
+    id: "kh-duty-heading",
+    number: "1",
+    title: "だれが教職員を守る義務を負うか",
+    lead: "ハラスメントの防止は、働く人が安心して働ける職場をつくるための、事業主の「雇用管理上の措置義務」と位置づけられています。公立学校では、教職員を雇用する学校の設置者(教育委員会等)がこの義務を負う立場にあります。厚生労働省は、職場のハラスメント防止のために事業主が講ずべき措置の全体像を示しています。本サイトは制度と公式資料の所在を示すのみで、個別の判断や指導は行いません。",
+    links: [
+      {
+        label: "職場におけるハラスメントの防止のために",
+        publisher: "厚生労働省",
+        url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/seisaku06/index.html",
+      },
+    ],
+  },
+  {
+    id: "kh-law-heading",
+    number: "2",
+    title: "カスタマーハラスメント対策の義務化(2026年10月施行予定)",
+    lead: "令和7年(2025年)に公布された労働施策総合推進法等の改正で、顧客等からの著しい迷惑行為(カスタマーハラスメント)に関して、事業主が雇用管理上講ずべき措置が定められました。施行は2026年(令和8年)10月1日が予定されています。厚生労働省は、事業主が講ずべき措置等についての指針を示しています。動きの速い領域のため、最新の内容は公式情報でご確認ください。",
+    links: [
+      {
+        label: "令和7年労働施策総合推進法等の一部改正について",
+        publisher: "厚生労働省",
+        url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/zaitaku/index_00003.html",
+      },
+    ],
+  },
+  {
+    id: "kh-measures-heading",
+    number: "3",
+    title: "事業主が講ずべき措置の具体像",
+    lead: "厚生労働省は、事業主が取り組む措置の参考として、相談に応じる体制の整備や被害を受けた人への配慮などをまとめた対策マニュアルを公開しています。実際に保護者等への対応や相談先を探す場面では、文部科学省・教育委員会・スクールロイヤー等の支援と相談先を整理した当サイトの別ガイドもあわせてご覧ください。",
+    links: [
+      {
+        label: "カスタマーハラスメント対策企業マニュアル等",
+        publisher: "厚生労働省",
+        url: "https://www.mhlw.go.jp/stf/newpage_24067.html",
+      },
+      {
+        label: "保護者対応をめぐる公的な支援と相談先(ガイド)",
+        publisher: "EduLaw JP",
+        url: "/guides/parent-response/",
+      },
+    ],
+  },
+  {
+    id: "kh-local-heading",
+    number: "4",
+    title: "公立学校の教職員(地方公務員)への適用",
+    lead: "公立学校の教職員は地方公務員にあたります。地方公共団体も、職場のハラスメント防止について雇用管理上の措置を講ずる立場にあり、総務省が地方公務員のハラスメント対策に関する通知や調査結果、取組事例集を公開しています。勤務する学校・教育委員会での具体的な体制や相談窓口は、所属する教育委員会等にご確認ください。",
+    links: [
+      {
+        label:
+          "地方公共団体における各種ハラスメントに関する職員アンケート調査結果／取組事例集／通知",
+        publisher: "総務省",
+        url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/harassment.html",
+      },
+    ],
+  },
+  {
+    id: "kh-laws-heading",
+    number: "5",
+    title: "参考 — 関係法令",
+    lead: "カスタマーハラスメント対策を含むハラスメント防止の措置義務の根拠となる法令です。本サイトは解釈を加えず、e-Gov 法令検索の本文への入口のみを示します。",
+    links: [
+      {
+        label:
+          "労働施策の総合的な推進並びに労働者の雇用の安定及び職業生活の充実等に関する法律(労働施策総合推進法)",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/341AC0000000132/",
+      },
+    ],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+const breadcrumbLinkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >教職員へのカスタマーハラスメント対策と雇用主の措置義務</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Guide
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      教職員へのカスタマー<br />ハラスメント対策と<span
+        class="text-[var(--color-accent)]">雇用主の措置義務</span
+      >
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        教職員を不当な要求やカスタマーハラスメントから守ることは、雇用主である学校の設置者(教育委員会等)が取り組むべき<strong
+          class="text-[var(--color-ink)]">雇用管理上の責任</strong
+        >です。このページは、その制度的な根拠と公式資料がどこにあるかを整理します。
+      </p>
+      <p>
+        本サイトは個別の事案や対応の当否を判断しません(<a
+          href="/about/"
+          class={breadcrumbLinkClass}>サイトの立場</a
+        >)。示すのは公式情報の所在のみです。具体的な相談や対応は、所属する学校・教育委員会等にご確認ください。
+      </p>
+    </div>
+  </section>
+
+  <div class="space-y-12 pb-12">
+    {
+      sections.map((section) => (
+        <section
+          aria-labelledby={section.id}
+          class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+        >
+          <h2
+            id={section.id}
+            class="text-xl sm:text-2xl font-black text-[var(--color-ink)]"
+          >
+            <span class="text-[var(--color-accent)] font-mono text-base sm:text-lg">
+              {section.number}
+            </span>{" "}
+            {section.title}
+          </h2>
+          <p>{section.lead}</p>
+          <ul class="space-y-3">
+            {section.links.map((link) => {
+              const isInternal = link.url.startsWith("/");
+              return (
+                <li class="space-y-0.5">
+                  <a
+                    href={link.url}
+                    target={isInternal ? undefined : "_blank"}
+                    rel={isInternal ? undefined : "noopener noreferrer"}
+                    class={linkClass}
+                  >
+                    {link.label}
+                    {link.format === "pdf" ? "(PDF)" : ""}
+                    {!isInternal && (
+                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                        ↗
+                      </span>
+                    )}
+                  </a>
+                  <span class="block text-xs text-[var(--color-sub)]">
+                    {link.publisher}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <footer
+    class="mt-4 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="guide-footer-heading"
+  >
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページが案内する公式情報は、取得日 2026-05-26
+      時点で各公式サイトに公開されているものです。リンク先の最新の内容は、各公式サイトでご確認ください。
+    </p>
+    <p>
+      引用ルールは <a
+        href="/about/#citation-basis-heading"
+        class={breadcrumbLinkClass}
+        >引用の根拠 — 公共データ利用規約 第 1.0 版</a
+      > を参照してください。
+    </p>
+  </footer>
+</Layout>
