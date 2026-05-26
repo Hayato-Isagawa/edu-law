@@ -1,0 +1,231 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const pageTitle = "妊娠・出産・育児と仕事の両立をめぐる公的な情報 — EduLaw JP";
+const pageDescription =
+  "公立学校教員(地方公務員)の妊娠・出産・育児と仕事の両立について、産前産後休暇・育児休業・部分休業などの制度と、総務省『地方公務員 両立支援パスポート』・e-Gov など公的な情報の所在を整理するガイド。本サイトは個別の制度の該当性や取得の可否を判断せず、公式情報への入口のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "妊娠・出産・育児と仕事の両立",
+      item: `${siteUrl}/guides/childcare-work-balance/`,
+    },
+  ],
+};
+
+type GuideLink = { label: string; publisher: string; url: string; format?: "pdf" };
+type GuideSection = {
+  id: string;
+  number: string;
+  title: string;
+  lead: string;
+  links: GuideLink[];
+};
+
+const sections: GuideSection[] = [
+  {
+    id: "cwb-scope-heading",
+    number: "1",
+    title: "両立支援制度の全体像 — だれが対象か",
+    lead: "公立学校の教員(地方公務員)が妊娠・出産・育児と仕事を両立するための休暇・休業・勤務時間の制度は、地方公務員の育児休業等に関する法律や、各地方公共団体の条例等で定められています。総務省は、これらの制度の全体像を「地方公務員 両立支援パスポート」にまとめています。私立学校の教員など公務員以外は、民間の育児・介護休業法等に基づく扱いとなり、根拠が異なります。具体的な制度の内容や日数は所属団体の条例等により異なるため、詳細は所属にご確認ください。本サイトは制度の所在のみを示します。",
+    links: [
+      {
+        label: "地方公務員 両立支援パスポート(令和4年6月)",
+        publisher: "総務省自治行政局公務員部",
+        url: "https://www.soumu.go.jp/main_content/000822130.pdf",
+        format: "pdf",
+      },
+      {
+        label: "女性活躍・働き方改革関係(地方公務員制度等)",
+        publisher: "総務省",
+        url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/josei_hatarakikata.html",
+      },
+    ],
+  },
+  {
+    id: "cwb-pregnancy-heading",
+    number: "2",
+    title: "妊娠・出産期に利用できる制度",
+    lead: "妊娠から出産前後にかけては、妊娠中の健康保持や業務負担の軽減、産前・産後休暇、配偶者出産休暇、育児参加のための休暇、不妊治療のための休暇などの制度があります。各制度の対象や期間は、両立支援パスポートに図表と Q&A で整理されています。",
+    links: [
+      {
+        label: "地方公務員 両立支援パスポート(令和4年6月)",
+        publisher: "総務省自治行政局公務員部",
+        url: "https://www.soumu.go.jp/main_content/000822130.pdf",
+        format: "pdf",
+      },
+    ],
+  },
+  {
+    id: "cwb-childcare-heading",
+    number: "3",
+    title: "育児期に利用できる制度",
+    lead: "子の養育のためには、育児休業、育児短時間勤務・部分休業、保育時間、子の看護休暇、深夜勤務・時間外勤務の制限などの制度があります。対象となる子の年齢や取得の単位は制度ごとに異なり、両立支援パスポートに一覧と Q&A があります。",
+    links: [
+      {
+        label: "地方公務員 両立支援パスポート(令和4年6月)",
+        publisher: "総務省自治行政局公務員部",
+        url: "https://www.soumu.go.jp/main_content/000822130.pdf",
+        format: "pdf",
+      },
+    ],
+  },
+  {
+    id: "cwb-reform-heading",
+    number: "4",
+    title: "育児休業の取得促進と近年の制度改正",
+    lead: "育児休業の取得回数の制限の緩和や部分休業制度の拡充など、両立支援制度は近年も改正が重ねられています。改正の内容や、男性職員の育児休業の取得促進に向けた取組は、総務省のページに通知・資料がまとめられています。最新の制度内容は、所属団体および下記の公式情報でご確認ください。",
+    links: [
+      {
+        label: "女性活躍・働き方改革関係(地方公務員制度等)",
+        publisher: "総務省",
+        url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/josei_hatarakikata.html",
+      },
+    ],
+  },
+  {
+    id: "cwb-laws-heading",
+    number: "5",
+    title: "参考 — 両立支援に関わる法令",
+    lead: "育児休業・部分休業などの根拠となる法令です。本サイトは解釈を加えず、e-Gov 法令検索の本文への入口のみを示します。",
+    links: [
+      {
+        label: "地方公務員の育児休業等に関する法律",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/403AC0000000110/",
+      },
+    ],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+const breadcrumbLinkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >妊娠・出産・育児と仕事の両立</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Guide
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      妊娠・出産・育児と<br />仕事の両立をめぐる<span
+        class="text-[var(--color-accent)]">公的な情報</span
+      >
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        教員が妊娠・出産・育児と仕事を両立するための、休暇・休業・勤務時間の<strong
+          class="text-[var(--color-ink)]">制度と窓口</strong
+        >には、公的な情報があります。このページは、それらがどこにあるかを整理します。
+      </p>
+      <p>
+        本サイトは個別の制度の該当性や取得の可否を判断しません(<a
+          href="/about/"
+          class={breadcrumbLinkClass}>サイトの立場</a
+        >)。示すのは公式情報の所在のみです。具体的な制度の内容や日数は所属団体の条例等により異なるため、所属(任命権者)等にご確認ください。
+      </p>
+    </div>
+  </section>
+
+  <div class="space-y-12 pb-12">
+    {
+      sections.map((section) => (
+        <section
+          aria-labelledby={section.id}
+          class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+        >
+          <h2
+            id={section.id}
+            class="text-xl sm:text-2xl font-black text-[var(--color-ink)]"
+          >
+            <span class="text-[var(--color-accent)] font-mono text-base sm:text-lg">
+              {section.number}
+            </span>{" "}
+            {section.title}
+          </h2>
+          <p>{section.lead}</p>
+          <ul class="space-y-3">
+            {section.links.map((link) => {
+              const isInternal = link.url.startsWith("/");
+              return (
+                <li class="space-y-0.5">
+                  <a
+                    href={link.url}
+                    target={isInternal ? undefined : "_blank"}
+                    rel={isInternal ? undefined : "noopener noreferrer"}
+                    class={linkClass}
+                  >
+                    {link.label}
+                    {link.format === "pdf" ? "(PDF)" : ""}
+                    {!isInternal && (
+                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                        ↗
+                      </span>
+                    )}
+                  </a>
+                  <span class="block text-xs text-[var(--color-sub)]">
+                    {link.publisher}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <footer
+    class="mt-4 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="guide-footer-heading"
+  >
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページが案内する公式情報は、取得日 2026-05-26
+      時点で各公式サイトに公開されているものです。リンク先の最新の内容は、各公式サイトでご確認ください。
+    </p>
+    <p>
+      引用ルールは <a
+        href="/about/#citation-basis-heading"
+        class={breadcrumbLinkClass}
+        >引用の根拠 — 公共データ利用規約 第 1.0 版</a
+      > を参照してください。
+    </p>
+  </footer>
+</Layout>
