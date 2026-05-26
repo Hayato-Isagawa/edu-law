@@ -1,0 +1,240 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const pageTitle = "学校の労働安全衛生管理体制をめぐる公的な情報 — EduLaw JP";
+const pageDescription =
+  "公立学校の教職員の安全と健康を守るため、学校の設置者に求められる労働安全衛生管理体制(衛生管理者・産業医・衛生委員会・衛生推進者の選任、面接指導・ストレスチェックの体制)について、文部科学省『学校における労働安全衛生管理体制の整備のために(第3版)』・e-Gov など公的な情報の所在を整理するガイド。本サイトは体制の整備状況や個別の該当性を判断せず、公式情報への入口のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "学校の労働安全衛生管理体制",
+      item: `${siteUrl}/guides/occupational-safety-health/`,
+    },
+  ],
+};
+
+type GuideLink = { label: string; publisher: string; url: string; format?: "pdf" };
+type GuideSection = {
+  id: string;
+  number: string;
+  title: string;
+  lead: string;
+  links: GuideLink[];
+};
+
+const sections: GuideSection[] = [
+  {
+    id: "osh-scope-heading",
+    number: "1",
+    title: "労働安全衛生管理体制とは — だれが整える義務を負うか",
+    lead: "公立学校の教職員(地方公務員)が教育活動に専念できる適切な職場を確保するため、学校の設置者(教育委員会等)には、労働安全衛生法に基づく安全衛生管理体制を整える義務があります。文部科学省は、体制の未整備は法令違反であるとして整備を求めています。求められる体制の内容は、学校の教職員数によって異なります。本サイトは体制と公式資料の所在を示すのみで、個別の判断や指導は行いません。",
+    links: [
+      {
+        label: "学校における労働安全衛生管理体制の整備のために(第3版)(平成31年4月)",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/kenko/hoken/1324759.htm",
+      },
+      {
+        label: "学校における労働安全衛生(関連資料の入口)",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/kenko/hoken/1353639.htm",
+      },
+    ],
+  },
+  {
+    id: "osh-large-heading",
+    number: "2",
+    title: "教職員50人以上の学校で求められる体制",
+    lead: "教職員が50人以上の学校では、衛生管理者と産業医の選任、衛生委員会の設置が求められます。衛生管理者は衛生に係る技術的事項を管理する者で、衛生管理者免許の取得者や「保健体育」の中学・高等学校教諭、養護教諭等から選任されます。産業医は、医師のうち所定の研修を修了した者等から選任され、健康診断・面接指導の実施や健康管理を行い、必要なときは設置者に勧告します。衛生委員会は、教職員の健康障害の防止や健康の保持増進などの重要事項を調査審議する機関です。各役割の具体的な内容は、下記の公式資料に整理されています。",
+    links: [
+      {
+        label: "学校における労働安全衛生管理体制の整備のために(第3版)",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2019/03/29/1414486_1.pdf",
+        format: "pdf",
+      },
+    ],
+  },
+  {
+    id: "osh-small-heading",
+    number: "3",
+    title: "教職員10〜49人の学校で求められる体制",
+    lead: "衛生管理者の選任を要する学校以外で、教職員が10人以上の学校では、衛生に係る業務を担当する衛生推進者を選任します。また、産業医の選任義務がない教職員49人以下の学校でも、設置者は、教職員の健康管理等を行うのに必要な医学に関する知識を有する医師や保健師に、その健康管理等を行わせるよう努めることとされています。各校ごとに選任するのではなく、教育委員会が産業医の要件を備えた医師等を採用し、複数の学校の健康管理を担当させる取組も示されています。具体的な進め方は、下記の事例集が参考になります。",
+    links: [
+      {
+        label: "公立学校における労働安全衛生管理体制の事例集",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/kenko/hoken/mext_02712.html",
+      },
+    ],
+  },
+  {
+    id: "osh-health-heading",
+    number: "4",
+    title: "健康を守る仕組み — 面接指導とストレスチェック",
+    lead: "学校には、教職員の健康を守るための仕組みの整備も求められます。週40時間を超える労働時間が月80時間を超え、疲労の蓄積が認められる教職員などから申出があったときは、医師による面接指導を行う体制が必要です。また、心理的な負担の程度を把握する検査(ストレスチェック)を年に1度実施することが設置者に義務づけられています(教職員50人未満の学校では当分の間努力義務)。心の不調による休職・復職など、教員個人を支える窓口は、メンタルヘルスのガイドもあわせてご覧ください。",
+    links: [
+      {
+        label: "教員のメンタルヘルスと休職・復職をめぐる公的な支援と相談先(ガイド)",
+        publisher: "EduLaw JP",
+        url: "/guides/teacher-mental-health/",
+      },
+      {
+        label: "学校における労働安全衛生管理体制の整備のために(第3版)",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2019/03/29/1414486_1.pdf",
+        format: "pdf",
+      },
+    ],
+  },
+  {
+    id: "osh-laws-heading",
+    number: "5",
+    title: "参考 — 関係法令と整備状況",
+    lead: "学校の労働安全衛生管理体制の根拠となる法令と、公立学校における整備状況の調査です。本サイトは解釈を加えず、e-Gov 法令検索の本文や公式の調査への入口のみを示します。",
+    links: [
+      {
+        label: "労働安全衛生法",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/347AC0000000057/",
+      },
+      {
+        label: "公立学校等における労働安全衛生管理体制等に関する調査について",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/kenko/hoken/1414775.htm",
+      },
+    ],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+const breadcrumbLinkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >学校の労働安全衛生管理体制</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Guide
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      学校の労働安全衛生<br />管理体制をめぐる<span
+        class="text-[var(--color-accent)]">公的な情報</span
+      >
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        教職員が安全に、健康に働ける職場を整えることは、学校の設置者(教育委員会等)に法令上求められた<strong
+          class="text-[var(--color-ink)]">義務</strong
+        >です。このページは、学校に求められる労働安全衛生管理体制と、その公式資料がどこにあるかを整理します。
+      </p>
+      <p>
+        本サイトは体制の整備状況や個別の該当性を判断しません(<a
+          href="/about/"
+          class={breadcrumbLinkClass}>サイトの立場</a
+        >)。示すのは公式情報の所在のみです。具体的な体制の整備や相談は、所属する学校・教育委員会等にご確認ください。
+      </p>
+    </div>
+  </section>
+
+  <div class="space-y-12 pb-12">
+    {
+      sections.map((section) => (
+        <section
+          aria-labelledby={section.id}
+          class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+        >
+          <h2
+            id={section.id}
+            class="text-xl sm:text-2xl font-black text-[var(--color-ink)]"
+          >
+            <span class="text-[var(--color-accent)] font-mono text-base sm:text-lg">
+              {section.number}
+            </span>{" "}
+            {section.title}
+          </h2>
+          <p>{section.lead}</p>
+          <ul class="space-y-3">
+            {section.links.map((link) => {
+              const isInternal = link.url.startsWith("/");
+              return (
+                <li class="space-y-0.5">
+                  <a
+                    href={link.url}
+                    target={isInternal ? undefined : "_blank"}
+                    rel={isInternal ? undefined : "noopener noreferrer"}
+                    class={linkClass}
+                  >
+                    {link.label}
+                    {link.format === "pdf" ? "(PDF)" : ""}
+                    {!isInternal && (
+                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                        ↗
+                      </span>
+                    )}
+                  </a>
+                  <span class="block text-xs text-[var(--color-sub)]">
+                    {link.publisher}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <footer
+    class="mt-4 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    aria-labelledby="guide-footer-heading"
+  >
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページが案内する公式情報は、取得日 2026-05-26
+      時点で各公式サイトに公開されているものです。リンク先の最新の内容は、各公式サイトでご確認ください。
+    </p>
+    <p>
+      引用ルールは <a
+        href="/about/#citation-basis-heading"
+        class={breadcrumbLinkClass}
+        >引用の根拠 — 公共データ利用規約 第 1.0 版</a
+      > を参照してください。
+    </p>
+  </footer>
+</Layout>
