@@ -7,45 +7,6 @@ const laws = (await getCollection("laws")).sort(
   (a, b) => a.data.order - b.data.order,
 );
 
-const scenarios = [
-  {
-    title: "いじめ対応",
-    summary: "いじめ防止対策推進法 / 学校教育法(出席停止・懲戒)",
-    href: "/laws/bullying-prevention-act/",
-    group: "child",
-  },
-  {
-    title: "教材コピー(著作物の授業利用)",
-    summary: "著作権法 35 条 / 授業目的公衆送信補償金制度",
-    href: "/laws/copyright-act/",
-    group: "child",
-  },
-  {
-    title: "保護者からの開示請求",
-    summary: "個人情報の保護に関する法律 / 教育データの利活用に係る留意事項",
-    href: "/laws/personal-information-protection-act/",
-    group: "child",
-  },
-  {
-    title: "児童虐待の発見・通告",
-    summary: "児童虐待防止法 / 児童福祉法 / 学校教育法",
-    href: "/laws/child-abuse-prevention-act/",
-    group: "child",
-  },
-  {
-    title: "教員免許の確認・更新",
-    summary: "教育職員免許法 / 文部科学省「教員免許状に関する Q&A」",
-    href: "/laws/teacher-license-act/",
-    group: "child",
-  },
-  {
-    title: "体罰・懲戒の境界",
-    summary: "学校教育法第 11 条 / 生徒指導提要(改訂版)",
-    href: "/laws/school-education-act/",
-    group: "child",
-  },
-] as const;
-
 const highlights = [
   {
     badge: "mext" as const,
@@ -157,7 +118,7 @@ const highlights = [
 
     <nav aria-label="2 つの入口" class="grid gap-3 sm:grid-cols-2">
       <a
-        href="#scenarios-child"
+        href="/child-guidance/"
         class="group block border border-[var(--color-line)] rounded-xl p-5 transition hover:border-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
       >
         <span class="flex items-baseline justify-between gap-2">
@@ -195,45 +156,6 @@ const highlights = [
         </span>
       </a>
     </nav>
-  </section>
-
-  <section
-    id="scenarios-child"
-    class="py-12 border-t border-[var(--color-line)] scroll-mt-20"
-    aria-labelledby="scenarios-child-heading"
-  >
-    <header class="mb-6">
-      <p
-        class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
-      >
-        Children — 子供への指導・対応
-      </p>
-      <h2
-        id="scenarios-child-heading"
-        class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
-      >
-        児童生徒への対応の法的根拠
-      </h2>
-      <p class="mt-3 text-sm text-[var(--color-sub)] leading-relaxed max-w-2xl">
-        場面ごとに関連法令への入口を整理します。本サイトは判断を示さず、所管法令の場所のみを示します。
-      </p>
-    </header>
-
-    <div>
-      {
-        scenarios
-          .filter((scenario) => scenario.group === "child")
-          .map((scenario, i) => (
-            <LawRow
-              index={i + 1}
-              href={scenario.href}
-              title={scenario.title}
-              summary={scenario.summary}
-              variant="scenario"
-            />
-          ))
-      }
-    </div>
   </section>
 
   <section
