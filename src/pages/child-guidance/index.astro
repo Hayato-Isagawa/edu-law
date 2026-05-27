@@ -1,0 +1,127 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EntranceRow from "../../components/EntranceRow.astro";
+
+const pageTitle = "子供への指導・対応 — EduLaw JP";
+const pageDescription =
+  "児童生徒への指導・対応の法的根拠への入口。いじめ対応・教材の著作物利用・保護者からの開示請求・児童虐待の発見と通告・教員免許の確認・体罰と懲戒の境界など、場面ごとに関連する法令と公式解説への導線を 1 ページに集約します。本サイトは判断を示さず、所管法令と公的な情報の所在のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "子供への指導・対応",
+      item: `${siteUrl}/child-guidance/`,
+    },
+  ],
+};
+
+const scenarios = [
+  {
+    title: "いじめ対応",
+    summary: "いじめ防止対策推進法 / 学校教育法(出席停止・懲戒)",
+    href: "/laws/bullying-prevention-act/",
+  },
+  {
+    title: "教材コピー(著作物の授業利用)",
+    summary: "著作権法 35 条 / 授業目的公衆送信補償金制度",
+    href: "/laws/copyright-act/",
+  },
+  {
+    title: "保護者からの開示請求",
+    summary: "個人情報の保護に関する法律 / 教育データの利活用に係る留意事項",
+    href: "/laws/personal-information-protection-act/",
+  },
+  {
+    title: "児童虐待の発見・通告",
+    summary: "児童虐待防止法 / 児童福祉法 / 学校教育法",
+    href: "/laws/child-abuse-prevention-act/",
+  },
+  {
+    title: "教員免許の確認・更新",
+    summary: "教育職員免許法 / 文部科学省「教員免許状に関する Q&A」",
+    href: "/laws/teacher-license-act/",
+  },
+  {
+    title: "体罰・懲戒の境界",
+    summary: "学校教育法第 11 条 / 生徒指導提要(改訂版)",
+    href: "/laws/school-education-act/",
+  },
+];
+
+const linkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={linkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >子供への指導・対応</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Children — 子供への指導・対応
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      子供への指導・対応
+    </h1>
+    <p
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base"
+    >
+      いじめ・著作物の授業利用・保護者からの開示請求・児童虐待の発見と通告・教員免許の確認・体罰と懲戒の境界など、児童生徒への指導と対応の場面ごとに、関連する法令と公式解説への入口を整理します。本サイトは判断を示さず、所管法令と公的な情報の所在のみを示します。
+    </p>
+  </section>
+
+  <section class="mt-4 first:mt-0">
+    <h2
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Scenes — 場面から法令へ
+    </h2>
+    <div class="mt-4 border-t border-[var(--color-line)]">
+      {
+        scenarios.map((scenario) => (
+          <EntranceRow
+            href={scenario.href}
+            title={scenario.title}
+            description={scenario.summary}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <section
+    class="mt-12 pt-8 border-t border-[var(--color-line)] text-sm leading-relaxed text-[var(--color-sub)] space-y-3"
+  >
+    <p>
+      <a href="/laws/" class={linkClass}>→ 整理対象の法令一覧</a>
+    </p>
+    <p>
+      <a href="/about/" class={linkClass}>→ 引用ルールとサイトの立場(About)</a>
+    </p>
+  </section>
+</Layout>
