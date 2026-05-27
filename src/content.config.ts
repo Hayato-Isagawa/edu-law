@@ -5,7 +5,7 @@ const laws = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/laws" }),
   schema: z.object({
     title: z.string(),
-    order: z.number().int().min(1).max(9),
+    order: z.number().int().min(1).max(10),
     summary: z.string(),
     eGovUrl: z
       .string()
