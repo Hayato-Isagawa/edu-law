@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import LawRow from "../components/LawRow.astro";
+import { changelogEntries, typeLabel } from "../data/changelog";
 
 const laws = (await getCollection("laws")).sort(
   (a, b) => a.data.order - b.data.order,
@@ -198,6 +199,67 @@ const highlights = [
         ))
       }
     </div>
+  </section>
+
+  <section
+    class="py-12 border-t border-[var(--color-line)]"
+    aria-labelledby="updates-heading"
+  >
+    <header class="mb-6 flex flex-wrap items-baseline justify-between gap-4">
+      <div>
+        <p
+          class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+        >
+          Updates — 最近の更新
+        </p>
+        <h2
+          id="updates-heading"
+          class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
+        >
+          最近の更新
+        </h2>
+      </div>
+      <a
+        href="/changelog/"
+        class="link-underline text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+      >
+        更新履歴へ <span aria-hidden="true">→</span>
+      </a>
+    </header>
+
+    <ul class="space-y-5">
+      {
+        changelogEntries.slice(0, 3).map((entry) =>
+          entry.items.map((item) => {
+            const t = typeLabel[item.type];
+            return (
+              <li class="flex flex-wrap gap-x-3 gap-y-1 items-baseline text-sm leading-relaxed">
+                <span class="font-mono text-xs text-[var(--color-accent)] shrink-0">
+                  {entry.date}
+                </span>
+                <span
+                  class={`font-mono text-xs uppercase tracking-widest shrink-0 ${t.color}`}
+                >
+                  {t.label}
+                </span>
+                <span class="w-full sm:w-auto sm:flex-1 sm:min-w-0">
+                  <span class="line-clamp-2">{item.text}</span>
+                  {item.links && (
+                    <span class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                      {item.links.map((l) => (
+                        <a href={l.href} class="link-underline">
+                          {l.label} <span aria-hidden="true">→</span>
+                        </a>
+                      ))}
+                    </span>
+                  )}
+                </span>
+              </li>
+            );
+          }),
+        )
+      }
+    </ul>
   </section>
 
   <section
