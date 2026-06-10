@@ -6,13 +6,13 @@ eGovUrl: https://laws.e-gov.go.jp/law/333AC0000000056/
 officialExplanations:
   - publisher: mext
     title: 学校保健(健康診断・感染症対策・学校環境衛生 等)
-    url: https://www.mext.go.jp/a_menu/kenko/hoken/index.htm
+    url: https://www.mext.go.jp/a_menu/01_k.htm
     format: html
   - publisher: mext
     title: 学校安全(学校安全計画・危機管理マニュアル・安全教育)
     url: https://www.mext.go.jp/a_menu/kenko/anzen/1289303.htm
     format: html
-lastVerified: "2026-05-27"
+lastVerified: "2026-06-09"
 tags: []
 ---
 
@@ -28,7 +28,7 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 
 ## 公式解説
 
-- [学校保健(文部科学省)](https://www.mext.go.jp/a_menu/kenko/hoken/index.htm)
+- [学校保健(文部科学省)](https://www.mext.go.jp/a_menu/01_k.htm)
   - 児童生徒等の健康診断、就学時の健康診断
   - 感染症予防のための出席停止・臨時休業の取扱い
   - 学校環境衛生基準、健康相談・保健指導・保健教育
@@ -44,4 +44,4 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 ## 出典
 
 - 法令本文: [e-Gov 法令検索](https://laws.e-gov.go.jp/law/333AC0000000056/)
-- 公式解説: 文部科学省『学校保健』『学校安全』(取得日: 2026-05-27)
+- 公式解説: 文部科学省『学校保健』『学校安全』(取得日: 2026-06-09)
