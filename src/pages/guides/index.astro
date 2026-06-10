@@ -19,98 +19,94 @@ type Guide = {
   title: string;
   description: string;
   href: string;
-  category: "foundation" | "teacher";
 };
-const guides: Guide[] = [
+const foundationGuides: Guide[] = [
   {
     title: "日本の法令階層",
     description:
       "憲法・法律・政令・省令・告示・通知が、それぞれ誰の手で作られ、どの法令を根拠とするのかを整理します。",
     href: "/guides/legal-hierarchy/",
-    category: "foundation",
-  },
-  {
-    title: "保護者対応をめぐる公的な支援と相談先",
-    description:
-      "保護者からの過剰な苦情や不当な要求について、文部科学省・教育委員会・スクールロイヤー等の公的な支援と相談先の所在を整理します。",
-    href: "/guides/parent-response/",
-    category: "teacher",
-  },
-  {
-    title: "教員のメンタルヘルスと休職・復職をめぐる公的な支援と相談先",
-    description:
-      "教員の心の不調による休職・復職について、文部科学省・厚生労働省等の公的な支援と相談先の所在を整理します。公務災害の認定と補償は専用ガイドに案内します。",
-    href: "/guides/teacher-mental-health/",
-    category: "teacher",
-  },
-  {
-    title: "教員の公務災害(認定と補償)をめぐる公的な情報",
-    description:
-      "公務上の負傷や過労による疾患(精神疾患・脳血管疾患・心臓疾患)の公務災害認定と、補償の種類・認定請求の手続について、地方公務員災害補償基金・e-Gov 等の公的な情報の所在を整理します。",
-    href: "/guides/occupational-injury/",
-    category: "teacher",
-  },
-  {
-    title: "教員の長時間労働と働き方改革をめぐる国の方針と公式資料",
-    description:
-      "教員の長時間勤務の是正と働き方改革について、文部科学省の方針・勤務時間の上限に関する指針・給特法等の公的な方針と資料の所在を整理します。",
-    href: "/guides/work-style-reform/",
-    category: "teacher",
-  },
-  {
-    title: "教員の懲戒・分限処分と不服申立てをめぐる公的な情報",
-    description:
-      "教員の懲戒処分・分限処分と、不利益処分を受けたときの審査請求について、文部科学省・総務省・人事委員会等の公的な情報の所在を整理します。",
-    href: "/guides/disciplinary-disposition/",
-    category: "teacher",
-  },
-  {
-    title: "学校管理下の事故の補償と責任をめぐる公的な情報",
-    description:
-      "学校管理下で児童生徒等が事故にあったときの災害共済給付、文部科学省の学校事故対応指針、関わる法令について、日本スポーツ振興センター・e-Gov 等の公的な情報の所在を整理します。",
-    href: "/guides/school-accident/",
-    category: "teacher",
-  },
-  {
-    title: "教員の妊娠・出産・育児と仕事の両立をめぐる公的な情報",
-    description:
-      "教員(地方公務員)の妊娠・出産・育児と仕事の両立について、産前産後休暇・育児休業・部分休業などの制度と、総務省『地方公務員 両立支援パスポート』・e-Gov 等の公的な情報の所在を整理します。",
-    href: "/guides/childcare-work-balance/",
-    category: "teacher",
-  },
-  {
-    title: "非正規の教員(臨時的任用・会計年度任用)の任用と勤務条件をめぐる公的な情報",
-    description:
-      "公立学校の臨時的任用職員・会計年度任用職員(いわゆる非正規の教員)の任用と勤務条件について、総務省『会計年度任用職員制度の運用に係る事務処理マニュアル』・文部科学省・e-Gov 等の公的な情報の所在を整理します。",
-    href: "/guides/non-regular-teachers/",
-    category: "teacher",
-  },
-  {
-    title: "学校の労働安全衛生管理体制(衛生管理者・産業医ほか)をめぐる公的な情報",
-    description:
-      "公立学校の教職員の安全と健康を守るため学校の設置者に求められる衛生管理者・産業医・衛生委員会・衛生推進者の選任や面接指導・ストレスチェックの体制について、文部科学省『学校における労働安全衛生管理体制の整備のために(第3版)』・e-Gov 等の公的な情報の所在を整理します。",
-    href: "/guides/occupational-safety-health/",
-    category: "teacher",
-  },
-  {
-    title: "教職員へのカスタマーハラスメント対策と雇用主の措置義務をめぐる公的な情報",
-    description:
-      "教職員を不当な要求やカスタマーハラスメントから守る雇用主(学校の設置者)の措置義務について、労働施策総合推進法の改正(2026年10月施行予定)を含め、厚生労働省・総務省・e-Gov 等の公的な情報の所在を整理します。",
-    href: "/guides/customer-harassment/",
-    category: "teacher",
   },
 ];
 
-const guideGroups = [
+// 「教師を守る」のサブグループ定義(正本は ADR 0016。/protect-teachers/ と同期)
+const teacherSubgroups: { label: string; items: Guide[] }[] = [
   {
-    label: "読む前の基礎",
-    items: guides.filter((g) => g.category === "foundation"),
+    label: "保護者・外部への対応",
+    items: [
+      {
+        title: "保護者対応をめぐる公的な支援と相談先",
+        description:
+          "保護者からの過剰な苦情や不当な要求について、文部科学省・教育委員会・スクールロイヤー等の公的な支援と相談先の所在を整理します。",
+        href: "/guides/parent-response/",
+      },
+      {
+        title: "教職員へのカスタマーハラスメント対策と雇用主の措置義務をめぐる公的な情報",
+        description:
+          "教職員を不当な要求やカスタマーハラスメントから守る雇用主(学校の設置者)の措置義務について、労働施策総合推進法の改正(2026年10月施行予定)を含め、厚生労働省・総務省・e-Gov 等の公的な情報の所在を整理します。",
+        href: "/guides/customer-harassment/",
+      },
+      {
+        title: "学校管理下の事故の補償と責任をめぐる公的な情報",
+        description:
+          "学校管理下で児童生徒等が事故にあったときの災害共済給付、文部科学省の学校事故対応指針、関わる法令について、日本スポーツ振興センター・e-Gov 等の公的な情報の所在を整理します。",
+        href: "/guides/school-accident/",
+      },
+    ],
   },
   {
-    label: "教師を守る",
-    items: guides.filter((g) => g.category === "teacher"),
+    label: "心身の健康と安全",
+    items: [
+      {
+        title: "教員のメンタルヘルスと休職・復職をめぐる公的な支援と相談先",
+        description:
+          "教員の心の不調による休職・復職について、文部科学省・厚生労働省等の公的な支援と相談先の所在を整理します。公務災害の認定と補償は専用ガイドに案内します。",
+        href: "/guides/teacher-mental-health/",
+      },
+      {
+        title: "教員の公務災害(認定と補償)をめぐる公的な情報",
+        description:
+          "公務上の負傷や過労による疾患(精神疾患・脳血管疾患・心臓疾患)の公務災害認定と、補償の種類・認定請求の手続について、地方公務員災害補償基金・e-Gov 等の公的な情報の所在を整理します。",
+        href: "/guides/occupational-injury/",
+      },
+      {
+        title: "学校の労働安全衛生管理体制(衛生管理者・産業医ほか)をめぐる公的な情報",
+        description:
+          "公立学校の教職員の安全と健康を守るため学校の設置者に求められる衛生管理者・産業医・衛生委員会・衛生推進者の選任や面接指導・ストレスチェックの体制について、文部科学省『学校における労働安全衛生管理体制の整備のために(第3版)』・e-Gov 等の公的な情報の所在を整理します。",
+        href: "/guides/occupational-safety-health/",
+      },
+    ],
   },
-] as const;
+  {
+    label: "勤務条件と身分",
+    items: [
+      {
+        title: "教員の長時間労働と働き方改革をめぐる国の方針と公式資料",
+        description:
+          "教員の長時間勤務の是正と働き方改革について、文部科学省の方針・勤務時間の上限に関する指針・給特法等の公的な方針と資料の所在を整理します。",
+        href: "/guides/work-style-reform/",
+      },
+      {
+        title: "教員の妊娠・出産・育児と仕事の両立をめぐる公的な情報",
+        description:
+          "教員(地方公務員)の妊娠・出産・育児と仕事の両立について、産前産後休暇・育児休業・部分休業などの制度と、総務省『地方公務員 両立支援パスポート』・e-Gov 等の公的な情報の所在を整理します。",
+        href: "/guides/childcare-work-balance/",
+      },
+      {
+        title: "非正規の教員(臨時的任用・会計年度任用)の任用と勤務条件をめぐる公的な情報",
+        description:
+          "公立学校の臨時的任用職員・会計年度任用職員(いわゆる非正規の教員)の任用と勤務条件について、総務省『会計年度任用職員制度の運用に係る事務処理マニュアル』・文部科学省・e-Gov 等の公的な情報の所在を整理します。",
+        href: "/guides/non-regular-teachers/",
+      },
+      {
+        title: "教員の懲戒・分限処分と不服申立てをめぐる公的な情報",
+        description:
+          "教員の懲戒処分・分限処分と、不利益処分を受けたときの審査請求について、文部科学省・総務省・人事委員会等の公的な情報の所在を整理します。",
+        href: "/guides/disciplinary-disposition/",
+      },
+    ],
+  },
+];
 
 const linkClass =
   "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
@@ -151,30 +147,67 @@ const linkClass =
     </p>
   </section>
 
-  {
-    guideGroups.map((group) => (
-      <section class="mt-12 first:mt-0">
-        <h2 class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]">
-          {group.label}
-        </h2>
-        <div class="mt-4 border-t border-[var(--color-line)]">
-          {group.items.map((guide) => (
-            <article class="py-6 border-b border-[var(--color-line)]">
-              <h3 class="text-xl sm:text-2xl font-black text-[var(--color-ink)]">
-                <a href={guide.href} class={linkClass}>
-                  {guide.title}
-                </a>
-              </h3>
-              <p class="mt-2 max-w-2xl text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
-                {guide.description}
-              </p>
-              <a href={guide.href} class={`${linkClass} mt-3 inline-block text-sm`}>
-                開く <span aria-hidden="true">→</span>
+  <section class="mt-12 first:mt-0">
+    <h2
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      読む前の基礎
+    </h2>
+    <div class="mt-4 border-t border-[var(--color-line)]">
+      {
+        foundationGuides.map((guide) => (
+          <article class="py-6 border-b border-[var(--color-line)]">
+            <h3 class="text-xl sm:text-2xl font-black text-[var(--color-ink)]">
+              <a href={guide.href} class={linkClass}>
+                {guide.title}
               </a>
-            </article>
-          ))}
+            </h3>
+            <p class="mt-2 max-w-2xl text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
+              {guide.description}
+            </p>
+            <a href={guide.href} class={`${linkClass} mt-3 inline-block text-sm`}>
+              開く <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="mt-12">
+    <h2
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      教師を守る
+    </h2>
+    {
+      teacherSubgroups.map((sub) => (
+        <div class="mt-6 first:mt-4">
+          <h3 class="text-sm font-bold tracking-wide text-[var(--color-ink)]">
+            {sub.label}
+          </h3>
+          <div class="mt-3 border-t border-[var(--color-line)]">
+            {sub.items.map((guide) => (
+              <article class="py-6 border-b border-[var(--color-line)]">
+                <h4 class="text-xl sm:text-2xl font-black text-[var(--color-ink)]">
+                  <a href={guide.href} class={linkClass}>
+                    {guide.title}
+                  </a>
+                </h4>
+                <p class="mt-2 max-w-2xl text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
+                  {guide.description}
+                </p>
+                <a
+                  href={guide.href}
+                  class={`${linkClass} mt-3 inline-block text-sm`}
+                >
+                  開く <span aria-hidden="true">→</span>
+                </a>
+              </article>
+            ))}
+          </div>
         </div>
-      </section>
-    ))
-  }
+      ))
+    }
+  </section>
 </Layout>
