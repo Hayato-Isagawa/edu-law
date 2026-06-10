@@ -9,7 +9,7 @@ officialExplanations:
     url: https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2019/06/26/1400030_007.pdf
     publishedAt: "2017-03-14"
     format: pdf
-lastVerified: "2026-05-18"
+lastVerified: "2026-06-09"
 tags: []
 ---
 
@@ -26,7 +26,8 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 ## 公式解説
 
 - [いじめの防止等のための基本的な方針(平成29年最終改定)PDF](https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2019/06/26/1400030_007.pdf)(文部科学大臣決定、平成25年10月11日策定 / 平成29年3月14日最終改定)
-- [平成29年3月16日「いじめの防止等のための基本的な方針」の改定及び「いじめの重大事態の調査に関するガイドライン」の策定について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1400142.htm)
+- [いじめの重大事態の調査に関するガイドライン(令和6年8月改訂)PDF](https://www.mext.go.jp/content/20240830-mext_jidou01-1336275_3.pdf)(原策定 平成29年3月 / 令和6年8月改訂)
+- [「いじめの重大事態の調査に関するガイドライン」の改訂について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1400142_00006.htm)
 
 ## 関連法令
 
@@ -37,3 +38,4 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 
 - 法令本文: [e-Gov 法令検索](https://laws.e-gov.go.jp/law/425AC1000000071/)
 - 公式解説: 文部科学省『いじめの防止等のための基本的な方針(平成29年最終改定)』(取得日: 2026-05-17)
+- 公式解説: 文部科学省『いじめの重大事態の調査に関するガイドライン(令和6年8月改訂)』(取得日: 2026-06-09)
