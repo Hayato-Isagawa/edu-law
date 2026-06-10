@@ -25,6 +25,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           THRESHOLD_DAYS: "90"
+          AUDIT_DOC_URL: ${{ github.server_url }}/${{ github.repository }}/blob/main/docs/freshness-audit.md
         run: |
           set -euo pipefail
 
@@ -83,6 +84,8 @@ jobs:
               echo "## 対応"
               echo ""
               echo "内容確認後、\`src/content/laws/$slug.md\` の \`lastVerified\` を本日日付に更新する PR を起票してください。"
+              echo ""
+              echo "棚卸しの具体的な手順(「旧 URL 生存のまま新版公開」= 静かな改訂の捕捉方法)は [docs/freshness-audit.md]($AUDIT_DOC_URL) を参照してください。複数法令の issue が同時期に立っている場合は 1 回の作業でまとめて棚卸しします。"
               echo ""
               echo "本 issue は \`.github/workflows/stale-check.yml\` が自動起票しました(ADR 0002 \`lastVerified\` 運用予約)。"
             } > issue-body.md
