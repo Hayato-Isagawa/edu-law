@@ -1,0 +1,185 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { sceneCategories, getAllScenes } from "../../data/scenes";
+
+const laws = await getCollection("laws");
+const lawMap = new Map(laws.map((l) => [l.id, l.data.title]));
+
+const totalScenes = getAllScenes(sceneCategories).length;
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "場面から探す",
+      item: `${siteUrl}/scenes/`,
+    },
+  ],
+};
+
+const linkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+
+const chipClass =
+  "group inline-flex items-baseline gap-1.5 border border-[var(--color-line)] rounded-full px-3 min-h-[1.5rem] py-1 text-xs bg-[var(--color-bg)] motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out hover:border-[var(--color-accent)] hover:bg-[var(--color-card)] focus-visible:outline-none focus-visible:border-[var(--color-accent)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]";
+
+const chipTextHover =
+  "motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out group-hover:text-[var(--color-accent)] group-focus-visible:text-[var(--color-accent)]";
+---
+
+<Layout
+  title="場面から探す — EduLaw JP"
+  description="教師の困りごと(場面)から、関連する法令と公式解説・ガイドへの入口を整理します。いじめ・保護者対応・著作物の授業利用・公務災害・働き方など、現場の場面ごとに公的情報の所在を示します。本サイトは判断を示さず、所管法令と公的な情報の所在のみを示します。"
+  breadcrumbJsonLd={breadcrumbJsonLd}
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+    >
+      <li><a href="/" class={linkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-[var(--color-ink)]"
+          >場面から探す</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <p
+      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+    >
+      Scenes — 場面から探す
+    </p>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      <span class="text-[var(--color-accent)]">場面</span>から探す
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-2"
+    >
+      <p>
+        現場の困りごとから、関連する<strong class="text-[var(--color-ink)]"
+          >法令</strong
+        >と<strong class="text-[var(--color-ink)]">公式解説・ガイド</strong
+        >への入口に進めます。本サイトは判断を示さず、所管法令と公的な情報の所在のみを示します。
+      </p>
+      <p class="text-xs">
+        {sceneCategories.length} カテゴリ / {totalScenes} の場面
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-16 space-y-16">
+    {
+      sceneCategories.map((cat) => (
+        <div class="space-y-6">
+          <div class="border-b border-[var(--color-line)] pb-3 flex items-baseline gap-4 flex-wrap relative pl-4">
+            <span
+              aria-hidden="true"
+              class="absolute left-0 top-1 w-[3px] h-[calc(100%-1rem)] rounded-full bg-[var(--color-accent)]"
+            />
+            <h2 id={cat.id} class="font-black text-2xl md:text-3xl tracking-tight">
+              {cat.title}
+            </h2>
+            <p class="text-sm text-[var(--color-sub)]">{cat.description}</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {cat.scenes.map((scene) => {
+              const lawsLabelId = `${scene.slug}-laws-label`;
+              const guidesLabelId = `${scene.slug}-guides-label`;
+              return (
+                <article
+                  id={scene.slug}
+                  class="border border-[var(--color-line)] rounded-xl p-5 md:p-6 bg-[var(--color-card)] space-y-4 motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out focus-within:border-[var(--color-accent)]"
+                >
+                  <h3 class="font-black text-lg md:text-xl leading-snug">
+                    {scene.title}
+                  </h3>
+                  <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+                    {scene.description}
+                  </p>
+
+                  {scene.lawSlugs.length > 0 && (
+                    <div class="space-y-2">
+                      <p
+                        id={lawsLabelId}
+                        class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+                      >
+                        関連する法令
+                      </p>
+                      <ul aria-labelledby={lawsLabelId} class="flex flex-wrap gap-2">
+                        {scene.lawSlugs.map((slug) => {
+                          const title = lawMap.get(slug);
+                          if (!title) return null;
+                          return (
+                            <li>
+                              <a href={`/laws/${slug}/`} class={chipClass}>
+                                <span class={`font-bold ${chipTextHover}`}>
+                                  {title}
+                                </span>
+                              </a>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+
+                  {scene.guides && scene.guides.length > 0 && (
+                    <div class="space-y-2">
+                      <p
+                        id={guidesLabelId}
+                        class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+                      >
+                        関連するガイド
+                      </p>
+                      <ul aria-labelledby={guidesLabelId} class="flex flex-wrap gap-2">
+                        {scene.guides.map((g) => (
+                          <li>
+                            <a href={`/guides/${g.slug}/`} class={chipClass}>
+                              <span
+                                aria-hidden="true"
+                                class={`font-mono text-[9px] uppercase tracking-widest text-[var(--color-sub)] ${chipTextHover}`}
+                              >
+                                Guide
+                              </span>
+                              <span class={chipTextHover}>{g.title}</span>
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      ))
+    }
+  </section>
+
+  <section
+    class="pb-24 pt-8 border-t border-[var(--color-line)] text-sm leading-relaxed text-[var(--color-sub)] space-y-3"
+  >
+    <p>
+      <a href="/laws/" class={linkClass}>→ 法令から探す(法令一覧)</a>
+    </p>
+    <p>
+      <a href="/guides/" class={linkClass}>→ ガイド一覧</a>
+    </p>
+    <p>
+      <a href="/about/" class={linkClass}>→ 引用ルールとサイトの立場(About)</a>
+    </p>
+  </section>
+</Layout>

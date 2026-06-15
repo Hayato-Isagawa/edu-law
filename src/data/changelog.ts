@@ -27,6 +27,16 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-06-15",
+    items: [
+      {
+        type: "update",
+        text: "サイトの構成を見直し、いじめ・保護者対応・著作物の授業利用・公務災害・働き方などの「場面」から、関連する法令と公式解説・ガイドを引ける「場面から探す」を新設。困りごとから必要な情報にたどり着きやすくした",
+        links: [{ label: "場面から探す", href: "/scenes/" }],
+      },
+    ],
+  },
+  {
     date: "2026-06-11",
     items: [
       {
@@ -42,7 +52,7 @@ export const changelogEntries: ChangelogEntry[] = [
         type: "update",
         text: "「教師を守る」のガイド 10 本を「保護者・外部への対応」「心身の健康と安全」「勤務条件と身分」の 3 グループに整理。入口ページとガイド一覧の両方で、目的のガイドを見つけやすくした",
         links: [
-          { label: "教師を守る", href: "/protect-teachers/" },
+          { label: "教師を守る", href: "/scenes/" },
           { label: "ガイド一覧", href: "/guides/" },
         ],
       },
@@ -104,7 +114,7 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: "update",
         text: "「子供への指導・対応」を独立したページにまとめ、「教師を守る」と対になる入口にした。トップの 2 つの入口が同じ動きで開き、目的の一覧へたどり着きやすくなった",
-        links: [{ label: "子供への指導・対応", href: "/child-guidance/" }],
+        links: [{ label: "子供への指導・対応", href: "/scenes/#students" }],
       },
     ],
   },
@@ -134,7 +144,7 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: "add",
         text: "「教師を守る」入口ページを公開。保護者対応・メンタルヘルス・公務災害・働き方改革・懲戒分限処分・学校事故の各ガイドへの導線を 1 ページにまとめ、教師自身を守る制度の入口をまとめて見渡せる",
-        links: [{ label: "教師を守る", href: "/protect-teachers/" }],
+        links: [{ label: "教師を守る", href: "/scenes/" }],
       },
     ],
   },

@@ -3,6 +3,7 @@ import Logo from "./Logo.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 
 const path = Astro.url.pathname;
+const isScenesPage = path.startsWith("/scenes");
 const isLawsPage = path.startsWith("/laws");
 const isGuidesPage = path.startsWith("/guides");
 const isAboutPage = path.startsWith("/about");
@@ -24,6 +25,15 @@ const isChangelogPage = path.startsWith("/changelog");
     </a>
 
     <nav class="hidden lg:flex items-center gap-6 text-sm" aria-label="メインナビゲーション">
+      <a
+        href="/scenes/"
+        class={isScenesPage
+          ? "text-[var(--color-ink)] font-semibold"
+          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+        aria-current={isScenesPage ? "page" : undefined}
+      >
+        場面から探す
+      </a>
       <a
         href="/laws/"
         class={isLawsPage
@@ -80,10 +90,13 @@ const isChangelogPage = path.startsWith("/changelog");
     <div class="mobile-menu-inner">
       <nav class="mobile-menu-nav" aria-label="サイトナビゲーション">
         <section class="mobile-menu-section">
-          <h2 class="mobile-menu-section-title">Explore — 法令を見る</h2>
+          <h2 class="mobile-menu-section-title">Explore — 探す</h2>
           <ul>
             <li>
               <a href="/" aria-current={path === "/" ? "page" : undefined}>ホーム</a>
+            </li>
+            <li>
+              <a href="/scenes/" aria-current={isScenesPage ? "page" : undefined}>場面から探す</a>
             </li>
             <li>
               <a href="/laws/" aria-current={isLawsPage ? "page" : undefined}>法令一覧</a>
