@@ -11,8 +11,8 @@
 ## ブランド
 
 - **モチーフ**: 根(root)。EduEvidence JP(葉)・EduWatch JP(双葉)と対になり、「足元から支える基盤」を象徴する
-- **アクセント色**: 茶 `#6b4423`(`--color-accent`、ロゴ実装 PR で具体値を再確定する余地あり)
-- **ロゴ実装**: 別 PR で `src/components/Logo.astro` に inline SVG + `currentColor` 継承で導入予定。現在は最小 favicon プレースホルダーのみ
+- **アクセント色**: 茶 `#6b4423`(`--color-accent`)
+- **ロゴ**: `src/components/Logo.astro` に根モチーフの inline SVG(`currentColor` 継承)を実装済み。`SiteHeader` / `SiteFooter` で使用する。`public/favicon.svg` は最小ブランドマーク
 - 詳細は [`docs/BRAND.md`](docs/BRAND.md)(姉妹サイト共通、edu-evidence からミラー)
 
 ## 環境
