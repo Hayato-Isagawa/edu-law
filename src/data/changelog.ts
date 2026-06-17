@@ -27,6 +27,19 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-06-17",
+    items: [
+      {
+        type: "add",
+        text: "「不登校への対応」の場面を新設し、教育機会確保法のページを法令一覧に追加。不登校児童生徒への対応について、教育機会確保法に基づく国・学校の責務と、文部科学省の基本指針・支援通知の所在を 1 ページで確認できる",
+        links: [
+          { label: "不登校への対応", href: "/scenes/#students" },
+          { label: "教育機会確保法", href: "/laws/education-opportunity-assurance-act/" },
+        ],
+      },
+    ],
+  },
+  {
     date: "2026-06-15",
     items: [
       {
