@@ -79,6 +79,13 @@ export const sceneCategories: SceneCategory[] = [
           "保護者からの個人情報の開示請求への対応について、法令と公式の留意事項の所在を示します。",
         lawSlugs: ["personal-information-protection-act"],
       },
+      {
+        slug: "school-refusal",
+        title: "不登校への対応",
+        description:
+          "不登校児童生徒への対応について、教育機会確保法に基づく国・学校の責務と、文部科学省の基本指針・支援通知の所在を示します。",
+        lawSlugs: ["education-opportunity-assurance-act", "school-education-act"],
+      },
     ],
   },
   {

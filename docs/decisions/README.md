@@ -57,3 +57,4 @@
 - [0017. 更新情報の正本を changelog データに一元化し、RSS・トップ新着を導出する](0017-changelog-as-update-source.md)
 - [0018. 場面軸 IA への再編とグローバルナビへの場面レンズ追加](0018-scene-based-ia.md)
 - [0019. ダーク本文 ink を react.dev の gray-15(`#D0D3DC`)に統一する](0019-dark-ink-react-dev-gray-15.md)
+- [0020. 初期スコープの拡張(教育機会確保法を 12 法令目として追加)と不登校場面の新設](0020-expand-scope-education-opportunity-act-and-school-refusal-scene.md)
