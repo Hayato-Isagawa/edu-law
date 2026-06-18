@@ -66,7 +66,7 @@ npm run check  # Astro 型チェック
 ```
 src/
 ├── components/     # UI 部品(SiteHeader / SiteFooter / Logo / LawRow ほか)
-├── content/        # 法令コンテンツコレクション(法令別 Markdown 11 本)
+├── content/        # 法令コンテンツコレクション(法令別 Markdown 12 本)
 ├── data/           # scenes.ts(場面定義) / changelog.ts / publishers.ts
 ├── layouts/        # 共通レイアウト
 ├── pages/          # Astro ページ(laws / guides / scenes / about / changelog)
