@@ -209,4 +209,25 @@ export const sceneCategories: SceneCategory[] = [
       },
     ],
   },
+  {
+    id: "school-health-safety",
+    title: "学校の保健・安全",
+    description: "感染症対応・健康診断や学校安全計画など、児童生徒の保健と学校の安全を確かめたいとき",
+    scenes: [
+      {
+        slug: "school-health",
+        title: "感染症対策・健康診断",
+        description:
+          "学校での感染症予防のための出席停止・臨時休業や、児童生徒の健康診断・学校環境衛生について、学校保健安全法に基づく学校の措置と、文部科学省『学校保健』の公式解説の所在を示します。",
+        lawSlugs: ["school-health-and-safety-act"],
+      },
+      {
+        slug: "school-safety",
+        title: "学校安全計画・危機管理マニュアル",
+        description:
+          "学校安全計画の策定や危険等発生時対処要領（危機管理マニュアル）の作成について、学校保健安全法に基づく学校の責務と、文部科学省『学校安全』の公式解説の所在を示します。",
+        lawSlugs: ["school-health-and-safety-act"],
+      },
+    ],
+  },
 ];
