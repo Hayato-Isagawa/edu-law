@@ -27,6 +27,16 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-06-18",
+    items: [
+      {
+        type: "add",
+        text: "「学校の保健・安全」の場面カテゴリを新設し、感染症対策・健康診断と学校安全計画・危機管理から、学校保健安全法と文部科学省の公式解説を引けるようにした",
+        links: [{ label: "場面から探す", href: "/scenes/#school-health-safety" }],
+      },
+    ],
+  },
+  {
     date: "2026-06-17",
     items: [
       {

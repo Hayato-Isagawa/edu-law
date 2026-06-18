@@ -58,3 +58,4 @@
 - [0018. 場面軸 IA への再編とグローバルナビへの場面レンズ追加](0018-scene-based-ia.md)
 - [0019. ダーク本文 ink を react.dev の gray-15(`#D0D3DC`)に統一する](0019-dark-ink-react-dev-gray-15.md)
 - [0020. 初期スコープの拡張(教育機会確保法を 12 法令目として追加)と不登校場面の新設](0020-expand-scope-education-opportunity-act-and-school-refusal-scene.md)
+- [0021. 「学校の保健・安全」カテゴリの新設と学校保健安全法の場面化](0021-add-school-health-safety-category.md)
