@@ -61,6 +61,15 @@ const isChangelogPage = path.startsWith("/changelog");
       >
         サイトについて
       </a>
+      <a
+        href="/changelog/"
+        class={isChangelogPage
+          ? "text-[var(--color-ink)] font-semibold"
+          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+        aria-current={isChangelogPage ? "page" : undefined}
+      >
+        更新履歴
+      </a>
       <ThemeToggle id="theme-toggle" />
     </nav>
 
