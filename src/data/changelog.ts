@@ -27,6 +27,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-06-22",
+    items: [
+      {
+        type: "add",
+        text: "メニューに姉妹サイトへの導線を追加しました。教育エビデンスの EduEvidence JP と教育ニュースの EduWatch JP へ、サイト内から直接たどれます",
+      },
+    ],
+  },
+  {
     date: "2026-06-18",
     items: [
       {
