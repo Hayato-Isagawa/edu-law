@@ -47,7 +47,7 @@
 
 ## セットアップ
 
-Node.js 24 系を `.tool-versions` で固定(`nodejs 24.15.0`)。[mise](https://mise.jdx.dev/) を推奨。
+Node.js 24 系を `.tool-versions` で固定(`nodejs 24.17.0`)。[mise](https://mise.jdx.dev/) を推奨。
 
 ```bash
 git clone https://github.com/Hayato-Isagawa/edu-law.git
