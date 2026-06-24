@@ -55,6 +55,75 @@ const pageDescription =
     </div>
   </section>
 
+  <section class="pb-12" aria-labelledby="sister-heading">
+    <h2
+      id="sister-heading"
+      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+    >
+      姉妹サイト — 1 本の木
+    </h2>
+    <p
+      class="max-w-2xl text-sm sm:text-base text-[var(--color-sub)] leading-loose mb-6"
+    >
+      EduEvidence JP・EduWatch JP・<strong
+        class="text-[var(--color-ink)]">EduLaw JP</strong
+      > は、教員の仕事を 1 本の木に見立てた姉妹サイトです。光を受けて学びを育てる「成熟した葉」、日々新しい情報が芽吹く「双葉」、足元から制度を支える「根」——それぞれが独立したサイトとして、1 本の木を形づくります。
+    </p>
+    <div class="grid sm:grid-cols-3 gap-5">
+      <div class="border border-[var(--color-line)] rounded-xl p-5 space-y-1.5">
+        <div
+          class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+        >
+          成熟した葉
+        </div>
+        <div class="font-bold">
+          <a
+            href="https://edu-evidence.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="sister-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+            >EduEvidence JP</a
+          >
+        </div>
+        <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+          研究で確かめられた指導法・コラムを長期に蓄積するエビデンスポータル（ストック型）。
+        </p>
+      </div>
+      <div class="border border-[var(--color-line)] rounded-xl p-5 space-y-1.5">
+        <div
+          class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+        >
+          双葉
+        </div>
+        <div class="font-bold">
+          <a
+            href="https://news.edu-evidence.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="sister-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+            >EduWatch JP</a
+          >
+        </div>
+        <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+          教育の一次情報を日次収集し、週次ダイジェストで論点を整理（フロー型）。
+        </p>
+      </div>
+      <div class="border border-[var(--color-line)] rounded-xl p-5 space-y-1.5">
+        <div
+          class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+        >
+          根
+        </div>
+        <div class="font-bold">
+          <span aria-current="page">EduLaw JP（このサイト）</span>
+        </div>
+        <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+          教育関連法と公式解説を法令別に整理する、制度の基盤。
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="pb-12" aria-labelledby="stance-heading">
     <h2
       id="stance-heading"
@@ -263,3 +332,31 @@ const pageDescription =
     </p>
   </footer>
 </Layout>
+
+<style>
+  /* 姉妹サイトカードのリンクは EduEvidence/EduWatch と同じ「伸びる下線」ホバーに揃える。
+     law 既定の .link-underline(常時下線)とは別実装のためスコープして適用。 */
+  .sister-link {
+    text-decoration: none;
+    background-image: linear-gradient(
+      var(--color-accent),
+      var(--color-accent)
+    );
+    background-size: 0% 1px;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    transition:
+      color 0.2s ease,
+      background-size 0.3s ease;
+    padding-bottom: 2px;
+  }
+  .sister-link:hover {
+    color: var(--color-accent);
+    background-size: 100% 1px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sister-link {
+      transition: none;
+    }
+  }
+</style>
