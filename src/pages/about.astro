@@ -81,7 +81,7 @@ const pageDescription =
             href="https://edu-evidence.org"
             target="_blank"
             rel="noopener noreferrer"
-            class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+            class="sister-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
             >EduEvidence JP</a
           >
         </div>
@@ -100,7 +100,7 @@ const pageDescription =
             href="https://news.edu-evidence.org"
             target="_blank"
             rel="noopener noreferrer"
-            class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+            class="sister-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
             >EduWatch JP</a
           >
         </div>
@@ -332,3 +332,31 @@ const pageDescription =
     </p>
   </footer>
 </Layout>
+
+<style>
+  /* 姉妹サイトカードのリンクは EduEvidence/EduWatch と同じ「伸びる下線」ホバーに揃える。
+     law 既定の .link-underline(常時下線)とは別実装のためスコープして適用。 */
+  .sister-link {
+    text-decoration: none;
+    background-image: linear-gradient(
+      var(--color-accent),
+      var(--color-accent)
+    );
+    background-size: 0% 1px;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    transition:
+      color 0.2s ease,
+      background-size 0.3s ease;
+    padding-bottom: 2px;
+  }
+  .sister-link:hover {
+    color: var(--color-accent);
+    background-size: 100% 1px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sister-link {
+      transition: none;
+    }
+  }
+</style>
