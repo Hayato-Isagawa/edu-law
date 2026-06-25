@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "astro check",
+    "vrt": "npx playwright test --config playwright.vrt.config.ts"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.7",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@playwright/test": "^1.61.0",
     "rehype-external-links": "^3.0.0",
     "typescript": "^5.0.0"
   },

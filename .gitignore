@@ -5,6 +5,14 @@ dist
 *.log
 .env
 .env.*
+test-results
+playwright-report
+blob-report
+
+# VRT(ADR 0023): ベースラインはコミットせず CI の 2 ビルド差分で都度生成する
+vrt/__screenshots__/
+dist-pr
+dist-main
 
 # Claude Code の生きたセッション状態(docs/context-management.md 参照)
 .claude/state/

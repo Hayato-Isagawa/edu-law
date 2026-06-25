@@ -33,6 +33,7 @@ npm run dev      # 開発サーバー(localhost:4321)
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
 npm run check    # Astro 型チェック
+npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
 
 ## 対象法令 — 12 法令
@@ -53,6 +54,17 @@ npm run check    # Astro 型チェック
 12. 教育機会確保法
 
 今後の追加候補: 子どもの権利条約、判例。
+
+## ビジュアルリグレッションテスト(VRT)
+
+共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー)。edu-law には e2e が無く、これが唯一の自動視覚検出系統となる:
+
+- **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 の 2 projects、`maxDiffPixelRatio: 0.01`、アニメーション無効)
+- **対象**: `vrt/pages.spec.ts` がテンプレート代表 18 URL(トップ / about / changelog / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本)をフルページ撮影。テンプレートを追加したら代表 URL を 1 行追記する
+- **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で `src/layouts/**`・`src/components/**`・`src/styles/**`・`astro.config.*`・`vrt/**`・`playwright.vrt.config.ts` に限定起動。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)
+- **比較方式(案A)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため
+- **ローカル**: `npm run vrt` で現在の `dist` を撮影・比較できる。権威ある 2 ビルド差分は CI 側
+- **required check 非対象**: 視覚変更 PR でしか起動しないため required には含めない。マージ可否は編集者判断(rule 13)
 
 ## ホスティング
 
