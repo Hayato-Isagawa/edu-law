@@ -68,7 +68,7 @@ npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮
 
 ## ホスティング
 
-Cloudflare Pages(GitHub `main` ブランチ連携で自動デプロイ予定)。
+Cloudflare Pages(GitHub `main` ブランチ連携で自動デプロイ)。
 ドメイン: `law.edu-evidence.org`(`edu-evidence.org` サブドメイン)
 セキュリティヘッダー: `public/_headers`
 ボット設定: `public/robots.txt`
