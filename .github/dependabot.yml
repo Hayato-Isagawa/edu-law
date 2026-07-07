@@ -22,6 +22,14 @@ updates:
       # が欠落してビルドが落ちる)。`@tailwindcss/vite` 側が vite 8 対応を公表するまで major 更新を無視する。
       - dependency-name: "vite"
         update-types: ["version-update:semver-major"]
+      # Astro 7 は既定 Markdown プロセッサが Sätteri に変わり @astrojs/markdown-remark を
+      # 同梱しなくなるため、markdown.remarkPlugins/rehypePlugins を使う既存設定でビルドが
+      # 失敗する(コンパイラも Rust 実装に移行)。@astrojs/react の major 更新もこれに追随する
+      # ため合わせて除外する。移行を計画するまで major 更新を無視する。
+      - dependency-name: "astro"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@astrojs/react"
+        update-types: ["version-update:semver-major"]
     groups:
       astro-ecosystem:
         patterns:
