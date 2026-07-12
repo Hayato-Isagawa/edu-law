@@ -31,7 +31,7 @@ export const changelogEntries: ChangelogEntry[] = [
     items: [
       {
         type: "add",
-        text: "「このサイトについて」(about)に運営者の紹介(元小学校教諭・現場経験約 11 年)を追加しました。誰が整理しているサイトかを確認できます",
+        text: "「このサイトについて」(about)に運営者の紹介(元小学校教諭・現場経験約 10 年)を追加しました。誰が整理しているサイトかを確認できます",
         links: [{ label: "このサイトについて", href: "/about/" }],
       },
     ],
