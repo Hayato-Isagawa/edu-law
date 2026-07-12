@@ -102,6 +102,13 @@ const organizationJsonLd = {
     {breadcrumbJsonLd && (
       <script type="application/ld+json" set:html={escapeLd(breadcrumbJsonLd)} />
     )}
+
+    <!-- Cloudflare Web Analytics -->
+    <script
+      is:inline
+      type="module"
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "5739775e385e4d29a7d3be777f1bc18f"}'></script>
   </head>
   <body
     class="bg-[var(--color-bg)] text-[var(--color-ink)]"
