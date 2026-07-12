@@ -27,6 +27,16 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-07-12",
+    items: [
+      {
+        type: "add",
+        text: "「このサイトについて」(about)に運営者の紹介(元小学校教諭・現場経験約 11 年)を追加しました。誰が整理しているサイトかを確認できます",
+        links: [{ label: "このサイトについて", href: "/about/" }],
+      },
+    ],
+  },
+  {
     date: "2026-06-24",
     items: [
       {
