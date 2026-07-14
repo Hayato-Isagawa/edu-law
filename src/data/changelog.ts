@@ -27,6 +27,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-07-15",
+    items: [
+      {
+        type: "update",
+        text: "SNS やチャットでリンクを共有したときのプレビュー画像を、姉妹サイト共通のデザインに刷新しました",
+      },
+    ],
+  },
+  {
     date: "2026-07-12",
     items: [
       {
