@@ -59,3 +59,6 @@
 - [0019. ダーク本文 ink を react.dev の gray-15(`#D0D3DC`)に統一する](0019-dark-ink-react-dev-gray-15.md)
 - [0020. 初期スコープの拡張(教育機会確保法を 12 法令目として追加)と不登校場面の新設](0020-expand-scope-education-opportunity-act-and-school-refusal-scene.md)
 - [0021. 「学校の保健・安全」カテゴリの新設と学校保健安全法の場面化](0021-add-school-health-safety-category.md)
+- [0022. changelog の文体(敬体)と粒度をファミリー統一する](0022-unify-changelog-register-and-granularity.md)
+- [0023. ビジュアルリグレッションテスト(VRT)を視覚変更 PR に限定して導入する(edu-evidence ADR 0024 ミラー)](0023-visual-regression-testing.md)
+- [0024. Cloudflare Web Analytics を手動スニペット方式で導入し CSP を最小限緩和する(edu-evidence ADR 0026 ミラー)](0024-web-analytics-beacon-and-csp.md)
