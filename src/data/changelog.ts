@@ -27,6 +27,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-07-18",
+    items: [
+      {
+        type: "add",
+        text: "サイト内の法令・ガイド・場面をキーワードで検索できるようにしました",
+      },
+    ],
+  },
+  {
     date: "2026-07-15",
     items: [
       {

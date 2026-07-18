@@ -13,6 +13,7 @@ const isLawsPage = path.startsWith("/laws");
 const isGuidesPage = path.startsWith("/guides");
 const isAboutPage = path.startsWith("/about");
 const isChangelogPage = path.startsWith("/changelog");
+const isSearchPage = path.startsWith("/search");
 ---
 
 <header class="site-header">
@@ -75,6 +76,16 @@ const isChangelogPage = path.startsWith("/changelog");
       >
         更新履歴
       </a>
+      <a
+        href="/search/"
+        class={isSearchPage
+          ? "text-[var(--color-ink)]"
+          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+        aria-current={isSearchPage ? "page" : undefined}
+        aria-label="検索"
+      >
+        <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </a>
       <ThemeToggle id="theme-toggle" />
     </nav>
 
@@ -102,6 +113,36 @@ const isChangelogPage = path.startsWith("/changelog");
     inert
   >
     <div class="mobile-menu-inner">
+      <form
+        class="mobile-menu-search"
+        action="/search"
+        method="get"
+        role="search"
+      >
+        <label for="mobile-menu-search-input" class="sr-only">検索</label>
+        <svg
+          class="mobile-menu-search-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input
+          id="mobile-menu-search-input"
+          type="search"
+          name="q"
+          placeholder="法令・ガイド・場面を検索…"
+          autocomplete="off"
+          enterkeyhint="search"
+        />
+      </form>
+
       <nav class="mobile-menu-nav" aria-label="サイトナビゲーション">
         <section class="mobile-menu-section">
           <h2 class="mobile-menu-section-title">Explore — 探す</h2>
