@@ -4,6 +4,7 @@ const pages = [
   { name: "home", path: "/" },
   { name: "about", path: "/about" },
   { name: "changelog", path: "/changelog" },
+  { name: "search", path: "/search" },
   { name: "scenes", path: "/scenes" },
   { name: "laws-index", path: "/laws" },
   { name: "law-detail", path: "/laws/school-education-act" },
