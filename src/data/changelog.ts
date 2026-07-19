@@ -33,6 +33,11 @@ export const changelogEntries: ChangelogEntry[] = [
         type: "add",
         text: "サイト内の法令・ガイド・場面をキーワードで検索できるようにしました",
       },
+      {
+        type: "fix",
+        text: "ダークモードの検索ページで、検索アイコン・案内文字・入力欄・検索結果が背景に沈んで読みづらかった問題を修正しました",
+        links: [{ label: "検索", href: "/search/" }],
+      },
     ],
   },
   {
