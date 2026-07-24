@@ -1,6 +1,6 @@
 # EduLaw JP
 
-日本の小学校教員向けに、教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を法令別に整理する静的ポータル。Astro 6 + React 19 + Tailwind 4 + TypeScript。
+日本の小学校教員向けに、教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を法令別に整理する静的ポータル。Astro 7 + React 19 + Tailwind 4 + TypeScript。
 
 ## 設計の核
 

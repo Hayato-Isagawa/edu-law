@@ -18,17 +18,9 @@ updates:
     ignore:
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
-      # vite 8 系は `@tailwindcss/vite@4.2.2` と非互換(BindingViteResolvePluginConfig.tsconfigPaths
-      # が欠落してビルドが落ちる)。`@tailwindcss/vite` 側が vite 8 対応を公表するまで major 更新を無視する。
+      # 現在 vite 8 系へ移行済(ADR 0025・Astro 7)。次期メジャー(vite 9)は `@tailwindcss/vite`
+      # が対応を公表するまで見送る。vite は overrides 専用で直接依存ではない。
       - dependency-name: "vite"
-        update-types: ["version-update:semver-major"]
-      # Astro 7 は既定 Markdown プロセッサが Sätteri に変わり @astrojs/markdown-remark を
-      # 同梱しなくなるため、markdown.remarkPlugins/rehypePlugins を使う既存設定でビルドが
-      # 失敗する(コンパイラも Rust 実装に移行)。@astrojs/react の major 更新もこれに追随する
-      # ため合わせて除外する。移行を計画するまで major 更新を無視する。
-      - dependency-name: "astro"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@astrojs/react"
         update-types: ["version-update:semver-major"]
     groups:
       astro-ecosystem:
