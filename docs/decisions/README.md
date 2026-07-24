@@ -62,3 +62,4 @@
 - [0022. changelog の文体(敬体)と粒度をファミリー統一する](0022-unify-changelog-register-and-granularity.md)
 - [0023. ビジュアルリグレッションテスト(VRT)を視覚変更 PR に限定して導入する(edu-evidence ADR 0024 ミラー)](0023-visual-regression-testing.md)
 - [0024. Cloudflare Web Analytics を手動スニペット方式で導入し CSP を最小限緩和する(edu-evidence ADR 0026 ミラー)](0024-web-analytics-beacon-and-csp.md)
+- [0025. Astro 7 へ移行し XSS advisory 3 件を解消する(Markdown は `processor: unified()` で維持・edu-evidence ADR 0027 ミラー)](0025-astro-7-migration.md)
