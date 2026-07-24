@@ -2,7 +2,7 @@
 
 - 状態: 採用
 - 日付: 2026-07-24
-- 関連 PR: —(本 astro 7 移行 PR。作成後に追記)
+- 関連 PR: [#131](https://github.com/Hayato-Isagawa/edu-law/pull/131)
 - 関連 ADR: edu-evidence [ADR 0027](https://github.com/Hayato-Isagawa/edu-evidence/blob/main/docs/decisions/0027-astro-7-migration.md)(原本・heavy 経路の全体像)/ edu-watch ADR 0063(light 経路の姉妹事例)/ [`ADR 0023`](0023-visual-regression-testing.md)(VRT で移行を検証)
 
 ## 背景
