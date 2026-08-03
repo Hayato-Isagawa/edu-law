@@ -24,13 +24,13 @@ const breadcrumbJsonLd = {
 };
 
 const linkClass =
-  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
 
 const chipClass =
-  "group inline-flex items-baseline gap-1.5 border border-[var(--color-line)] rounded-full px-3 min-h-[1.5rem] py-1 text-xs bg-[var(--color-bg)] motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out hover:border-[var(--color-accent)] hover:bg-[var(--color-card)] focus-visible:outline-none focus-visible:border-[var(--color-accent)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]";
+  "group inline-flex items-baseline gap-1.5 border border-line rounded-full px-3 min-h-[1.5rem] py-1 text-xs bg-bg motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out hover:border-accent hover:bg-card focus-visible:outline-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg";
 
 const chipTextHover =
-  "motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out group-hover:text-[var(--color-accent)] group-focus-visible:text-[var(--color-accent)]";
+  "motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out group-hover:text-accent group-focus-visible:text-accent";
 ---
 
 <Layout
@@ -40,12 +40,12 @@ const chipTextHover =
 >
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">
     <ol
-      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-sub"
     >
       <li><a href="/" class={linkClass}>ホーム</a></li>
       <li aria-hidden="true">/</li>
       <li>
-        <span aria-current="page" class="text-[var(--color-ink)]"
+        <span aria-current="page" class="text-ink"
           >場面から探す</span
         >
       </li>
@@ -54,22 +54,22 @@ const chipTextHover =
 
   <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
     <p
-      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+      class="font-mono text-xs uppercase tracking-widest text-accent"
     >
       Scenes — 場面から探す
     </p>
     <h1
       class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
     >
-      <span class="text-[var(--color-accent)]">場面</span>から探す
+      <span class="text-accent">場面</span>から探す
     </h1>
     <div
-      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-2"
+      class="mt-6 max-w-2xl text-sub leading-loose text-sm sm:text-base space-y-2"
     >
       <p>
-        現場の困りごとから、関連する<strong class="text-[var(--color-ink)]"
+        現場の困りごとから、関連する<strong class="text-ink"
           >法令</strong
-        >と<strong class="text-[var(--color-ink)]">公式解説・ガイド</strong
+        >と<strong class="text-ink">公式解説・ガイド</strong
         >への入口に進めます。本サイトは判断を示さず、所管法令と公的な情報の所在のみを示します。
       </p>
       <p class="text-xs">
@@ -82,15 +82,15 @@ const chipTextHover =
     {
       sceneCategories.map((cat) => (
         <div class="space-y-6">
-          <div class="border-b border-[var(--color-line)] pb-3 flex items-baseline gap-4 flex-wrap relative pl-4">
+          <div class="border-b border-line pb-3 flex items-baseline gap-4 flex-wrap relative pl-4">
             <span
               aria-hidden="true"
-              class="absolute left-0 top-1 w-[3px] h-[calc(100%-1rem)] rounded-full bg-[var(--color-accent)]"
+              class="absolute left-0 top-1 w-[3px] h-[calc(100%-1rem)] rounded-full bg-accent"
             />
             <h2 id={cat.id} class="font-black text-2xl md:text-3xl tracking-tight">
               {cat.title}
             </h2>
-            <p class="text-sm text-[var(--color-sub)]">{cat.description}</p>
+            <p class="text-sm text-sub">{cat.description}</p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -100,12 +100,12 @@ const chipTextHover =
               return (
                 <article
                   id={scene.slug}
-                  class="border border-[var(--color-line)] rounded-xl p-5 md:p-6 bg-[var(--color-card)] space-y-4 motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out focus-within:border-[var(--color-accent)]"
+                  class="border border-line rounded-xl p-5 md:p-6 bg-card space-y-4 motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out focus-within:border-accent"
                 >
                   <h3 class="font-black text-lg md:text-xl leading-snug">
                     {scene.title}
                   </h3>
-                  <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+                  <p class="text-sm text-sub leading-relaxed">
                     {scene.description}
                   </p>
 
@@ -113,7 +113,7 @@ const chipTextHover =
                     <div class="space-y-2">
                       <p
                         id={lawsLabelId}
-                        class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+                        class="font-mono text-[10px] uppercase tracking-widest text-sub"
                       >
                         関連する法令
                       </p>
@@ -139,7 +139,7 @@ const chipTextHover =
                     <div class="space-y-2">
                       <p
                         id={guidesLabelId}
-                        class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+                        class="font-mono text-[10px] uppercase tracking-widest text-sub"
                       >
                         関連するガイド
                       </p>
@@ -149,7 +149,7 @@ const chipTextHover =
                             <a href={`/guides/${g.slug}/`} class={chipClass}>
                               <span
                                 aria-hidden="true"
-                                class={`font-mono text-[9px] uppercase tracking-widest text-[var(--color-sub)] ${chipTextHover}`}
+                                class={`font-mono text-[9px] uppercase tracking-widest text-sub ${chipTextHover}`}
                               >
                                 Guide
                               </span>
@@ -170,7 +170,7 @@ const chipTextHover =
   </section>
 
   <section
-    class="pb-24 pt-8 border-t border-[var(--color-line)] text-sm leading-relaxed text-[var(--color-sub)] space-y-3"
+    class="pb-24 pt-8 border-t border-line text-sm leading-relaxed text-sub space-y-3"
   >
     <p>
       <a href="/laws/" class={linkClass}>→ 法令から探す(法令一覧)</a>

@@ -30,7 +30,7 @@ const overview = [
   { level: "07", name: "通知・通達(訓令)", subject: "所管機関・職員への命令 / 示達", basis: "国家行政組織法 14 条 2 項" },
 ];
 
-const accent = (s: string) => `<strong class="text-[var(--color-ink)]">「${s}」</strong>`;
+const accent = (s: string) => `<strong class="text-ink">「${s}」</strong>`;
 
 const details = [
   {
@@ -102,11 +102,11 @@ const details = [
 ];
 
 const linkClass =
-  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
 const labelClass =
-  "font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]";
+  "font-mono text-[11px] uppercase tracking-widest text-sub";
 const h2Class =
-  "font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4";
+  "font-mono uppercase tracking-widest text-xs text-ink mb-4";
 ---
 
 <Layout
@@ -116,29 +116,29 @@ const h2Class =
   longForm
 >
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">
-    <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]">
+    <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-sub">
       <li><a href="/" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>ホーム</a></li>
       <li aria-hidden="true">/</li>
-      <li><span class="text-[var(--color-sub)]">ガイド</span></li>
+      <li><span class="text-sub">ガイド</span></li>
       <li aria-hidden="true">/</li>
-      <li><span aria-current="page" class="text-[var(--color-ink)]">日本の法令階層</span></li>
+      <li><span aria-current="page" class="text-ink">日本の法令階層</span></li>
     </ol>
   </nav>
 
   <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
-    <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]">Guide</p>
+    <p class="font-mono text-xs uppercase tracking-widest text-accent">Guide</p>
     <h1 class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight">
-      日本の法令<span class="text-[var(--color-accent)]">階層</span>
+      日本の法令<span class="text-accent">階層</span>
     </h1>
-    <div class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3">
+    <div class="mt-6 max-w-2xl text-sub leading-loose text-sm sm:text-base space-y-3">
       <p>
-        教師が学校教育法や著作権法 35 条の条文に触れる前段として、<strong class="text-[var(--color-ink)]"
+        教師が学校教育法や著作権法 35 条の条文に触れる前段として、<strong class="text-ink"
           >憲法・法律・政令・省令・告示・通知</strong
         >がそれぞれ誰の手によって作られ、どの法令を根拠としているのかを整理します。
       </p>
       <p>
         本ページは <a href="https://laws.e-gov.go.jp/" target="_blank" rel="noopener noreferrer" class={linkClass}>
-          e-Gov 法令検索<span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+          e-Gov 法令検索<span aria-hidden="true" class="text-sub text-xs">↗</span>
         </a> の公式条文を一次ソースとし、本サイトは自前の法解釈を加えません(<a href="/about/" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>サイトの立場</a>)。
       </p>
     </div>
@@ -146,16 +146,16 @@ const h2Class =
 
   <section class="pb-12" aria-labelledby="overview-heading">
     <h2 id="overview-heading" class={h2Class}>1. 階層の全体像</h2>
-    <div class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose">
+    <div class="space-y-4 text-sm sm:text-base text-sub leading-loose">
       <p>
-        以下は上位から下位へ並べた 7 種別です。下位の規範は、上位の法令の<strong class="text-[var(--color-ink)]">実施</strong>または<strong class="text-[var(--color-ink)]">委任</strong>を根拠として定められます。
+        以下は上位から下位へ並べた 7 種別です。下位の規範は、上位の法令の<strong class="text-ink">実施</strong>または<strong class="text-ink">委任</strong>を根拠として定められます。
       </p>
-      <ol class="mt-6 space-y-4 border-l-2 border-[var(--color-line)] pl-5">
+      <ol class="mt-6 space-y-4 border-l-2 border-line pl-5">
         {overview.map((r) => (
           <li class="space-y-1">
             <p class={labelClass}>Lv. {r.level}</p>
-            <p class="text-[var(--color-ink)] font-semibold">{r.name} — {r.subject}</p>
-            <p class="text-xs text-[var(--color-sub)]">根拠: {r.basis}</p>
+            <p class="text-ink font-semibold">{r.name} — {r.subject}</p>
+            <p class="text-xs text-sub">根拠: {r.basis}</p>
           </li>
         ))}
       </ol>
@@ -166,8 +166,8 @@ const h2Class =
     <h2 id="details-heading" class={h2Class}>2. 各種別の制定主体と根拠条文</h2>
     <div class="space-y-12">
       {details.map((d) => (
-        <article aria-labelledby={d.id} class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose">
-          <h3 id={d.id} class="text-xl sm:text-2xl font-black text-[var(--color-ink)]">
+        <article aria-labelledby={d.id} class="space-y-4 text-sm sm:text-base text-sub leading-loose">
+          <h3 id={d.id} class="text-xl sm:text-2xl font-black text-ink">
             {d.number} {d.title}
           </h3>
           <div class="space-y-1">
@@ -187,7 +187,7 @@ const h2Class =
             {d.links.length === 1 ? (
               <a href={d.links[0].url} target="_blank" rel="noopener noreferrer" class={linkClass}>
                 {d.links[0].label}
-                <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+                <span aria-hidden="true" class="text-sub text-xs">↗</span>
               </a>
             ) : (
               <ul class="space-y-1.5">
@@ -195,7 +195,7 @@ const h2Class =
                   <li>
                     <a href={link.url} target="_blank" rel="noopener noreferrer" class={linkClass}>
                       {link.label}
-                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+                      <span aria-hidden="true" class="text-sub text-xs">↗</span>
                     </a>
                   </li>
                 ))}
@@ -209,30 +209,30 @@ const h2Class =
 
   <section class="pb-12" aria-labelledby="practice-heading">
     <h2 id="practice-heading" class={h2Class}>3. 教師が現場で出会う文書(参考整理)</h2>
-    <div class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose">
+    <div class="space-y-4 text-sm sm:text-base text-sub leading-loose">
       <p>学校に届く文書のうち、本ガイドの階層に対応するものを、文書名から階層番号へ引き当てる形で整理します。</p>
       <ul class="space-y-2 pl-5 list-disc">
         <li>
-          <span class="text-[var(--color-ink)] font-semibold">「○○省令」「○○府令」</span>
+          <span class="text-ink font-semibold">「○○省令」「○○府令」</span>
           — Lv. 04(<a href="#rank-ministerial-order-heading" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>2.4 省令 / 府令</a>)
         </li>
         <li>
-          <span class="text-[var(--color-ink)] font-semibold">「学習指導要領」「○○告示」</span>
+          <span class="text-ink font-semibold">「学習指導要領」「○○告示」</span>
           — Lv. 06(<a href="#rank-notice-heading" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>2.6 告示</a>)。本サイトは学習指導要領の法的拘束力に関する学説対立には立ち入りません。
         </li>
         <li>
-          <span class="text-[var(--color-ink)] font-semibold">「○○通知」「○○事務連絡」「○○通達」「○○訓令」</span>
+          <span class="text-ink font-semibold">「○○通知」「○○事務連絡」「○○通達」「○○訓令」</span>
           — Lv. 07(<a href="#rank-directive-heading" class={linkClass.replace(" inline-flex items-baseline gap-1", "")}>2.7 通知・通達(訓令)</a>)
         </li>
       </ul>
     </div>
   </section>
 
-  <footer class="mt-12 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2" aria-labelledby="guide-footer-heading">
+  <footer class="mt-12 mb-16 border-t border-line pt-6 text-xs text-sub leading-relaxed space-y-2" aria-labelledby="guide-footer-heading">
     <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
     <p>
       本ページの記述は、すべて <a href="https://laws.e-gov.go.jp/" target="_blank" rel="noopener noreferrer" class={linkClass}>
-        e-Gov 法令検索<span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+        e-Gov 法令検索<span aria-hidden="true" class="text-sub text-xs">↗</span>
       </a> 上で公開されている公式条文に基づきます。
     </p>
     <p>

@@ -4,8 +4,8 @@ import { changelogEntries, typeLabel } from "../data/changelog";
 ---
 
 <Layout title="更新履歴 — EduLaw JP">
-  <section class="pt-10 sm:pt-14 md:pt-20 lg:pt-28 pb-10 sm:pb-14 md:pb-20 border-b border-[var(--color-line)]">
-    <p class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-accent)]">
+  <section class="pt-10 sm:pt-14 md:pt-20 lg:pt-28 pb-10 sm:pb-14 md:pb-20 border-b border-line">
+    <p class="font-mono text-[10px] uppercase tracking-widest text-accent">
       Changelog
     </p>
     <h1
@@ -13,7 +13,7 @@ import { changelogEntries, typeLabel } from "../data/changelog";
     >
       更新履歴
     </h1>
-    <p class="mt-6 text-[var(--color-sub)] text-sm sm:text-base leading-loose max-w-2xl">
+    <p class="mt-6 text-sub text-sm sm:text-base leading-loose max-w-2xl">
       サイトの機能追加・公式解説の更新・修正を時系列で記録しています。
     </p>
   </section>
@@ -21,8 +21,8 @@ import { changelogEntries, typeLabel } from "../data/changelog";
   <section class="pb-24">
     {
       changelogEntries.map((entry) => (
-        <div id={`d-${entry.date}`} class="border-t border-[var(--color-line)] py-10 space-y-4">
-          <div class="font-mono text-sm text-[var(--color-accent)]">
+        <div id={`d-${entry.date}`} class="border-t border-line py-10 space-y-4">
+          <div class="font-mono text-sm text-accent">
             {entry.date}
           </div>
           <ul class="space-y-3">
@@ -54,6 +54,6 @@ import { changelogEntries, typeLabel } from "../data/changelog";
         </div>
       ))
     }
-    <div class="border-t border-[var(--color-line)]"></div>
+    <div class="border-t border-line"></div>
   </section>
 </Layout>

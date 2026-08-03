@@ -115,9 +115,9 @@ const sections: GuideSection[] = [
 ];
 
 const linkClass =
-  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
 const breadcrumbLinkClass =
-  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
 ---
 
 <Layout
@@ -128,14 +128,14 @@ const breadcrumbLinkClass =
 >
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">
     <ol
-      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-sub"
     >
       <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
       <li aria-hidden="true">/</li>
       <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
       <li aria-hidden="true">/</li>
       <li>
-        <span aria-current="page" class="text-[var(--color-ink)]"
+        <span aria-current="page" class="text-ink"
           >学校管理下の事故と補償</span
         >
       </li>
@@ -144,7 +144,7 @@ const breadcrumbLinkClass =
 
   <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
     <p
-      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+      class="font-mono text-xs uppercase tracking-widest text-accent"
     >
       Guide
     </p>
@@ -152,15 +152,15 @@ const breadcrumbLinkClass =
       class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
     >
       学校で起きた事故の<br />補償と責任をめぐる<span
-        class="text-[var(--color-accent)]">公的な情報</span
+        class="text-accent">公的な情報</span
       >
     </h1>
     <div
-      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+      class="mt-6 max-w-2xl text-sub leading-loose text-sm sm:text-base space-y-3"
     >
       <p>
         学校の管理下で児童生徒等が事故にあったとき、その<strong
-          class="text-[var(--color-ink)]">補償</strong
+          class="text-ink">補償</strong
         >を担う公的な制度(災害共済給付)と、学校の対応の指針があります。このページは、それらがどこにあるかを整理します。
       </p>
       <p>
@@ -177,13 +177,13 @@ const breadcrumbLinkClass =
       sections.map((section) => (
         <section
           aria-labelledby={section.id}
-          class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+          class="space-y-4 text-sm sm:text-base text-sub leading-loose"
         >
           <h2
             id={section.id}
-            class="text-xl sm:text-2xl font-black text-[var(--color-ink)]"
+            class="text-xl sm:text-2xl font-black text-ink"
           >
-            <span class="text-[var(--color-accent)] font-mono text-base sm:text-lg">
+            <span class="text-accent font-mono text-base sm:text-lg">
               {section.number}
             </span>{" "}
             {section.title}
@@ -203,12 +203,12 @@ const breadcrumbLinkClass =
                     {link.label}
                     {link.format === "pdf" ? "(PDF)" : ""}
                     {!isInternal && (
-                      <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                      <span aria-hidden="true" class="text-sub text-xs">
                         ↗
                       </span>
                     )}
                   </a>
-                  <span class="block text-xs text-[var(--color-sub)]">
+                  <span class="block text-xs text-sub">
                     {link.publisher}
                   </span>
                 </li>
@@ -221,7 +221,7 @@ const breadcrumbLinkClass =
   </div>
 
   <footer
-    class="mt-4 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    class="mt-4 mb-16 border-t border-line pt-6 text-xs text-sub leading-relaxed space-y-2"
     aria-labelledby="guide-footer-heading"
   >
     <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>

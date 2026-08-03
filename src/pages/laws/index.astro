@@ -29,27 +29,27 @@ function formatLabel(format?: "pdf" | "html"): string {
   description="教師の実務文脈で参照頻度の高い 12 法令について、e-Gov 法令検索の本文と所管省庁の公式解説への入口を整理しています。"
 >
   <section class="pt-10 sm:pt-14 md:pt-20 pb-8 sm:pb-12">
-    <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]">
+    <p class="font-mono text-xs uppercase tracking-widest text-accent">
       Laws — Index
     </p>
     <h1
       class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
     >
-      法令<span class="text-[var(--color-accent)]">一覧</span>
+      法令<span class="text-accent">一覧</span>
     </h1>
     <div
-      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+      class="mt-6 max-w-2xl text-sub leading-loose text-sm sm:text-base space-y-3"
     >
       <p>
         教師の実務文脈で参照頻度の高い 12 法令について、<strong
-          class="text-[var(--color-ink)]">e-Gov 法令検索の本文</strong
-        >と<strong class="text-[var(--color-ink)]">所管省庁の公式解説</strong
+          class="text-ink">e-Gov 法令検索の本文</strong
+        >と<strong class="text-ink">所管省庁の公式解説</strong
         >への入口を整理しています。
       </p>
       <p class="text-sm">
         <a
           href="/about/"
-          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
           >→ 引用ルールとサイトの立場(About)</a
         >
       </p>
@@ -58,46 +58,46 @@ function formatLabel(format?: "pdf" | "html"): string {
 
   <section class="pb-24" aria-labelledby="laws-list-heading">
     <h2 id="laws-list-heading" class="sr-only">12 法令の入口一覧</h2>
-    <ul class="border-t border-[var(--color-line)]">
+    <ul class="border-t border-line">
       {
         laws.map((law, i) => (
-          <li class="border-b border-[var(--color-line)] py-8 space-y-4">
+          <li class="border-b border-line py-8 space-y-4">
             <header class="space-y-2">
-              <p class="font-mono text-xs text-[var(--color-sub)]">
+              <p class="font-mono text-xs text-sub">
                 {String(i + 1).padStart(2, "0")}
               </p>
               <h3 class="text-2xl md:text-3xl font-black tracking-tight leading-tight">
                 <a
                   href={`/laws/${law.id}/`}
-                  class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+                  class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
                 >
                   {law.data.title}
                 </a>
               </h3>
-              <p class="text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
+              <p class="text-sm sm:text-base text-sub leading-relaxed">
                 {law.data.summary}
               </p>
             </header>
 
             <div class="space-y-2 text-sm">
-              <p class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]">
+              <p class="font-mono text-[11px] uppercase tracking-widest text-sub">
                 法令本文
               </p>
               <a
                 href={law.data.eGovUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+                class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               >
                 e-Gov 法令検索で本文を読む
-                <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                <span aria-hidden="true" class="text-sub text-xs">
                   ↗
                 </span>
               </a>
             </div>
 
             <div class="space-y-2 text-sm">
-              <p class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]">
+              <p class="font-mono text-[11px] uppercase tracking-widest text-sub">
                 公式解説
               </p>
               <ul class="space-y-1.5">
@@ -111,12 +111,12 @@ function formatLabel(format?: "pdf" | "html"): string {
                         href={exp.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+                        class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
                       >
                         <span>
                           {publisherLabel}『{exp.title}』{fmt}
                         </span>
-                        <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">
+                        <span aria-hidden="true" class="text-sub text-xs">
                           ↗
                         </span>
                       </a>
@@ -126,7 +126,7 @@ function formatLabel(format?: "pdf" | "html"): string {
               </ul>
             </div>
 
-            <p class="text-xs text-[var(--color-sub)]">
+            <p class="text-xs text-sub">
               最終確認:{" "}
               <time datetime={law.data.lastVerified}>
                 {formatDay(law.data.lastVerified)}

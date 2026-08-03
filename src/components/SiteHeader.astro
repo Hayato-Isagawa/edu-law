@@ -24,18 +24,18 @@ const isSearchPage = path.startsWith("/search");
       href="/"
       class="flex items-center gap-2 whitespace-nowrap font-black text-lg sm:text-xl tracking-tight shrink-0"
     >
-      <span class="text-[var(--color-accent)] inline-flex shrink-0">
+      <span class="text-accent inline-flex shrink-0">
         <Logo class="w-8 h-8" />
       </span>
-      EduLaw <span class="text-[var(--color-accent)]">JP</span>
+      EduLaw <span class="text-accent">JP</span>
     </a>
 
     <nav class="hidden lg:flex items-center gap-6 text-sm" aria-label="メインナビゲーション">
       <a
         href="/scenes/"
         class={isScenesPage
-          ? "text-[var(--color-ink)] font-semibold"
-          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+          ? "text-ink font-semibold"
+          : "text-sub hover:text-ink transition"}
         aria-current={isScenesPage ? "page" : undefined}
       >
         場面から探す
@@ -43,8 +43,8 @@ const isSearchPage = path.startsWith("/search");
       <a
         href="/laws/"
         class={isLawsPage
-          ? "text-[var(--color-ink)] font-semibold"
-          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+          ? "text-ink font-semibold"
+          : "text-sub hover:text-ink transition"}
         aria-current={isLawsPage ? "page" : undefined}
       >
         法令一覧
@@ -52,8 +52,8 @@ const isSearchPage = path.startsWith("/search");
       <a
         href="/guides/"
         class={isGuidesPage
-          ? "text-[var(--color-ink)] font-semibold"
-          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+          ? "text-ink font-semibold"
+          : "text-sub hover:text-ink transition"}
         aria-current={isGuidesPage ? "page" : undefined}
       >
         ガイド
@@ -61,8 +61,8 @@ const isSearchPage = path.startsWith("/search");
       <a
         href="/about/"
         class={isAboutPage
-          ? "text-[var(--color-ink)] font-semibold"
-          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+          ? "text-ink font-semibold"
+          : "text-sub hover:text-ink transition"}
         aria-current={isAboutPage ? "page" : undefined}
       >
         サイトについて
@@ -70,8 +70,8 @@ const isSearchPage = path.startsWith("/search");
       <a
         href="/changelog/"
         class={isChangelogPage
-          ? "text-[var(--color-ink)] font-semibold"
-          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+          ? "text-ink font-semibold"
+          : "text-sub hover:text-ink transition"}
         aria-current={isChangelogPage ? "page" : undefined}
       >
         更新履歴
@@ -79,8 +79,8 @@ const isSearchPage = path.startsWith("/search");
       <a
         href="/search/"
         class={isSearchPage
-          ? "text-[var(--color-ink)]"
-          : "text-[var(--color-sub)] hover:text-[var(--color-ink)] transition"}
+          ? "text-ink"
+          : "text-sub hover:text-ink transition"}
         aria-current={isSearchPage ? "page" : undefined}
         aria-label="検索"
       >
@@ -97,9 +97,9 @@ const isSearchPage = path.startsWith("/search");
       aria-expanded="false"
       aria-controls="mobile-menu"
     >
-      <span class="block w-6 h-[2px] bg-[var(--color-ink)] transition-transform duration-200 origin-center"></span>
-      <span class="block w-6 h-[2px] bg-[var(--color-ink)] transition-opacity duration-200"></span>
-      <span class="block w-6 h-[2px] bg-[var(--color-ink)] transition-transform duration-200 origin-center"></span>
+      <span class="block w-6 h-[2px] bg-ink transition-transform duration-200 origin-center"></span>
+      <span class="block w-6 h-[2px] bg-ink transition-opacity duration-200"></span>
+      <span class="block w-6 h-[2px] bg-ink transition-transform duration-200 origin-center"></span>
     </button>
   </div>
 
