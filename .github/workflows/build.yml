@@ -29,5 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Design token conventions
+        run: npm run check:tokens
+
       - name: Build
         run: npm run build

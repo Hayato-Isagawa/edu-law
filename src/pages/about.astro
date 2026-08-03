@@ -9,18 +9,18 @@ const pageDescription =
 <Layout title={pageTitle} description={pageDescription}>
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">
     <ol
-      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-sub"
     >
       <li>
         <a
           href="/"
-          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
           >ホーム</a
         >
       </li>
       <li aria-hidden="true">/</li>
       <li>
-        <span aria-current="page" class="text-[var(--color-ink)]"
+        <span aria-current="page" class="text-ink"
           >このサイトについて</span
         >
       </li>
@@ -29,27 +29,27 @@ const pageDescription =
 
   <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
     <p
-      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+      class="font-mono text-xs uppercase tracking-widest text-accent"
     >
       About
     </p>
     <h1
       class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
     >
-      EduLaw JP <span class="text-[var(--color-accent)]">について</span>
+      EduLaw JP <span class="text-accent">について</span>
     </h1>
     <div
-      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base space-y-3"
+      class="mt-6 max-w-2xl text-sub leading-loose text-sm sm:text-base space-y-3"
     >
       <p>
         EduLaw JP は、教師の実務文脈で参照頻度の高い<strong
-          class="text-[var(--color-ink)]">教育関連法と公式解説</strong
+          class="text-ink">教育関連法と公式解説</strong
         >を、法令別に整理する静的ポータルです。
       </p>
       <p>
-        本ページではサイトの<strong class="text-[var(--color-ink)]">立場</strong
-        >・<strong class="text-[var(--color-ink)]">引用の根拠</strong>・<strong
-          class="text-[var(--color-ink)]">誤りの報告窓口</strong
+        本ページではサイトの<strong class="text-ink">立場</strong
+        >・<strong class="text-ink">引用の根拠</strong>・<strong
+          class="text-ink">誤りの報告窓口</strong
         >を明示します。
       </p>
     </div>
@@ -58,21 +58,21 @@ const pageDescription =
   <section class="pb-12" aria-labelledby="sister-heading">
     <h2
       id="sister-heading"
-      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+      class="font-mono uppercase tracking-widest text-xs text-ink mb-4"
     >
       姉妹サイト — 1 本の木
     </h2>
     <p
-      class="max-w-2xl text-sm sm:text-base text-[var(--color-sub)] leading-loose mb-6"
+      class="max-w-2xl text-sm sm:text-base text-sub leading-loose mb-6"
     >
       EduEvidence JP・EduWatch JP・<strong
-        class="text-[var(--color-ink)]">EduLaw JP</strong
+        class="text-ink">EduLaw JP</strong
       > は、教員の仕事を 1 本の木に見立てた姉妹サイトです。光を受けて学びを育てる「成熟した葉」、日々新しい情報が芽吹く「双葉」、足元から制度を支える「根」——それぞれが独立したサイトとして、1 本の木を形づくります。
     </p>
     <div class="grid sm:grid-cols-3 gap-5">
-      <div class="border border-[var(--color-line)] rounded-xl p-5 space-y-1.5">
+      <div class="border border-line rounded-xl p-5 space-y-1.5">
         <div
-          class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+          class="font-mono text-[10px] uppercase tracking-widest text-sub"
         >
           成熟した葉
         </div>
@@ -81,17 +81,17 @@ const pageDescription =
             href="https://edu-evidence.org"
             target="_blank"
             rel="noopener noreferrer"
-            class="sister-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+            class="sister-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
             >EduEvidence JP</a
           >
         </div>
-        <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+        <p class="text-sm text-sub leading-relaxed">
           研究で確かめられた指導法・コラムを長期に蓄積するエビデンスポータル（ストック型）。
         </p>
       </div>
-      <div class="border border-[var(--color-line)] rounded-xl p-5 space-y-1.5">
+      <div class="border border-line rounded-xl p-5 space-y-1.5">
         <div
-          class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+          class="font-mono text-[10px] uppercase tracking-widest text-sub"
         >
           双葉
         </div>
@@ -100,24 +100,24 @@ const pageDescription =
             href="https://news.edu-evidence.org"
             target="_blank"
             rel="noopener noreferrer"
-            class="sister-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+            class="sister-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
             >EduWatch JP</a
           >
         </div>
-        <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+        <p class="text-sm text-sub leading-relaxed">
           教育の一次情報を日次収集し、週次ダイジェストで論点を整理（フロー型）。
         </p>
       </div>
-      <div class="border border-[var(--color-line)] rounded-xl p-5 space-y-1.5">
+      <div class="border border-line rounded-xl p-5 space-y-1.5">
         <div
-          class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-sub)]"
+          class="font-mono text-[10px] uppercase tracking-widest text-sub"
         >
           根
         </div>
         <div class="font-bold">
           <span aria-current="page">EduLaw JP（このサイト）</span>
         </div>
-        <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+        <p class="text-sm text-sub leading-relaxed">
           教育関連法と公式解説を法令別に整理する、制度の基盤。
         </p>
       </div>
@@ -127,18 +127,18 @@ const pageDescription =
   <section class="pb-12" aria-labelledby="stance-heading">
     <h2
       id="stance-heading"
-      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+      class="font-mono uppercase tracking-widest text-xs text-ink mb-4"
     >
       1. サイトの立場 — 自前の法解釈は加えない
     </h2>
     <div
-      class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+      class="space-y-4 text-sm sm:text-base text-sub leading-loose"
     >
       <p>
-        EduLaw JP が提供するのは、<strong class="text-[var(--color-ink)]"
+        EduLaw JP が提供するのは、<strong class="text-ink"
           >法令本文への e-Gov 法令検索リンク</strong
-        > + <strong class="text-[var(--color-ink)]">公式解説の見出し整理</strong
-        > + <strong class="text-[var(--color-ink)]"
+        > + <strong class="text-ink">公式解説の見出し整理</strong
+        > + <strong class="text-ink"
           >所管省庁の公式 URL への誘導</strong
         >の 3 点のみです。
       </p>
@@ -148,7 +148,7 @@ const pageDescription =
 
       <div class="mt-6 space-y-2">
         <p
-          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+          class="font-mono text-[11px] uppercase tracking-widest text-sub"
         >
           許容する記述
         </p>
@@ -165,7 +165,7 @@ const pageDescription =
 
       <div class="mt-4 space-y-2">
         <p
-          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+          class="font-mono text-[11px] uppercase tracking-widest text-sub"
         >
           加えない記述
         </p>
@@ -186,12 +186,12 @@ const pageDescription =
   <section class="pb-12" aria-labelledby="citation-basis-heading">
     <h2
       id="citation-basis-heading"
-      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+      class="font-mono uppercase tracking-widest text-xs text-ink mb-4"
     >
       2. 引用の根拠 — 公共データ利用規約 第 1.0 版・著作権法 13 条
     </h2>
     <div
-      class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+      class="space-y-4 text-sm sm:text-base text-sub leading-loose"
     >
       <p>
         EduLaw JP が扱う引用元には、性格の異なる 2 種類が混在します。
@@ -199,20 +199,20 @@ const pageDescription =
 
       <div class="mt-2 space-y-2">
         <p
-          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+          class="font-mono text-[11px] uppercase tracking-widest text-sub"
         >
           法令本文(条文)
         </p>
         <p>
           著作権法第 13 条により著作権の対象外で、複製・改変は自由です。本サイトは出典として<strong
-            class="text-[var(--color-ink)]">「e-Gov 法令検索」</strong
+            class="text-ink">「e-Gov 法令検索」</strong
           >を明示し、該当法令の e-Gov ページへ直リンクします。
         </p>
       </div>
 
       <div class="mt-2 space-y-2">
         <p
-          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+          class="font-mono text-[11px] uppercase tracking-widest text-sub"
         >
           公式解説(文科省・文化庁・厚労省 等の PDF / HTML)
         </p>
@@ -221,10 +221,10 @@ const pageDescription =
             href="https://www.digital.go.jp/resources/open_data/public_data_license_v1.0"
             target="_blank"
             rel="noopener noreferrer"
-            class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+            class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
           >
             公共データ利用規約 第 1.0 版
-            <span aria-hidden="true" class="text-[var(--color-sub)] text-xs"
+            <span aria-hidden="true" class="text-sub text-xs"
               >↗</span
             >
           </a>
@@ -234,7 +234,7 @@ const pageDescription =
 
       <div class="mt-4 space-y-2">
         <p
-          class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+          class="font-mono text-[11px] uppercase tracking-widest text-sub"
         >
           サイト側での実装
         </p>
@@ -260,8 +260,8 @@ const pageDescription =
           href="https://github.com/Hayato-Isagawa/edu-law/blob/main/LICENSE"
           target="_blank"
           rel="noopener noreferrer"
-          class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
-          >LICENSE<span aria-hidden="true" class="text-[var(--color-sub)] text-xs"
+          class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+          >LICENSE<span aria-hidden="true" class="text-sub text-xs"
             >↗</span
           ></a
         >
@@ -273,17 +273,17 @@ const pageDescription =
   <section class="pb-12" aria-labelledby="error-report-heading">
     <h2
       id="error-report-heading"
-      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+      class="font-mono uppercase tracking-widest text-xs text-ink mb-4"
     >
       3. 誤りの報告窓口 — law@edu-evidence.org
     </h2>
     <div
-      class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+      class="space-y-4 text-sm sm:text-base text-sub leading-loose"
     >
       <p>
         以下のいずれかを見つけた場合、<a
           href="mailto:law@edu-evidence.org"
-          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
           >law@edu-evidence.org</a
         > へご連絡ください。
       </p>
@@ -299,7 +299,7 @@ const pageDescription =
       </ul>
 
       <p class="mt-4">
-        報告受領後、<strong class="text-[var(--color-ink)]"
+        報告受領後、<strong class="text-ink"
           >24 時間以内</strong
         >に該当箇所を訂正・削除・非表示にします。
       </p>
@@ -312,15 +312,15 @@ const pageDescription =
   <section class="pb-12" aria-labelledby="operator-heading">
     <h2
       id="operator-heading"
-      class="font-mono uppercase tracking-widest text-xs text-[var(--color-ink)] mb-4"
+      class="font-mono uppercase tracking-widest text-xs text-ink mb-4"
     >
       4. 運営者
     </h2>
     <div
-      class="space-y-4 text-sm sm:text-base text-[var(--color-sub)] leading-loose"
+      class="space-y-4 text-sm sm:text-base text-sub leading-loose"
     >
       <p>
-        <strong class="text-[var(--color-ink)]">Isagawa Hayato</strong>
+        <strong class="text-ink">Isagawa Hayato</strong>
         が個人で運営しています。元小学校教諭(2011〜2022、現場経験約 10
         年)。学級担任のほか、非常勤講師・理科専科・特別支援学級担任を経験しました。姉妹サイト
         EduEvidence JP・EduWatch JP も同一の運営者です。
@@ -329,7 +329,7 @@ const pageDescription =
   </section>
 
   <footer
-    class="mt-12 mb-16 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    class="mt-12 mb-16 border-t border-line pt-6 text-xs text-sub leading-relaxed space-y-2"
     aria-labelledby="about-footer-heading"
   >
     <h2 id="about-footer-heading" class="sr-only">本ページの根拠</h2>
@@ -338,10 +338,10 @@ const pageDescription =
         href="https://github.com/Hayato-Isagawa/edu-law/blob/main/docs/decisions/0002-citation-rules-and-policy.md"
         target="_blank"
         rel="noopener noreferrer"
-        class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+        class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
         >引用ルールと運用ポリシー<span
           aria-hidden="true"
-          class="text-[var(--color-sub)] text-xs">↗</span
+          class="text-sub text-xs">↗</span
         ></a
       > に基づきます。
     </p>

@@ -71,12 +71,12 @@ const breadcrumbJsonLd = {
 >
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">
     <ol
-      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-sub"
     >
       <li>
         <a
           href="/"
-          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
           >ホーム</a
         >
       </li>
@@ -84,13 +84,13 @@ const breadcrumbJsonLd = {
       <li>
         <a
           href="/laws/"
-          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+          class="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
           >法令一覧</a
         >
       </li>
       <li aria-hidden="true">/</li>
       <li>
-        <span aria-current="page" class="text-[var(--color-ink)]"
+        <span aria-current="page" class="text-ink"
           >{law.data.title}</span
         >
       </li>
@@ -99,7 +99,7 @@ const breadcrumbJsonLd = {
 
   <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
     <p
-      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+      class="font-mono text-xs uppercase tracking-widest text-accent"
     >
       Laws — Detail
     </p>
@@ -109,21 +109,21 @@ const breadcrumbJsonLd = {
       {law.data.title}
     </h1>
     <p
-      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base"
+      class="mt-6 max-w-2xl text-sub leading-loose text-sm sm:text-base"
     >
       {law.data.summary}
     </p>
   </section>
 
   <section
-    class="mb-12 rounded-xl border border-[var(--color-line)] bg-[var(--color-card)] p-6 sm:p-8 space-y-6"
+    class="mb-12 rounded-xl border border-line bg-card p-6 sm:p-8 space-y-6"
     aria-labelledby="entry-points-heading"
   >
     <h2 id="entry-points-heading" class="sr-only">公式情報源への入口</h2>
 
     <div class="space-y-2 text-sm">
       <p
-        class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+        class="font-mono text-[11px] uppercase tracking-widest text-sub"
       >
         法令本文
       </p>
@@ -131,16 +131,16 @@ const breadcrumbJsonLd = {
         href={law.data.eGovUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+        class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
       >
         e-Gov 法令検索で本文を読む
-        <span aria-hidden="true" class="text-[var(--color-sub)] text-xs">↗</span>
+        <span aria-hidden="true" class="text-sub text-xs">↗</span>
       </a>
     </div>
 
     <div class="space-y-2 text-sm">
       <p
-        class="font-mono text-[11px] uppercase tracking-widest text-[var(--color-sub)]"
+        class="font-mono text-[11px] uppercase tracking-widest text-sub"
       >
         公式解説
       </p>
@@ -156,20 +156,20 @@ const breadcrumbJsonLd = {
                   href={exp.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+                  class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
                 >
                   <span>
                     {publisherLabel}『{exp.title}』{fmt}
                   </span>
                   <span
                     aria-hidden="true"
-                    class="text-[var(--color-sub)] text-xs"
+                    class="text-sub text-xs"
                   >
                     ↗
                   </span>
                 </a>
                 {exp.publishedAt && (
-                  <span class="ml-2 text-xs text-[var(--color-sub)]">
+                  <span class="ml-2 text-xs text-sub">
                     <time datetime={exp.publishedAt}>
                       {formatDay(exp.publishedAt)}
                     </time>
@@ -188,7 +188,7 @@ const breadcrumbJsonLd = {
   </section>
 
   <footer
-    class="mt-12 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-sub)] leading-relaxed space-y-2"
+    class="mt-12 border-t border-line pt-6 text-xs text-sub leading-relaxed space-y-2"
     aria-labelledby="source-policy-heading"
   >
     <h2 id="source-policy-heading" class="sr-only">出典と運用ポリシー</h2>
@@ -212,7 +212,7 @@ const breadcrumbJsonLd = {
   <p class="mt-8 mb-16 text-sm">
     <a
       href="/laws/"
-      class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+      class="link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
     >
       <span aria-hidden="true">←</span>
       法令一覧へ戻る

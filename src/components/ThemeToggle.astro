@@ -10,7 +10,7 @@ const { id = "theme-toggle", class: className = "" } = Astro.props;
 <button
   id={id}
   type="button"
-  class={`theme-toggle relative flex items-center justify-center w-8 h-8 text-[var(--color-sub)] hover:text-[var(--color-ink)] transition-colors ${className}`}
+  class={`theme-toggle relative flex items-center justify-center w-8 h-8 text-sub hover:text-ink transition-colors ${className}`}
   aria-label="ダークモードに切り替え"
   aria-pressed="false"
 >

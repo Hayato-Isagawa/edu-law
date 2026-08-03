@@ -109,7 +109,7 @@ const teacherSubgroups: { label: string; items: Guide[] }[] = [
 ];
 
 const linkClass =
-  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2";
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
 ---
 
 <Layout
@@ -119,19 +119,19 @@ const linkClass =
 >
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">
     <ol
-      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-sub)]"
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-sub"
     >
       <li><a href="/" class={linkClass}>ホーム</a></li>
       <li aria-hidden="true">/</li>
       <li>
-        <span aria-current="page" class="text-[var(--color-ink)]">ガイド</span>
+        <span aria-current="page" class="text-ink">ガイド</span>
       </li>
     </ol>
   </nav>
 
   <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
     <p
-      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+      class="font-mono text-xs uppercase tracking-widest text-accent"
     >
       Guides
     </p>
@@ -141,7 +141,7 @@ const linkClass =
       ガイド
     </h1>
     <p
-      class="mt-6 max-w-2xl text-[var(--color-sub)] leading-loose text-sm sm:text-base"
+      class="mt-6 max-w-2xl text-sub leading-loose text-sm sm:text-base"
     >
       法令本文に触れる前提となる基礎と、現場の場面ごとに公的情報の所在を整理したまとめです。
     </p>
@@ -149,20 +149,20 @@ const linkClass =
 
   <section class="mt-12 first:mt-0">
     <h2
-      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+      class="font-mono text-xs uppercase tracking-widest text-accent"
     >
       読む前の基礎
     </h2>
-    <div class="mt-4 border-t border-[var(--color-line)]">
+    <div class="mt-4 border-t border-line">
       {
         foundationGuides.map((guide) => (
-          <article class="py-6 border-b border-[var(--color-line)]">
-            <h3 class="text-xl sm:text-2xl font-black text-[var(--color-ink)]">
+          <article class="py-6 border-b border-line">
+            <h3 class="text-xl sm:text-2xl font-black text-ink">
               <a href={guide.href} class={linkClass}>
                 {guide.title}
               </a>
             </h3>
-            <p class="mt-2 max-w-2xl text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
+            <p class="mt-2 max-w-2xl text-sm sm:text-base text-sub leading-relaxed">
               {guide.description}
             </p>
             <a href={guide.href} class={`${linkClass} mt-3 inline-block text-sm`}>
@@ -176,25 +176,25 @@ const linkClass =
 
   <section class="mt-12">
     <h2
-      class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]"
+      class="font-mono text-xs uppercase tracking-widest text-accent"
     >
       教師を守る
     </h2>
     {
       teacherSubgroups.map((sub) => (
         <div class="mt-6 first:mt-4">
-          <h3 class="text-sm font-bold tracking-wide text-[var(--color-ink)]">
+          <h3 class="text-sm font-bold tracking-wide text-ink">
             {sub.label}
           </h3>
-          <div class="mt-3 border-t border-[var(--color-line)]">
+          <div class="mt-3 border-t border-line">
             {sub.items.map((guide) => (
-              <article class="py-6 border-b border-[var(--color-line)]">
-                <h4 class="text-xl sm:text-2xl font-black text-[var(--color-ink)]">
+              <article class="py-6 border-b border-line">
+                <h4 class="text-xl sm:text-2xl font-black text-ink">
                   <a href={guide.href} class={linkClass}>
                     {guide.title}
                   </a>
                 </h4>
-                <p class="mt-2 max-w-2xl text-sm sm:text-base text-[var(--color-sub)] leading-relaxed">
+                <p class="mt-2 max-w-2xl text-sm sm:text-base text-sub leading-relaxed">
                   {guide.description}
                 </p>
                 <a

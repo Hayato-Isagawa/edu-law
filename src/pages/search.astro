@@ -5,7 +5,7 @@ import Layout from "../layouts/Layout.astro";
 <Layout title="検索 — EduLaw JP" description="法令・ガイド・場面を検索">
   <section class="py-10 xs:py-14 sm:py-20 md:py-28 space-y-8">
     <div class="space-y-2">
-      <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]">
+      <p class="font-mono text-xs uppercase tracking-widest text-accent">
         Search
       </p>
       <h1 class="font-black text-5xl md:text-6xl leading-[1.15] tracking-tight">
@@ -13,8 +13,8 @@ import Layout from "../layouts/Layout.astro";
       </h1>
     </div>
     <div id="search" class="max-w-2xl"></div>
-    <p id="search-fallback" class="text-sm text-[var(--color-sub)] hidden">
-      検索機能はビルド後の環境で動作します。<code class="font-mono text-xs bg-[var(--color-card)] px-1.5 py-0.5 rounded">npm run build && npm run preview</code> で確認できます。
+    <p id="search-fallback" class="text-sm text-sub hidden">
+      検索機能はビルド後の環境で動作します。<code class="font-mono text-xs bg-card px-1.5 py-0.5 rounded">npm run build && npm run preview</code> で確認できます。
     </p>
   </section>
 

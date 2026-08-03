@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
+/* トークンは @theme に置く。ここに置いて初めて Tailwind が text-ink /       */
+/* bg-card / border-line 等のユーティリティを生成する。:root に書いていた    */
+/* 間はユーティリティが無く、434 箇所が text-[var(--color-sub)] のような     */
+/* 任意値で書かれていた(edu-evidence ADR 0031 と同じ是正)。                  */
+/* 名前と値は docs/BRAND.md がファミリー 5 サイトで共有しているため変えない。*/
 @theme {
   --breakpoint-xs: 30rem;
-}
 
-@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
-:root {
   --color-bg: #faf9f5;
   --color-ink: #1a1a1a;
   --color-sub: #6b6b66;
@@ -15,15 +16,19 @@
   --color-accent: #6b4423;
   --color-accent-hover: color-mix(in oklab, var(--color-accent) 85%, black);
 
-  --badge-mext: #8b6f4e;
-  --badge-cfa: #a07642;
-  --badge-bunkacho: #6f6a3e;
-  --badge-egov: #5e5a52;
+  /* 発行元バッジ。--color- 接頭辞にするとユーティリティ(text-badge-mext 等)が
+     生成される。BRAND.md 非共有の edu-law 固有トークンなので改名してよい。 */
+  --color-badge-mext: #8b6f4e;
+  --color-badge-cfa: #a07642;
+  --color-badge-bunkacho: #6f6a3e;
+  --color-badge-egov: #5e5a52;
 
   --font-serif: "Hiragino Mincho ProN", "Yu Mincho", serif;
   --font-sans: system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", "Meiryo", sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
 }
+
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 [data-theme="dark"] {
   --color-bg: #16181d;
@@ -34,10 +39,10 @@
   --color-accent: #c89a7a;
   --color-accent-hover: color-mix(in oklab, var(--color-accent) 85%, white);
 
-  --badge-mext: #c6a880;
-  --badge-cfa: #d4a574;
-  --badge-bunkacho: #a8a472;
-  --badge-egov: #908a80;
+  --color-badge-mext: #c6a880;
+  --color-badge-cfa: #d4a574;
+  --color-badge-bunkacho: #a8a472;
+  --color-badge-egov: #908a80;
 }
 
 html {

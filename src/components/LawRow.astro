@@ -26,36 +26,36 @@ const publisherBadgeConfig = {
     label: "MEXT",
     fullLabel: "文部科学省",
     style:
-      "text-[var(--badge-mext)] border-[var(--badge-mext)]/40 bg-[var(--badge-mext)]/10",
+      "text-badge-mext border-badge-mext/40 bg-badge-mext/10",
   },
   cfa: {
     label: "CFA",
     fullLabel: "こども家庭庁",
     style:
-      "text-[var(--badge-cfa)] border-[var(--badge-cfa)]/40 bg-[var(--badge-cfa)]/10",
+      "text-badge-cfa border-badge-cfa/40 bg-badge-cfa/10",
   },
   bunkacho: {
     label: "BUNKACHO",
     fullLabel: "文化庁",
     style:
-      "text-[var(--badge-bunkacho)] border-[var(--badge-bunkacho)]/40 bg-[var(--badge-bunkacho)]/10",
+      "text-badge-bunkacho border-badge-bunkacho/40 bg-badge-bunkacho/10",
   },
   egov: {
     label: "E-GOV",
     fullLabel: "e-Gov 法令検索",
     style:
-      "text-[var(--badge-egov)] border-[var(--badge-egov)]/40 bg-[var(--badge-egov)]/10",
+      "text-badge-egov border-badge-egov/40 bg-badge-egov/10",
   },
 } as const;
 ---
 
 <a class="law-row group" href={href} data-variant={variant}>
-  <div class="col-span-2 sm:col-span-1 font-mono text-sm text-[var(--color-sub)]" data-num>
+  <div class="col-span-2 sm:col-span-1 font-mono text-sm text-sub" data-num>
     {num}
   </div>
   <div class="col-span-10 sm:col-span-8 space-y-1">
     <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-      <h3 class="text-lg sm:text-xl font-black tracking-tight leading-snug text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
+      <h3 class="text-lg sm:text-xl font-black tracking-tight leading-snug text-ink group-hover:text-accent transition-colors">
         {title}
       </h3>
       {badge && (
@@ -69,12 +69,12 @@ const publisherBadgeConfig = {
       )}
     </div>
     {summary && (
-      <p class="text-sm text-[var(--color-sub)] leading-relaxed">
+      <p class="text-sm text-sub leading-relaxed">
         {summary}
       </p>
     )}
   </div>
-  <div class="col-span-12 sm:col-span-3 sm:text-right font-mono text-xs text-[var(--color-sub)] flex sm:justify-end items-center gap-2">
+  <div class="col-span-12 sm:col-span-3 sm:text-right font-mono text-xs text-sub flex sm:justify-end items-center gap-2">
     {meta && <span>{meta}</span>}
     <span
       aria-hidden="true"
