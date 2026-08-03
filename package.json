@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@playwright/test": "^1.62.0",
+    "@playwright/test": "^1.62.1",
     "pagefind": "^1.5.2",
     "rehype-external-links": "^3.0.0",
     "satori": "^0.29.0",
