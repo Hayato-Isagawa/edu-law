@@ -21,3 +21,6 @@ dist-main
 # Local security assessment notes (kept outside the repository)
 VULN_ASSESSMENT_*.md
 SUPPLY_CHAIN_AUDIT_*.md
+
+# Wrangler の作業ディレクトリ
+.wrangler/

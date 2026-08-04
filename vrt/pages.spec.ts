@@ -20,6 +20,7 @@ const pages = [
   { name: "guide-school-accident", path: "/guides/school-accident" },
   { name: "guide-teacher-mental-health", path: "/guides/teacher-mental-health" },
   { name: "guide-work-style-reform", path: "/guides/work-style-reform" },
+  { name: "not-found", path: "/404" },
 ];
 
 for (const p of pages) {

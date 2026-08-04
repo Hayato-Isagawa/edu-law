@@ -27,6 +27,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-08-05",
+    items: [
+      {
+        type: "fix",
+        text: "存在しない URL を開いたときに、トップページがそのまま表示されて「見つからなかった」と分からない状態になっていました。専用のページを出すようにしました",
+      },
+    ],
+  },
+  {
     date: "2026-08-04",
     items: [
       {
