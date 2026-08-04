@@ -1,0 +1,48 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const pageTitle = "ページが見つかりません — EduLaw JP";
+const pageDescription =
+  "お探しのページは見つかりませんでした。URL が変わったか、削除された可能性があります。";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <section class="py-20 sm:py-32 md:py-40 text-center space-y-8">
+    <div class="space-y-2">
+      <p class="font-mono text-xs uppercase tracking-widest text-accent">
+        404 — Not Found
+      </p>
+      <h1 class="font-black text-6xl md:text-8xl tracking-tight text-sub">
+        404
+      </h1>
+    </div>
+    <p class="text-sub text-base md:text-lg leading-relaxed max-w-md mx-auto">
+      お探しのページは見つかりませんでした。<br />
+      URL が変わったか、削除された可能性があります。
+    </p>
+    <div
+      class="flex flex-wrap items-center justify-center gap-3 text-sm"
+    >
+      <a
+        href="/"
+        class="group inline-flex items-center gap-2 border border-line text-sub rounded-full px-6 py-2.5 hover:border-accent hover:text-accent motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out"
+      >
+        トップページへ戻る
+        <span
+          class="inline-block motion-safe:transition-transform group-hover:translate-x-1"
+          >→</span
+        >
+      </a>
+      <a
+        href="/laws/"
+        class="group inline-flex items-center gap-2 border border-line text-sub rounded-full px-6 py-2.5 hover:border-accent hover:text-accent motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out"
+      >
+        法令一覧へ
+        <span
+          class="inline-block motion-safe:transition-transform group-hover:translate-x-1"
+          >→</span
+        >
+      </a>
+    </div>
+  </section>
+</Layout>
