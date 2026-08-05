@@ -8,6 +8,11 @@ import { unified } from "@astrojs/markdown-remark";
 
 export default defineConfig({
   site: "https://law.edu-evidence.org",
+  // dev サーバーのポートはリポジトリごとに固定する。既定の 4321 だと、
+  // 別リポの dev サーバーが先に取っていた場合に Astro が黙って番号を繰り上げ、
+  // 「起動したつもりのポートに別プロジェクトが居る」状態になる。
+  // 4321 は設定を持たないプロジェクト用に空けてある。
+  server: { port: 4324 },
   // Astro 7 は空白を JSX ルールで除去する('jsx' 既定)。v6 の挙動を維持するため true に固定する。
   compressHTML: true,
   integrations: [react(), sitemap()],
