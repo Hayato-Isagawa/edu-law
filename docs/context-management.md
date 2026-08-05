@@ -69,7 +69,7 @@ Claude Code とのセッションは context window の上限に達すると圧�
 ### サイト稼働状況
 
 - ページ数 / 公式解説リンクのカバー法令数
-- Cloudflare Pages 稼働状況など
+- Cloudflare Workers デプロイ状況など
 
 ### Next Action
 
@@ -82,7 +82,7 @@ Claude Code とのセッションは context window の上限に達すると圧�
 - **検証**: 静的検証(build / check)+ 動的観測(本番 Lighthouse 等)を一覧。
 - **実装ノート(逸脱・判断・トレードオフ・未解決)**: Plan Mode で合意した仕様と実装中の判断の乖離を埋めるサブ節。Design decisions / Deviations / Tradeoffs / Open questions の 4 カテゴリを意識する。ADR ほど重くない判断を主対象とし、ADR で残すべき重大決定はそちらに昇格させる。逸脱なしの場合も「逸脱なし」と明示(空欄禁止)。由来は Anthropic Claude Code engineer Thariq Shihipar(@TRQ212)の 2026-05-18 X 投稿。
 - **採択された規約 / 仕組み**: memory rule、ADR、docs ガイドラインなど、後続セッションが参照する規約を明示する欄。なければ省略可。
-- **サイト稼働状況**: ページ数・公式解説カバレッジ・Cloudflare Pages デプロイ状況などスナップショット。本欄は EduLaw JP では「6 法令のうち何法令の公式解説リンクが整備済か」を主指標とする。
+- **サイト稼働状況**: ページ数・公式解説カバレッジ・Cloudflare Workers デプロイ状況などスナップショット。本欄は EduLaw JP では「6 法令のうち何法令の公式解説リンクが整備済か」を主指標とする。
 - **Next Action**: 次セッションの起点。短期(優先順)/ 中長期 / 横断課題で分けてもよい。
 
 ### 過去エントリの扱い

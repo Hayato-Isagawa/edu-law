@@ -68,9 +68,11 @@ npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮
 
 ## ホスティング
 
-Cloudflare Pages(GitHub `main` ブランチ連携で自動デプロイ)。
+Cloudflare Workers の静的アセット配信(Workers Builds が GitHub `main` を監視して自動デプロイ)。
+設定は `wrangler.jsonc`。2026-08-05 に Cloudflare Pages から移行した。
 ドメイン: `law.edu-evidence.org`(`edu-evidence.org` サブドメイン)
-セキュリティヘッダー: `public/_headers`
+セキュリティヘッダー: `public/_headers`(Workers でもそのまま解釈される)
+リダイレクト: `public/_redirects`(同上)
 ボット設定: `public/robots.txt`
 
 ## 連絡先
