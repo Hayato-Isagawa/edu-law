@@ -1,4 +1,5 @@
 ---
+import Kicker from "../../components/Kicker.astro";
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { sceneCategories, getAllScenes } from "../../data/scenes";
@@ -53,11 +54,9 @@ const chipTextHover =
   </nav>
 
   <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
-    <p
-      class="font-mono text-xs uppercase tracking-widest text-accent"
-    >
+    <Kicker>
       Scenes — 場面から探す
-    </p>
+    </Kicker>
     <h1
       class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
     >
@@ -111,12 +110,9 @@ const chipTextHover =
 
                   {scene.lawSlugs.length > 0 && (
                     <div class="space-y-2">
-                      <p
-                        id={lawsLabelId}
-                        class="font-mono text-[10px] uppercase tracking-widest text-sub"
-                      >
+                      <Kicker tone="sub" size="2xs" id={lawsLabelId}>
                         関連する法令
-                      </p>
+                      </Kicker>
                       <ul aria-labelledby={lawsLabelId} class="flex flex-wrap gap-2">
                         {scene.lawSlugs.map((slug) => {
                           const title = lawMap.get(slug);
@@ -137,12 +133,9 @@ const chipTextHover =
 
                   {scene.guides && scene.guides.length > 0 && (
                     <div class="space-y-2">
-                      <p
-                        id={guidesLabelId}
-                        class="font-mono text-[10px] uppercase tracking-widest text-sub"
-                      >
+                      <Kicker tone="sub" size="2xs" id={guidesLabelId}>
                         関連するガイド
-                      </p>
+                      </Kicker>
                       <ul aria-labelledby={guidesLabelId} class="flex flex-wrap gap-2">
                         {scene.guides.map((g) => (
                           <li>

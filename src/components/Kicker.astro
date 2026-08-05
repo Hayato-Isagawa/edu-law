@@ -1,0 +1,65 @@
+---
+/**
+ * セクションの上に置く mono 大文字ラベル。
+ *
+ * このリポジトリでは同じ意味の指定が 12 通りに分かれており、内容が同じで
+ * 語順だけ違うものも複数あった。実測した内訳(出典バッジの dt 4 件は役割が
+ * 違うので対象外):
+ *
+ *   24  p    text-xs     text-accent
+ *    9  p    text-[11px] text-sub
+ *    5  h2   text-xs     text-ink   + mb-4
+ *    3  div  text-[10px] text-sub
+ *    2  h2   text-xs     text-accent
+ *    2  h2   text-xs     text-ink
+ *    2  p    text-[10px] text-sub
+ *    1  p    text-[10px] text-accent
+ *
+ * 姉妹サイト edu-evidence の同名コンポーネントに合わせつつ、こちらに実在する
+ * 亜種(h2・text-[11px]・text-ink)を prop で受けられるようにしている。
+ */
+interface Props {
+  tone?: "accent" | "sub" | "ink";
+  size?: "xs" | "2xs" | "sm";
+  /**
+   * 出力要素。見出しとして使っている箇所があるため h2 を許す。
+   * インライン文脈やフレックス子要素では p を出すと不正な入れ子になる。
+   */
+  as?: "p" | "span" | "div" | "h2" | "dt";
+  /** 外側の余白など、呼び出し側の文脈に属するクラス。 */
+  class?: string;
+  /** id など、呼び出し側が付ける属性はそのまま通す(aria の参照先に使う箇所がある)。 */
+  [key: string]: unknown;
+}
+
+const {
+  tone = "accent",
+  size = "xs",
+  as: Tag = "p",
+  class: className,
+  ...rest
+} = Astro.props;
+
+const sizes = {
+  xs: "text-xs",
+  sm: "text-[11px]",
+  "2xs": "text-[10px]",
+} as const;
+const tones = {
+  accent: "text-accent",
+  sub: "text-sub",
+  ink: "text-ink",
+} as const;
+---
+
+<Tag
+  {...rest}
+  class:list={[
+    "font-mono uppercase tracking-widest",
+    sizes[size],
+    tones[tone],
+    className,
+  ]}
+>
+  <slot />
+</Tag>
