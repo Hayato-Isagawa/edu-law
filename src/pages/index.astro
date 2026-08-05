@@ -1,4 +1,5 @@
 ---
+import Kicker from "../components/Kicker.astro";
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import LawRow from "../components/LawRow.astro";
@@ -87,11 +88,9 @@ const highlights = [
   description="公式に立ち返り、教師の判断を支える教育法ポータル。教育関連法と公式解説(文科省・文化庁・厚労省・e-Gov)を法令別に整理し、自前の法解釈は加えず、公式 URL への入口に徹します。"
 >
   <section class="pt-10 sm:pt-14 md:pt-20 lg:pt-28 pb-10 sm:pb-14 md:pb-20">
-    <p
-      class="font-mono text-xs uppercase tracking-widest text-accent"
-    >
+    <Kicker>
       Statutes and official commentary, one path
-    </p>
+    </Kicker>
     <p class="mt-1 text-xs text-sub">
       小学校教員のための教育法ポータル
     </p>
@@ -122,11 +121,9 @@ const highlights = [
   >
     <div class="grid grid-cols-12 gap-6 mb-6">
       <div class="col-span-12 min-[900px]:col-span-8 space-y-2">
-        <p
-          class="font-mono text-xs uppercase tracking-widest text-accent"
-        >
+        <Kicker>
           Scenes — 場面から探す
-        </p>
+        </Kicker>
         <h2
           id="scenes-cta-heading"
           class="font-black text-3xl md:text-4xl tracking-tight leading-[1.2]"
@@ -167,9 +164,9 @@ const highlights = [
                 aria-labelledby={titleId}
                 class="group block h-full rounded-xl border border-line bg-card p-5 space-y-3 motion-safe:transition motion-safe:duration-200 motion-safe:ease-out hover:border-accent focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
               >
-                <div class="font-mono text-[10px] tracking-widest uppercase text-sub">
+                <Kicker as="div" tone="sub" size="2xs">
                   {categoryTitle}
-                </div>
+                </Kicker>
                 <h3
                   id={titleId}
                   class="font-black text-base leading-snug motion-safe:transition group-hover:text-accent group-focus-visible:text-accent"
@@ -211,11 +208,9 @@ const highlights = [
   >
     <header class="mb-6 flex flex-wrap items-baseline justify-between gap-4">
       <div>
-        <p
-          class="font-mono text-xs uppercase tracking-widest text-accent"
-        >
+        <Kicker>
           Laws — 対象法令
-        </p>
+        </Kicker>
         <h2
           id="laws-heading"
           class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
@@ -253,11 +248,9 @@ const highlights = [
   >
     <header class="mb-6 flex flex-wrap items-baseline justify-between gap-4">
       <div>
-        <p
-          class="font-mono text-xs uppercase tracking-widest text-accent"
-        >
+        <Kicker>
           Updates — 最近の更新
-        </p>
+        </Kicker>
         <h2
           id="updates-heading"
           class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
@@ -313,11 +306,9 @@ const highlights = [
     aria-labelledby="highlights-heading"
   >
     <header class="mb-6">
-      <p
-        class="font-mono text-xs uppercase tracking-widest text-accent"
-      >
+      <Kicker>
         Official Highlights — 公式解説の代表
-      </p>
+      </Kicker>
       <h2
         id="highlights-heading"
         class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"
@@ -371,11 +362,9 @@ const highlights = [
     class="py-12 border-t border-line"
     aria-labelledby="stance-heading"
   >
-    <p
-      class="font-mono text-xs uppercase tracking-widest text-accent"
-    >
+    <Kicker>
       Our Stance — 編集方針
-    </p>
+    </Kicker>
     <h2
       id="stance-heading"
       class="mt-2 text-2xl sm:text-3xl font-black tracking-tight"

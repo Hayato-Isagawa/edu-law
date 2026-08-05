@@ -1,4 +1,5 @@
 ---
+import Kicker from "../../components/Kicker.astro";
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { PUBLISHER_LABELS } from "../../data/publishers";
@@ -29,9 +30,9 @@ function formatLabel(format?: "pdf" | "html"): string {
   description="教師の実務文脈で参照頻度の高い 12 法令について、e-Gov 法令検索の本文と所管省庁の公式解説への入口を整理しています。"
 >
   <section class="pt-10 sm:pt-14 md:pt-20 pb-8 sm:pb-12">
-    <p class="font-mono text-xs uppercase tracking-widest text-accent">
+    <Kicker>
       Laws — Index
-    </p>
+    </Kicker>
     <h1
       class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
     >
@@ -80,9 +81,9 @@ function formatLabel(format?: "pdf" | "html"): string {
             </header>
 
             <div class="space-y-2 text-sm">
-              <p class="font-mono text-[11px] uppercase tracking-widest text-sub">
+              <Kicker tone="sub" size="sm">
                 法令本文
-              </p>
+              </Kicker>
               <a
                 href={law.data.eGovUrl}
                 target="_blank"
@@ -97,9 +98,9 @@ function formatLabel(format?: "pdf" | "html"): string {
             </div>
 
             <div class="space-y-2 text-sm">
-              <p class="font-mono text-[11px] uppercase tracking-widest text-sub">
+              <Kicker tone="sub" size="sm">
                 公式解説
-              </p>
+              </Kicker>
               <ul class="space-y-1.5">
                 {law.data.officialExplanations.map((exp) => {
                   const publisherLabel =

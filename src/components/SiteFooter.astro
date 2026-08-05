@@ -1,4 +1,5 @@
 ---
+import Kicker from "../components/Kicker.astro";
 import Logo from "./Logo.astro";
 ---
 
@@ -20,12 +21,9 @@ import Logo from "./Logo.astro";
     </div>
 
     <section aria-labelledby="footer-site" class="space-y-3">
-      <h2
-        id="footer-site"
-        class="font-mono uppercase tracking-widest text-ink text-xs"
-      >
+      <Kicker as="h2" tone="ink" id="footer-site">
         Site — サイト内
-      </h2>
+      </Kicker>
       <ul class="space-y-1.5">
         <li><a href="/scenes/" class="link-underline">場面から探す</a></li>
         <li><a href="/laws/" class="link-underline">法令一覧</a></li>
@@ -40,12 +38,9 @@ import Logo from "./Logo.astro";
     </section>
 
     <section aria-labelledby="footer-sister-legal" class="space-y-3">
-      <h2
-        id="footer-sister-legal"
-        class="font-mono uppercase tracking-widest text-ink text-xs"
-      >
+      <Kicker as="h2" tone="ink" id="footer-sister-legal">
         Sister Sites & Legal
-      </h2>
+      </Kicker>
       <ul class="space-y-1.5">
         <li>
           <a href="https://edu-evidence.org" class="link-underline">EduEvidence JP</a>

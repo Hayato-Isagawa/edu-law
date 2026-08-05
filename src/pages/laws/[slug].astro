@@ -1,4 +1,5 @@
 ---
+import Kicker from "../../components/Kicker.astro";
 import { getCollection, render, type CollectionEntry } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { PUBLISHER_LABELS } from "../../data/publishers";
@@ -98,11 +99,9 @@ const breadcrumbJsonLd = {
   </nav>
 
   <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
-    <p
-      class="font-mono text-xs uppercase tracking-widest text-accent"
-    >
+    <Kicker>
       Laws — Detail
-    </p>
+    </Kicker>
     <h1
       class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
     >
@@ -122,11 +121,9 @@ const breadcrumbJsonLd = {
     <h2 id="entry-points-heading" class="sr-only">公式情報源への入口</h2>
 
     <div class="space-y-2 text-sm">
-      <p
-        class="font-mono text-[11px] uppercase tracking-widest text-sub"
-      >
+      <Kicker tone="sub" size="sm">
         法令本文
-      </p>
+      </Kicker>
       <a
         href={law.data.eGovUrl}
         target="_blank"
@@ -139,11 +136,9 @@ const breadcrumbJsonLd = {
     </div>
 
     <div class="space-y-2 text-sm">
-      <p
-        class="font-mono text-[11px] uppercase tracking-widest text-sub"
-      >
+      <Kicker tone="sub" size="sm">
         公式解説
-      </p>
+      </Kicker>
       <ul class="space-y-2">
         {
           law.data.officialExplanations.map((exp) => {
