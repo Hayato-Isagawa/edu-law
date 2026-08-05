@@ -75,6 +75,10 @@ Cloudflare Workers の静的アセット配信(Workers Builds が GitHub `main` 
 リダイレクト: `public/_redirects`(同上)
 ボット設定: `public/robots.txt`
 
+**Cloudflare のメールアドレス難読化は Workers では効かない**。Pages 配信時は `mailto:`
+が `/cdn-cgi/l/email-protection#…` に置換されていたが、Workers では生のアドレスが出る。
+不具合ではなく Scrape Shield の仕様で、受容すると決めている(edu-evidence ADR 0032)。
+
 ## 連絡先
 
 `law@edu-evidence.org`(個人 Gmail に転送)。具体的な転送先アドレスは Cloudflare Email Routing 管理画面に保持し、リポジトリ・README・docs に記載しない(spam リスク回避)。
