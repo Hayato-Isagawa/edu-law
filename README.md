@@ -39,10 +39,10 @@
 
 | 分類 | 技術 |
 |------|------|
-| フレームワーク | [Astro](https://astro.build/) 6 |
+| フレームワーク | [Astro](https://astro.build/) 7 |
 | UI | [React](https://react.dev/) 19 + [Tailwind CSS](https://tailwindcss.com/) 4 |
 | 言語 | TypeScript |
-| ホスティング | [Cloudflare Pages](https://pages.cloudflare.com/) |
+| ホスティング | [Cloudflare Workers](https://developers.cloudflare.com/workers/static-assets/)(静的アセット配信) |
 | ドメイン | `law.edu-evidence.org`(edu-evidence.org サブドメイン) |
 
 ## セットアップ
@@ -80,7 +80,8 @@ docs/
 └── security/           # セキュリティ関連ドキュメント
 
 public/
-├── _headers        # Cloudflare Pages セキュリティヘッダー
+├── .assetsignore   # Workers の配信対象から外すもの
+├── _headers        # セキュリティヘッダー
 ├── _redirects      # 旧 URL からの 301(場面軸 IA 移行)
 ├── favicon.svg     # 最小ブランドマーク(根モチーフ本体は src/components/Logo.astro)
 ├── logo.svg
