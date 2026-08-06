@@ -32,7 +32,7 @@ npm ci
 npm run dev      # 開発サーバー(localhost:4324。ファミリー各リポで固定・4321 は未設定プロジェクト用に空けている)
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
-npm run check    # Astro 型チェック
+npm run check    # Astro 型チェック(CI の required check「Build site」に含まれる)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
 

@@ -32,5 +32,11 @@ jobs:
       - name: Design token conventions
         run: npm run check:tokens
 
+      # astro check は errors でのみ非ゼロ終了する(既定の minimumFailingSeverity=error)。
+      # 現在 hints が 22 件あるが落ちない。build より前に置いて、型が壊れている
+      # ときはビルド成果物を作る前に止める。
+      - name: Type check
+        run: npm run check
+
       - name: Build
         run: npm run build
