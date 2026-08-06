@@ -29,7 +29,7 @@ npm ci
 ## ビルド・テスト
 
 ```bash
-npm run dev      # 開発サーバー(localhost:4321)
+npm run dev      # 開発サーバー(localhost:4324。ファミリー各リポで固定・4321 は未設定プロジェクト用に空けている)
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
 npm run check    # Astro 型チェック

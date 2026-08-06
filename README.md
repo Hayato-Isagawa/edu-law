@@ -47,7 +47,7 @@
 
 ## セットアップ
 
-Node.js 24 系を `.tool-versions` で固定(`nodejs 24.17.0`)。[mise](https://mise.jdx.dev/) を推奨。
+Node.js 24 系を `.tool-versions` で固定(`nodejs 24.19.0`)。[mise](https://mise.jdx.dev/) を推奨。
 
 ```bash
 git clone https://github.com/Hayato-Isagawa/edu-law.git
@@ -56,7 +56,7 @@ cd edu-law
 mise install   # .tool-versions に従って Node 24 を導入
 npm ci         # 依存関係をロックから厳密復元
 
-npm run dev    # 開発サーバー(localhost:4321)
+npm run dev    # 開発サーバー(localhost:4324。ファミリー各リポで固定・4321 は未設定プロジェクト用に空けている)
 npm run build  # 本番ビルド
 npm run check  # Astro 型チェック
 ```

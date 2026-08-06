@@ -19,15 +19,15 @@ export default defineConfig({
     },
   },
   use: {
-    baseURL: "http://localhost:4173",
+    baseURL: "http://localhost:4175",
   },
   projects: [
     { name: "desktop", use: { viewport: { width: 1280, height: 800 } } },
     { name: "mobile", use: { viewport: { width: 390, height: 844 } } },
   ],
   webServer: {
-    command: `npx serve ${dist} -l 4173`,
-    port: 4173,
+    command: `npx serve ${dist} -l 4175`,
+    port: 4175,
     reuseExistingServer: !process.env.CI,
   },
 });
