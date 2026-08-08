@@ -33,8 +33,22 @@ npm run dev      # 開発サーバー(localhost:4324。ファミリー各リポ�
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
 npm run check    # Astro 型チェック(CI の required check「Build site」に含まれる)
+npm run test:e2e # Playwright(現状 a11y のみ。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
+
+## アクセシビリティ検査(a11y)
+
+`e2e/a11y.spec.ts` が **dist の全ページ**を axe にかける(`.github/workflows/e2e.yml` が PR ごとに実行)。
+
+- **ページ一覧は dist から動的に列挙する**。姉妹リポ(evi / watch)は代表 8 / 5 ページのハードコードだが、
+  このリポは法令とガイドが増えていく前提なので、追加したページが黙って対象から漏れる方式は採らない
+- **ライト / ダークの双方を検査する**。ダーク側だけで落ちる配色(dark 変種の付け忘れ)を取り逃がさないため。
+  導入時に実際、トップの CTA ボタン(白文字 on アクセント = 2.51:1)と更新履歴ラベル(-700 系 = 2.94〜3.53:1)が
+  ダーク側だけで落ちた
+- **既知違反の allowlist は置いていない**。姉妹 2 リポは持っているが中身は空で、実際に許容しているものが無い。
+  空の allowlist は「後で足せる穴」でしかないので、許容が必要になった時点で理由とともに作る
+- 判定は critical / serious のみ。moderate 以下は落とさない
 
 ## 対象法令 — 12 法令
 
