@@ -18,8 +18,11 @@
 
   /* 発行元バッジ。--color- 接頭辞にするとユーティリティ(text-badge-mext 等)が
      生成される。BRAND.md 非共有の edu-law 固有トークンなので改名してよい。 */
-  --color-badge-mext: #8b6f4e;
-  --color-badge-cfa: #a07642;
+  /* ライト背景(#faf9f5)に対して 4.5:1 を満たす値にしてある。トップの凡例は
+     11px なので大きい文字の緩和(3:1)は使えない。旧値は mext 4.45 / cfa 3.86 で
+     どちらも不足していた(bunkacho 5.24 / egov 6.51 は元から充足)。 */
+  --color-badge-mext: #876c4c;
+  --color-badge-cfa: #906a3b;
   --color-badge-bunkacho: #6f6a3e;
   --color-badge-egov: #5e5a52;
 

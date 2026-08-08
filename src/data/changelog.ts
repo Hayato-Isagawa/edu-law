@@ -18,14 +18,25 @@ export interface ChangelogEntry {
   items: ChangelogItem[];
 }
 
+// dark 変種は必須。-700 系はダーク背景でコントラストが 2.94〜3.53 しかなく、
+// 小さい文字(12px)の基準 4.5:1 を満たさない。-400 系で 6.21〜10.31 になる。
 export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
-  add: { label: "追加", color: "text-emerald-700" },
-  update: { label: "更新", color: "text-amber-700" },
-  fix: { label: "修正", color: "text-rose-700" },
+  add: { label: "追加", color: "text-emerald-700 dark:text-emerald-400" },
+  update: { label: "更新", color: "text-amber-700 dark:text-amber-400" },
+  fix: { label: "修正", color: "text-rose-700 dark:text-rose-400" },
   remove: { label: "削除", color: "text-[var(--color-sub)]" },
 };
 
 export const changelogEntries: ChangelogEntry[] = [
+  {
+    date: "2026-08-09",
+    items: [
+      {
+        type: "fix",
+        text: "ダークモードで「全19件の場面を見る」ボタンの文字と、更新履歴の「追加・更新・修正」ラベルが背景に沈んで読みづらかったのを直しました。トップページの省庁ラベル(MEXT・CFA)の色も濃くしました",
+      },
+    ],
+  },
   {
     date: "2026-08-08",
     items: [
