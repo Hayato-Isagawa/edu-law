@@ -27,6 +27,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-08-08",
+    items: [
+      {
+        type: "fix",
+        text: "Safari でお気に入り・ブックマークに登録したときに、サイトのアイコンが出ず空白になっていたのを直しました",
+      },
+    ],
+  },
+  {
     date: "2026-08-05",
     items: [
       {
