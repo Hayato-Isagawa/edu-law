@@ -14,10 +14,15 @@ on:
       # 法令本文・ガイドは src/content にあるので、これらを足しても
       # コンテンツの追記・修正では起動しない。
       - "src/pages/**"
-      # 更新履歴は PR ごとに 1 行増える(rule 8)。VRT の対象ページからは
-      # 外してあるので、ここで走らせても得るものが無い。
+      # 更新履歴は PR ごとに 1 行増える(rule 8)。その描画は VRT の撮影範囲に
+      # 残していない(`/changelog` は対象リストに無く、トップの「最近の更新」は
+      # リストを隠して撮る。理由は vrt/pages.spec.ts 冒頭)。撮っていないものの
+      # 変更で起動しても得るものが無いので、ページとデータの両方を除外する。
+      #
+      # データ側の除外は src/data/** の後ろに置くこと。paths の否定は後勝ち。
       - "!src/pages/changelog.astro"
       - "src/data/**"
+      - "!src/data/changelog.ts"
       - "astro.config.*"
       - "vrt/**"
       - "playwright.vrt.config.ts"
