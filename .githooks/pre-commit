@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Repo-tracked Git pre-commit hook — block direct commits to main/master.
+# Catches edits coming through any tool (Cursor, vim, plain `git commit`, etc.)
+# that the Claude Code hook cannot see.
+#
+# The server-side ruleset still refuses the push, so this is not the last line
+# of defence -- it just fails at commit time instead of after a round trip.
+#
+# Bypass for the rare hotfix case: `git commit --no-verify`.
+# Auto-installed via `npm install` (see package.json `scripts.prepare`).
+
+set -euo pipefail
+
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+
+case "$branch" in
+  main|master)
+    {
+      echo "[pre-commit] BLOCKED: direct commit on '$branch' is forbidden."
+      echo "[pre-commit] Move the change to a feature branch:"
+      echo "    git stash"
+      echo "    git checkout -b <type>/<short-description>"
+      echo "    git stash pop"
+      echo "    git commit ..."
+      echo "[pre-commit] To bypass intentionally (rare hotfix only): git commit --no-verify"
+    } >&2
+    exit 1
+    ;;
+esac
+
+exit 0
