@@ -73,7 +73,12 @@ npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮
 
 共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー)。edu-law には e2e が無く、これが唯一の自動視覚検出系統となる:
 
-- **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 の 2 projects、`maxDiffPixelRatio: 0.01`、アニメーション無効)
+- **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 の 2 projects、`maxDiffPixelRatio: 0.001`、`retries: 0`、アニメーション無効)
+- **閾値は実測で決めている**。同一ビルド同士の撮り比べは差分 0(閾値 0 で 38 件全通過 × 2 回)。
+  一方 `h2` の `letter-spacing` を 0.06em 変える実験では、旧閾値 0.01 だと 38 件中 4 件しか
+  落ちなかった(0.001 では 29 件)。**全画面撮影に対して 1% は緩すぎる**。
+  実際 #160 で省庁ラベルの色を変えたときも、11px の文字 4 個だったので旧閾値では検出されなかった
+- **リトライは入れない**。差分が実測 0 なら、リトライは間欠的な問題を握り潰すだけになる
 - **対象**: `vrt/pages.spec.ts` がテンプレート代表 18 URL(トップ / about / changelog / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本)をフルページ撮影。テンプレートを追加したら代表 URL を 1 行追記する
 - **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で `src/layouts/**`・`src/components/**`・`src/styles/**`・`astro.config.*`・`vrt/**`・`playwright.vrt.config.ts` に限定起動。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)
 - **比較方式(案A)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため
