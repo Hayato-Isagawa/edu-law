@@ -33,7 +33,7 @@ npm run dev      # 開発サーバー(localhost:4324。ファミリー各リポ�
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
 npm run check    # Astro 型チェック(CI の required check「Build site」に含まれる)
-npm run test:e2e # Playwright(現状 a11y のみ。要: 先に npm run build)
+npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
 
@@ -49,6 +49,30 @@ npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮
 - **既知違反の allowlist は置いていない**。姉妹 2 リポは持っているが中身は空で、実際に許容しているものが無い。
   空の allowlist は「後で足せる穴」でしかないので、許容が必要になった時点で理由とともに作る
 - 判定は critical / serious のみ。moderate 以下は落とさない
+
+## 機能テスト(E2E)
+
+`e2e/` の残り 3 本。a11y と同じワークフローで走る。
+
+- **`search.spec.ts`** — pagefind が「置いてある」ではなく「引ける」ことを見る。
+  検索は `npm run build` 後段の `npx pagefind --site dist` が dist/pagefind/ を作り、
+  ページ側の script がそれを読む。**索引の生成が飛んでも UI は入力欄を描いたまま
+  0 件を返すだけ**なので、ページの表示だけを見るテストでは壊れていることに気づけない
+  (姉妹リポ edu-evidence の検索テストは実際そこまでしか見ていない)
+- **`navigation.spec.ts`** — 主要導線と、**件数表示が実態と一致すること**。
+  「対象の N 法令」は約束そのものなので、宣言と実際の法令数がずれたら記載の誤りになる。
+  404 は 2026-08-05 に直した不具合(存在しない URL でトップがそのまま出ていた)の再発防止
+- **`official-links.spec.ts`** — 12 法令すべてに e-Gov へのリンクがあること、
+  別タブで開く外部リンクが `rel="noopener"` を持つこと。
+  **このサイトの機能要件は外部リンクが正しいことそのもの**なので、付随的な品質ではない。
+  リンク先の生死は週次の link-check(lychee)が見る
+
+### 検索テストを書くときの注意
+
+pagefind は**日本語を分割して部分一致させる**ので、和文の造語では 0 件にならない。
+「ぬりかべこんにゃくざむらい」で 11 件返る(実測)。0 件を確かめたいときは索引に無いことが
+確実な ASCII 列(`zzqqxwv`)を使う。また 1 ページにつき本文と見出しアンカーで複数の結果が
+出るため、件数を固定値で書かない。
 
 ## 対象法令 — 12 法令
 
