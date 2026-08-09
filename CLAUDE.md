@@ -33,6 +33,7 @@ npm run dev      # 開発サーバー(localhost:4324。ファミリー各リポ�
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
 npm run check    # Astro 型チェック(CI の required check「Build site」に含まれる)
+npm run test:hooks # .claude/hooks/ の回帰テスト(CI の required check「Build site」に含まれる)
 npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
@@ -73,6 +74,22 @@ pagefind は**日本語を分割して部分一致させる**ので、和文の�
 「ぬりかべこんにゃくざむらい」で 11 件返る(実測)。0 件を確かめたいときは索引に無いことが
 確実な ASCII 列(`zzqqxwv`)を使う。また 1 ページにつき本文と見出しアンカーで複数の結果が
 出るため、件数を固定値で書かない。
+
+## frontmatter 不変性ガード
+
+`.claude/hooks/pre-edit-frontmatter-immutable.cjs` が `src/content/laws/*.md` への
+Edit / MultiEdit を検査し、保護フィールド(`title` / `order` / `eGovUrl` /
+`officialExplanations[].url` / `lastVerified` / `publishedAt` / `retrievedAt`)と
+編集断片中の URL 集合が変わるときだけ確認を挟む(`permissionDecision: "ask"`。ブロックではない)。
+
+**このサイトでは URL と識別子そのものが商品**なのに、既存の検査系はどれも誤りを構造的に検出できない:
+e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文字違えば別の実在法令を指し、
+週次 link-check(lychee)は 200 を返す。`astro check` は型が正しく、e2e / vrt は正常に描画される。
+`lastVerified` が黙って進めば stale-check は「未確認を確認済み」と報告する。
+
+回帰テストは `.claude/hooks/__tests__/` に置き、`npm run test:hooks` で走る。
+`node --test` は glob が 0 件マッチでも exit 0 で終わるため、
+`scripts/assert-test-files.mjs` を前段に挟んでテストの消失を検出する。
 
 ## 対象法令 — 12 法令
 

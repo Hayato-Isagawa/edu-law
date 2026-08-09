@@ -29,7 +29,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # .claude/hooks/ の frontmatter 不変性ガードは、壊れても例外を出さず
+      # 素通りするだけなので失敗が見えない。フックは dist に入らないため
+      # e2e も vrt も届かず、link-check は誤った法令 ID にも 200 を返す。
+      # 「ガードが止めるはずだった改変」が公開された後でしか気づけないので、
+      # required check である Build site の中に載せる。ネットワーク不要で数百 ms。
+      - name: Hook regression tests
+        run: npm run test:hooks
+
       - name: Design token conventions
+        if: ${{ !cancelled() }}
         run: npm run check:tokens
 
       # astro check は errors でのみ非ゼロ終了する(既定の minimumFailingSeverity=error)。

@@ -13,6 +13,7 @@
     "astro": "astro",
     "check": "astro check",
     "check:tokens": "npx tsx scripts/check-tokens.ts",
+    "test:hooks": "node scripts/assert-test-files.mjs '.claude/hooks/__tests__/*.test.cjs' && node --test '.claude/hooks/__tests__/*.test.cjs'",
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
     "vrt": "npx playwright test --config playwright.vrt.config.ts"
