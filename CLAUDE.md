@@ -77,10 +77,20 @@ pagefind は**日本語を分割して部分一致させる**ので、和文の�
 
 ## frontmatter 不変性ガード
 
-`.claude/hooks/pre-edit-frontmatter-immutable.cjs` が `src/content/laws/*.md` への
-Edit / MultiEdit を検査し、保護フィールド(`title` / `order` / `eGovUrl` /
-`officialExplanations[].url` / `lastVerified` / `publishedAt` / `retrievedAt`)と
-編集断片中の URL 集合が変わるときだけ確認を挟む(`permissionDecision: "ask"`。ブロックではない)。
+`.claude/hooks/pre-edit-frontmatter-immutable.cjs` が Edit / Write / MultiEdit を検査し、
+読者に見せる事実が変わるときだけ確認を挟む(`permissionDecision: "ask"`。ブロックではない)。
+
+| 対象 | 見るもの |
+| --- | --- |
+| `src/content/laws/*.md` | 保護フィールド(`title` / `order` / `eGovUrl` / `officialExplanations[].url` / `lastVerified` / `publishedAt` / `retrievedAt`)+ URL 集合 + e-Gov 法令 ID |
+| `src/pages/**/*.astro` | URL 集合 + e-Gov 法令 ID(ガイドに ID が 18 箇所直書きされているため) |
+
+`.astro` は `---` の中身が JS で `title:` がデータとして頻出するので、保護フィールドは
+法令エントリにだけ当てる。自サイト URL と `schema.org` は除外する。
+**e-Gov の法令 ID は URL とは別に単独でも追跡する** — `418AC0000000120` の末尾 1 桁だけを
+書き換える Edit は断片に `https://` を含まず、URL 集合にも `eGovUrl:` の行にも現れないため。
+Write は差分を持たないのでディスク上の現物と突き合わせ、**読めない場合は素通りさせず確認を出す**
+(新規作成 = ENOENT だけ通す)。
 
 **このサイトでは URL と識別子そのものが商品**なのに、既存の検査系はどれも誤りを構造的に検出できない:
 e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文字違えば別の実在法令を指し、

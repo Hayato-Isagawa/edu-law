@@ -44,8 +44,31 @@ const PROTECTED_KEYS = [
 ];
 
 const FRONTMATTER_RE = /^---\s*\n([\s\S]*?)\n---\s*(?:\n|$)/;
-const TARGET_PATH_RE = /(?:^|\/)src\/content\/laws\/[^/]+\.(md|mdx)$/i;
+const LAW_PATH_RE = /(?:^|\/)src\/content\/laws\/[^/]+\.(md|mdx)$/i;
+// ガイドページにも e-Gov リンクが 18 箇所(12 種の ID)直書きされている。
+// コンテンツコレクションの外なので、パスを分けて拾う。
+const PAGE_PATH_RE = /(?:^|\/)src\/pages\/.+\.astro$/i;
 const URL_RE = /\bhttps?:\/\/[^\s)>"']+/gi;
+// e-Gov の法令 ID を URL とは別に単独で拾う。
+// `418AC0000000120` の下 1 桁だけを書き換える Edit は、チャンクに `https://` を
+// 含まないので URL 集合にも `eGovUrl:` の行にも現れず、素通りしていた(実測)。
+// **最も小さく最も危険な編集**なので、ID そのものを見る。
+// 形は「元号年 3 桁 + 種別英字 + 番号」(322AC0000000026 / 321CONSTITUTION)。
+// このパターンを src/ 全体に当てると 75 件マッチし、すべて実在の法令 ID だった
+// (誤検出ゼロ)。
+const EGOV_ID_RE = /\b\d{3}[A-Z][A-Z0-9]{6,}\b/g;
+// 自サイトへのリンクと JSON-LD の語彙 URL は「公式解説への入口」ではないので外す。
+// ガイドページには両者が 24 本あり、含めると本題と無関係な差分で鳴る。
+const BOILERPLATE_URL_RE = /^https?:\/\/(?:[a-z0-9-]+\.)*(?:edu-evidence\.org|schema\.org)(?:[/:?#]|$)/i;
+
+// .astro は `---` の中身が JS で、`title:` がデータとして何度も出てくる。
+// 保護キーの抽出は法令エントリ(YAML frontmatter)だけに適用し、
+// ページ側は URL の集合だけを見る。
+function targetKind(filePath) {
+  if (LAW_PATH_RE.test(filePath)) return 'law';
+  if (PAGE_PATH_RE.test(filePath)) return 'page';
+  return null;
+}
 
 function extractFrontmatter(s) {
   if (!s) return null;
@@ -58,10 +81,10 @@ function extractFrontmatter(s) {
 // 閉じフェンス以降を捨てるため。同じ窓を使うと**ファイル先頭から書き直す形の
 // Edit でだけ本文リンクの監視が外れる**(実測済み)。このサイトでは本文の
 // 公式解説リンクも frontmatter の URL と同じく商品なので、そこは全体で見る。
-function captureProtectedFields(fm, chunk = fm) {
+function captureProtectedFields(fm, chunk = fm, { keys = true } = {}) {
   if (!fm && !chunk) return new Map();
   const map = new Map();
-  for (const key of PROTECTED_KEYS) {
+  for (const key of keys ? PROTECTED_KEYS : []) {
     // 前置きを `[ \t]*(?:-[ \t]*)?` にしてある。移植元の `\s*-?\s*` は
     // **隣り合う 2 つの `*` が空白を分け合える**ため探索が O(N²) に落ちる。
     // 実測(7 キー分を走査、16KB の空白):
@@ -78,8 +101,13 @@ function captureProtectedFields(fm, chunk = fm) {
     const values = [...(fm || '').matchAll(re)].map(m => m[1].replace(/^["']|["']$/g, ''));
     if (values.length) map.set(key, values);
   }
-  const urls = ((chunk || '').match(URL_RE) || []).map(x => x.trim());
+  const urls = ((chunk || '').match(URL_RE) || [])
+    .map(x => x.trim())
+    .filter(u => !BOILERPLATE_URL_RE.test(u));
   if (urls.length) map.set('__urls__', urls.sort());
+
+  const ids = (chunk || '').match(EGOV_ID_RE) || [];
+  if (ids.length) map.set('__egovIds__', [...ids].sort());
   return map;
 }
 
@@ -96,31 +124,48 @@ function diffMaps(beforeM, afterM) {
   return diffs;
 }
 
-function evaluatePair(oldStr, newStr) {
+function evaluatePair(oldStr, newStr, opts = {}) {
   // Edit chunks usually don't include the `---` delimiters; fall back to the
   // whole chunk so single-line frontmatter edits ("lastVerified: ...") still
-  // get inspected. Path filter (TARGET_PATH_RE) keeps body-text false
-  // positives unlikely.
+  // get inspected. The path filter keeps body-text false positives unlikely.
   const before = oldStr ?? '';
   const after = newStr ?? '';
   if (!before && !after) return [];
   const beforeFm = extractFrontmatter(before) ?? before;
   const afterFm = extractFrontmatter(after) ?? after;
   return diffMaps(
-    captureProtectedFields(beforeFm, before),
-    captureProtectedFields(afterFm, after),
+    captureProtectedFields(beforeFm, before, opts),
+    captureProtectedFields(afterFm, after, opts),
   );
 }
 
-function evaluatePayload(toolName, toolInput) {
+// Write は差分ではなくファイル全体が届く。比較対象はディスク上の現物。
+// 読めない理由で挙動を分ける:
+//   ファイルが無い   → 新規作成。比較対象が無いので通す
+//   それ以外の失敗   → 検証できない。通さずに確認を出す(fail-safe)
+function evaluateWrite(filePath, content, opts) {
+  let current;
+  try {
+    current = require('node:fs').readFileSync(filePath, 'utf8');
+  } catch (err) {
+    if (err && err.code === 'ENOENT') return [];
+    return [{ key: '__unreadable__', before: [String(err && err.code) || 'read error'], after: [] }];
+  }
+  return evaluatePair(current, content ?? '', opts);
+}
+
+function evaluatePayload(toolName, toolInput, opts = {}) {
   if (toolName === 'Edit') {
-    return evaluatePair(toolInput?.old_string ?? '', toolInput?.new_string ?? '');
+    return evaluatePair(toolInput?.old_string ?? '', toolInput?.new_string ?? '', opts);
+  }
+  if (toolName === 'Write') {
+    return evaluateWrite(String(toolInput?.file_path || ''), toolInput?.content ?? '', opts);
   }
   if (toolName === 'MultiEdit') {
     const edits = Array.isArray(toolInput?.edits) ? toolInput.edits : [];
     const merged = [];
     for (const e of edits) {
-      merged.push(...evaluatePair(e?.old_string ?? '', e?.new_string ?? ''));
+      merged.push(...evaluatePair(e?.old_string ?? '', e?.new_string ?? '', opts));
     }
     return merged;
   }
@@ -146,18 +191,24 @@ function fmtVal(arr) {
     .join(' | ');
 }
 
+const LABELS = {
+  __urls__: 'urls (inspected chunk)',
+  __egovIds__: 'e-Gov law IDs',
+  __unreadable__: 'current file could not be read (error code)',
+};
+
 function buildReason(diffs, filePath) {
   const lines = [`[frontmatter-immutable] Protected fields changed in ${filePath}:`];
   for (const d of diffs) {
-    const label = d.key === '__urls__' ? 'urls (inspected chunk)' : d.key;
-    lines.push(`  ${label}:`);
+    lines.push(`  ${LABELS[d.key] ?? d.key}:`);
     lines.push(`    before: ${fmtVal(d.before)}`);
     lines.push(`    after:  ${fmtVal(d.after)}`);
   }
   lines.push('');
-  lines.push('法令エントリの frontmatter は読者に見せる事実そのもの(e-Gov の法令 ID・');
-  lines.push('公式解説 URL・確認日)。e-Gov の ID は 1 文字違っても別の実在法令を指し、');
-  lines.push('link-check は 200 を返すため気づけない。原典で引き直してから適用すること。');
+  lines.push('法令エントリの frontmatter とページ内の公式リンクは、読者に見せる事実');
+  lines.push('そのもの(e-Gov の法令 ID・公式解説 URL・確認日)。e-Gov の ID は 1 文字');
+  lines.push('違っても別の実在法令を指し、link-check は 200 を返すため気づけない。');
+  lines.push('原典で引き直してから適用すること。');
   return lines.join('\n');
 }
 
@@ -172,13 +223,14 @@ function run(inputOrRaw, _options = {}) {
   }
 
   const toolName = String(input?.tool_name || '');
-  if (!['Edit', 'MultiEdit'].includes(toolName)) return { exitCode: 0 };
+  if (!['Edit', 'Write', 'MultiEdit'].includes(toolName)) return { exitCode: 0 };
 
   const toolInput = input?.tool_input || {};
   const filePath = String(toolInput?.file_path || '');
-  if (!TARGET_PATH_RE.test(filePath)) return { exitCode: 0 };
+  const kind = targetKind(filePath);
+  if (!kind) return { exitCode: 0 };
 
-  const diffs = evaluatePayload(toolName, toolInput);
+  const diffs = evaluatePayload(toolName, toolInput, { keys: kind === 'law' });
   if (!diffs.length) return { exitCode: 0 };
 
   const reason = buildReason(diffs, filePath);
@@ -199,7 +251,9 @@ module.exports = {
   captureProtectedFields,
   diffMaps,
   PROTECTED_KEYS,
-  TARGET_PATH_RE,
+  LAW_PATH_RE,
+  PAGE_PATH_RE,
+  targetKind,
 };
 
 if (require.main === module) {

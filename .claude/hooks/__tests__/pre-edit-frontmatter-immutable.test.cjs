@@ -10,7 +10,9 @@ const {
   captureProtectedFields,
   diffMaps,
   PROTECTED_KEYS,
-  TARGET_PATH_RE,
+  LAW_PATH_RE,
+  PAGE_PATH_RE,
+  targetKind,
 } = require('../pre-edit-frontmatter-immutable.cjs');
 
 const LAW_PATH = 'src/content/laws/basic-act-on-education.md';
@@ -260,31 +262,88 @@ test('保護フィールドの純粋な削除・挿入でも発火する', () =>
 
 // --- 対象パス -------------------------------------------------------------
 
-test('TARGET_PATH_RE: laws 配下にマッチする', () => {
-  assert.match('src/content/laws/school-education-act.md', TARGET_PATH_RE);
-  assert.match('/Users/H/edu-law/src/content/laws/school-education-act.md', TARGET_PATH_RE);
-  assert.match('src/content/laws/x.mdx', TARGET_PATH_RE);
+test('LAW_PATH_RE: laws 配下にマッチする', () => {
+  assert.match('src/content/laws/school-education-act.md', LAW_PATH_RE);
+  assert.match('/Users/H/edu-law/src/content/laws/school-education-act.md', LAW_PATH_RE);
+  assert.match('src/content/laws/x.mdx', LAW_PATH_RE);
   // 大文字小文字を無視する。macOS の既定 FS は case-insensitive なので、
   // 同じファイルが別表記で届いても対象から外れない
-  assert.match('SRC/CONTENT/LAWS/X.MD', TARGET_PATH_RE);
+  assert.match('SRC/CONTENT/LAWS/X.MD', LAW_PATH_RE);
 });
 
-test('TARGET_PATH_RE: パス境界を無視して部分一致しない', () => {
-  assert.doesNotMatch('xsrc/content/laws/x.md', TARGET_PATH_RE);
+test('LAW_PATH_RE: パス境界を無視して部分一致しない', () => {
+  assert.doesNotMatch('xsrc/content/laws/x.md', LAW_PATH_RE);
 });
 
-test('TARGET_PATH_RE: laws 以外は対象外', () => {
-  assert.doesNotMatch('docs/decisions/0023-visual-regression-testing.md', TARGET_PATH_RE);
-  assert.doesNotMatch('src/content/guides/x.md', TARGET_PATH_RE);
-  assert.doesNotMatch('src/content/laws/sub/x.md', TARGET_PATH_RE);
-  assert.doesNotMatch('src/content/laws/x.ts', TARGET_PATH_RE);
-  assert.doesNotMatch('src/content/laws/x.md.bak', TARGET_PATH_RE);
-  assert.doesNotMatch('other/src/content/lawsuits/x.md', TARGET_PATH_RE);
+test('LAW_PATH_RE: laws 以外は対象外', () => {
+  assert.doesNotMatch('docs/decisions/0023-visual-regression-testing.md', LAW_PATH_RE);
+  assert.doesNotMatch('src/content/guides/x.md', LAW_PATH_RE);
+  assert.doesNotMatch('src/content/laws/sub/x.md', LAW_PATH_RE);
+  assert.doesNotMatch('src/content/laws/x.ts', LAW_PATH_RE);
+  assert.doesNotMatch('src/content/laws/x.md.bak', LAW_PATH_RE);
+  assert.doesNotMatch('other/src/content/lawsuits/x.md', LAW_PATH_RE);
 });
 
 test('対象外パスなら保護キーが変わっても素通りする', () => {
   const out = run(edit('lastVerified: "2026-05-28"', 'lastVerified: "2026-08-09"', 'docs/x.md'));
   assert.ok(!out.stdout);
+});
+
+// キーだけで確かめると、パス判定を外す変異が生き残る(対象外パスでは
+// keys=false 相当になり、キーの差分がそもそも出ないため)。
+// URL と ID でも素通りすることまで見る。
+test('対象外パスなら URL も e-Gov ID も見ない', () => {
+  assert.ok(!run(edit('https://a.go.jp/1', 'https://a.go.jp/2', 'docs/x.md')).stdout);
+  assert.ok(!run(edit('322AC0000000026', '322AC0000000027', 'README.md')).stdout);
+  assert.ok(!run(edit('322AC0000000026', '322AC0000000027', 'src/components/Logo.astro')).stdout);
+});
+
+// --- Write(全文上書き) ---------------------------------------------------
+//
+// Edit|MultiEdit だけを見ていると、Read → Write の全文書き換えという
+// **ファイル全体を最も安く壊せる経路**が無防備なまま残る。
+// Write は差分を持たないので、ディスク上の現物と突き合わせる。
+
+const REAL_LAW = path.join(__dirname, '..', '..', '..', 'src/content/laws/basic-act-on-education.md');
+
+const write = (filePath, content) =>
+  JSON.stringify({ tool_name: 'Write', tool_input: { file_path: filePath, content } });
+
+test('Write: 現物と比べて eGovUrl が変わっていれば発火する', () => {
+  const current = require('node:fs').readFileSync(REAL_LAW, 'utf8');
+  const tampered = current.replace('418AC0000000120', '418AC0000000121');
+  assert.notEqual(tampered, current, 'テストデータの前提が崩れている');
+  const reason = reasonOf(run(write(REAL_LAW, tampered)));
+  assert.match(reason, /^  eGovUrl:$/m);
+  assert.match(reason, /418AC0000000121/);
+});
+
+test('Write: 本文だけ変えた全文上書きでは発火しない', () => {
+  const current = require('node:fs').readFileSync(REAL_LAW, 'utf8');
+  assert.ok(!run(write(REAL_LAW, current + '\n\n追記した段落。\n')).stdout);
+});
+
+test('Write: 新規ファイルの作成は通す(比較対象が無い)', () => {
+  const out = run(write('src/content/laws/does-not-exist-yet.md', '---\ntitle: 新法\n---\n'));
+  assert.ok(!out.stdout);
+});
+
+// 読めない = 検証できない。素通りさせると「確認したことになっている」ので、
+// 確認を出す側に倒す。ENOENT(新規作成)だけが通る。
+test('Write: 現物を読めないときは確認を出す', () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  // パスは法令エントリに見えるが実体がディレクトリ = 読めば EISDIR
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'law-guard-'));
+  const decoy = path.join(dir, 'src/content/laws/decoy.md');
+  fs.mkdirSync(decoy, { recursive: true });
+  try {
+    assert.equal(targetKind(decoy), 'law', 'テストの前提: パスは対象として認識される');
+    const reason = reasonOf(run(write(decoy, '---\ntitle: x\n---\n')));
+    assert.match(reason, /could not be read/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 // --- 理由文 ---------------------------------------------------------------
@@ -330,6 +389,103 @@ test('空白の多い入力でも探索が線形にとどまる', () => {
   assert.ok(ms < 1000, `256KB の空白に ${ms.toFixed(0)}ms かかった(二次挙動の疑い)`);
 });
 
+// --- ガイドページ(コレクション外の直書きリンク) --------------------------
+//
+// src/pages/guides/*.astro に e-Gov リンクが 18 箇所(12 種の ID)直書きされている。
+// コンテンツコレクションの外なので frontmatter の保護キーは効かない。
+// .astro の `---` は中身が JS で、`title:` がデータとして何度も出てくるため、
+// ページ側は URL の集合だけを見る。
+
+const GUIDE = 'src/pages/guides/legal-hierarchy.astro';
+
+// URL 全体を含まない断片で ID の数字だけを書き換える編集は、
+// URL 集合にも `eGovUrl:` の行にも現れない。最小かつ最も危険な形なので、
+// ID そのものを別に見る。
+test('ID だけの Edit でも発火する(法令エントリ)', () => {
+  const reason = reasonOf(run(edit('418AC0000000120', '418AC0000000121')));
+  assert.match(reason, /^  e-Gov law IDs:$/m);
+  assert.match(reason, /418AC0000000120/);
+  assert.match(reason, /418AC0000000121/);
+});
+
+test('ID だけの Edit でも発火する(ガイドページ)', () => {
+  const reason = reasonOf(run(edit('323AC0000000120', '323AC0000000121', GUIDE)));
+  assert.match(reason, /^  e-Gov law IDs:$/m);
+});
+
+test('ID の並べ替えでは発火しない(集合として比較する)', () => {
+  assert.ok(!run(edit(
+    '322AC0000000026 と 322AC0000000164',
+    '322AC0000000164 と 322AC0000000026',
+  )).stdout);
+});
+
+test('ID パターンが通常の英数字列を拾わない', () => {
+  const m = captureProtectedFields('2026年 100VH #6b4423 ABC123 v1.2.3 20260423 SHA256HASH');
+  assert.equal(m.get('__egovIds__'), undefined);
+});
+
+test('ガイド: e-Gov の法令 ID を差し替えると発火する', () => {
+  const reason = reasonOf(run(edit(
+    'const eGovConstitution = "https://laws.e-gov.go.jp/law/321CONSTITUTION";',
+    'const eGovConstitution = "https://laws.e-gov.go.jp/law/321CONSTITUTIO";',
+    GUIDE,
+  )));
+  assert.match(reason, /^  urls \(inspected chunk\):$/m);
+});
+
+// 実ファイルの `const details = [...]` は各キーが行頭にインデントで並ぶ。
+// 1 行オブジェクトで書くと `^...title:` に当たらず、保護キーを .astro にも
+// 当てる変異が生き残る。実際の整形に合わせて確かめる。
+test('ガイド: JS データの title / url は保護キーとして拾わない', () => {
+  const before = ['  {', '    id: "rank-constitution-heading",', '    title: "憲法",', '  },'].join('\n');
+  const after = before.replace('"憲法"', '"日本国憲法"');
+  assert.ok(!run(edit(before, after, GUIDE)).stdout,
+    '.astro の JS データで鳴ると、ガイドを整えるたびに ask が出る');
+
+  const m = captureProtectedFields('    title: "憲法",', undefined, { keys: false });
+  assert.equal(m.get('title'), undefined);
+});
+
+test('ガイド: 自サイト URL と schema.org の差し替えでは発火しない', () => {
+  assert.ok(!run(edit(
+    'const siteUrl = "https://law.edu-evidence.org";',
+    'const siteUrl = "https://law.edu-evidence.org/";',
+    GUIDE,
+  )).stdout);
+  assert.ok(!run(edit(
+    '"@context": "https://schema.org",',
+    '"@context": "https://schema.org/",',
+    GUIDE,
+  )).stdout);
+});
+
+test('ガイド: 自サイト以外の外部リンクは見る', () => {
+  const reason = reasonOf(run(edit(
+    'href="https://www.mext.go.jp/a.htm"',
+    'href="https://www.mext.go.jp/b.htm"',
+    GUIDE,
+  )));
+  assert.match(reason, /^  urls \(inspected chunk\):$/m);
+});
+
+test('PAGE_PATH_RE: src/pages 配下の .astro だけにマッチする', () => {
+  assert.match('src/pages/guides/legal-hierarchy.astro', PAGE_PATH_RE);
+  assert.match('/Users/H/edu-law/src/pages/index.astro', PAGE_PATH_RE);
+  assert.doesNotMatch('src/components/Logo.astro', PAGE_PATH_RE);
+  assert.doesNotMatch('src/pages/rss.xml.ts', PAGE_PATH_RE);
+  assert.doesNotMatch('xsrc/pages/x.astro', PAGE_PATH_RE);
+});
+
+test('targetKind: 法令エントリとページを区別し、それ以外は対象外', () => {
+  assert.equal(targetKind('src/content/laws/x.md'), 'law');
+  assert.equal(targetKind('src/pages/guides/x.astro'), 'page');
+  assert.equal(targetKind('src/pages/index.astro'), 'page');
+  assert.equal(targetKind('src/components/Logo.astro'), null);
+  assert.equal(targetKind('src/pages/x.ts'), null);
+  assert.equal(targetKind('docs/decisions/0001.md'), null);
+});
+
 // --- MultiEdit / 入力の頑健性 --------------------------------------------
 
 test('MultiEdit: 1 件でも保護キーが変われば発火する', () => {
@@ -372,11 +528,11 @@ test('MultiEdit: すべて本文なら発火しない', () => {
   assert.ok(!out.stdout);
 });
 
-test('Edit 以外のツールは無視する', () => {
+test('Edit / Write / MultiEdit 以外のツールは無視する', () => {
   assert.ok(!run(JSON.stringify({ tool_name: 'Bash', tool_input: {} })).stdout);
   assert.ok(!run(JSON.stringify({
-    tool_name: 'Write',
-    tool_input: { file_path: LAW_PATH, content: 'order: 1' },
+    tool_name: 'NotebookEdit',
+    tool_input: { file_path: LAW_PATH, new_source: 'order: 1' },
   })).stdout);
 });
 
@@ -462,14 +618,14 @@ test('CLI: 前後に空白のある JSON でも読む', () => {
 
 const SETTINGS = path.join(__dirname, '..', '..', 'settings.json');
 
-test('settings.json: PreToolUse に Edit|MultiEdit で登録されている', () => {
+test('settings.json: PreToolUse に Edit|Write|MultiEdit で登録されている', () => {
   const settings = JSON.parse(require('node:fs').readFileSync(SETTINGS, 'utf8'));
   const blocks = settings.hooks?.PreToolUse ?? [];
   const entry = blocks
-    .filter(b => b.matcher === 'Edit|MultiEdit')
+    .filter(b => b.matcher === 'Edit|Write|MultiEdit')
     .flatMap(b => b.hooks ?? [])
     .find(h => h.command?.includes('pre-edit-frontmatter-immutable.cjs'));
-  assert.ok(entry, 'PreToolUse に matcher "Edit|MultiEdit" のこのフックが見つからない');
+  assert.ok(entry, 'PreToolUse に matcher "Edit|Write|MultiEdit" のこのフックが見つからない');
   assert.equal(entry.type, 'command');
   assert.match(entry.command, /^node "\$CLAUDE_PROJECT_DIR"\/\.claude\/hooks\//);
 });
