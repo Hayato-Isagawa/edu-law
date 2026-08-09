@@ -33,6 +33,7 @@ npm run dev      # 開発サーバー(localhost:4324。ファミリー各リポ�
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
 npm run check    # Astro 型チェック(CI の required check「Build site」に含まれる)
+npm run test:hooks # .claude/hooks/ の回帰テスト(CI の required check「Build site」に含まれる)
 npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
@@ -73,6 +74,34 @@ pagefind は**日本語を分割して部分一致させる**ので、和文の�
 「ぬりかべこんにゃくざむらい」で 11 件返る(実測)。0 件を確かめたいときは索引に無いことが
 確実な ASCII 列(`zzqqxwv`)を使う。また 1 ページにつき本文と見出しアンカーで複数の結果が
 出るため、件数を固定値で書かない。
+
+## frontmatter 不変性ガード
+
+`.claude/hooks/pre-edit-frontmatter-immutable.cjs` が Edit / Write / MultiEdit を検査し、
+読者に見せる事実が変わるときだけ確認を挟む(`permissionDecision: "ask"`。ブロックではない)。
+
+| 対象 | 見るもの |
+| --- | --- |
+| `src/content/laws/*.md` | 保護フィールド(`title` / `order` / `eGovUrl` / `officialExplanations[].url` / `lastVerified` / `publishedAt` / `retrievedAt`)+ URL 集合 + e-Gov 法令 ID |
+| `src/pages/**/*.astro` | URL 集合 + e-Gov 法令 ID(ガイドに ID が 18 箇所直書きされているため) |
+
+`.astro` は `---` の中身が JS で `title:` がデータとして頻出するので、保護フィールドは
+法令エントリにだけ当てる。自サイト URL と `schema.org` は除外する。
+**e-Gov の法令 ID は URL とは別に単独でも追跡する** — `418AC0000000120` の末尾 1 桁だけを
+書き換える Edit は断片に `https://` を含まず、URL 集合にも `eGovUrl:` の行にも現れないため。
+Write は差分を持たないのでディスク上の現物と突き合わせ、**読めない場合は素通りさせず確認を出す**
+(新規作成 = ENOENT だけ通す)。
+
+**このサイトでは URL と識別子そのものが商品**なのに、既存の検査系はどれも誤りを構造的に検出できない:
+e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文字違えば別の実在法令を指し、
+週次 link-check(lychee)は 200 を返す。`astro check` は型が正しく、e2e / vrt は正常に描画される。
+`lastVerified` が黙って進めば stale-check は「未確認を確認済み」と報告する。
+
+回帰テストは `.claude/hooks/__tests__/` に置き、`npm run test:hooks` で走る。
+`node --test` は **0 件マッチ・中身が空・全件 skip のいずれでも exit 0** で終わるので、
+前段に `scripts/assert-test-files.mjs`(ファイルの存在)、後段に
+`scripts/assert-test-results.mjs`(pass の下限と skip / todo 0)を噛ませてある。
+テストを増やしたときに下限を上げる必要はないが、まとめて消したときは落ちる。
 
 ## 対象法令 — 12 法令
 
