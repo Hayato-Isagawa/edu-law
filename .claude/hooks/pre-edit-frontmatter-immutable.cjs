@@ -53,16 +53,32 @@ function extractFrontmatter(s) {
   return m ? m[1] : null;
 }
 
-function captureProtectedFields(fm) {
-  if (!fm) return new Map();
+// 保護キーは frontmatter の窓から、URL は編集断片の全体から拾う。
+// 窓を分けているのは、チャンクが `---` で始まるときに extractFrontmatter が
+// 閉じフェンス以降を捨てるため。同じ窓を使うと**ファイル先頭から書き直す形の
+// Edit でだけ本文リンクの監視が外れる**(実測済み)。このサイトでは本文の
+// 公式解説リンクも frontmatter の URL と同じく商品なので、そこは全体で見る。
+function captureProtectedFields(fm, chunk = fm) {
+  if (!fm && !chunk) return new Map();
   const map = new Map();
   for (const key of PROTECTED_KEYS) {
-    const re = new RegExp(`^\\s*-?\\s*${key}:\\s*(.+?)\\s*$`, 'gm');
-    const values = [...fm.matchAll(re)].map(m => m[1].replace(/^["']|["']$/g, ''));
+    // 前置きを `[ \t]*(?:-[ \t]*)?` にしてある。移植元の `\s*-?\s*` は
+    // **隣り合う 2 つの `*` が空白を分け合える**ため探索が O(N²) に落ちる。
+    // 実測(7 キー分を走査、16KB の空白):
+    //   \s*-?\s*        2,969ms
+    //   [ \t]*-?[ \t]*  2,833ms  ← \s を [ \t] に変えるだけでは直らない
+    //   [ \t]*(?:-[ \t]*)?  0.5ms
+    // `-` を伴う場合だけ 2 つ目の空白列を許すと分割の曖昧さが消えて線形になる。
+    // 実データの抽出結果は 3 変種とも一致する(YAML のインデントは空白かタブなので
+    // `\s` が改行まで拾える必要が無い)。
+    //
+    // 詰めておく理由: settings.json の `timeout: 5` を超えるとプロセスが kill され、
+    // stdout が出ない = ガードが黙って素通りする。ここが唯一の fail-open 経路。
+    const re = new RegExp(`^[ \\t]*(?:-[ \\t]*)?${key}:[ \\t]*(.+?)[ \\t]*$`, 'gm');
+    const values = [...(fm || '').matchAll(re)].map(m => m[1].replace(/^["']|["']$/g, ''));
     if (values.length) map.set(key, values);
   }
-  // URLs in the inspected chunk (officialExplanations list, eGovUrl, 本文リンク)
-  const urls = (fm.match(URL_RE) || []).map(x => x.trim());
+  const urls = ((chunk || '').match(URL_RE) || []).map(x => x.trim());
   if (urls.length) map.set('__urls__', urls.sort());
   return map;
 }
@@ -85,10 +101,15 @@ function evaluatePair(oldStr, newStr) {
   // whole chunk so single-line frontmatter edits ("lastVerified: ...") still
   // get inspected. Path filter (TARGET_PATH_RE) keeps body-text false
   // positives unlikely.
-  const beforeFm = extractFrontmatter(oldStr) ?? (oldStr ?? '');
-  const afterFm = extractFrontmatter(newStr) ?? (newStr ?? '');
-  if (!beforeFm && !afterFm) return [];
-  return diffMaps(captureProtectedFields(beforeFm), captureProtectedFields(afterFm));
+  const before = oldStr ?? '';
+  const after = newStr ?? '';
+  if (!before && !after) return [];
+  const beforeFm = extractFrontmatter(before) ?? before;
+  const afterFm = extractFrontmatter(after) ?? after;
+  return diffMaps(
+    captureProtectedFields(beforeFm, before),
+    captureProtectedFields(afterFm, after),
+  );
 }
 
 function evaluatePayload(toolName, toolInput) {
@@ -106,9 +127,23 @@ function evaluatePayload(toolName, toolInput) {
   return [];
 }
 
+// 先頭 57 文字で切る素朴な実装は、この repo の実データで破綻する。
+// 本文中の実 URL 50 本のうち 21 本が 60 文字超で、しかも 57 文字目まで
+// 完全一致する 3 本組が実在する:
+//   .../20260423-mxt_syoto01-000028144_01.pdf / _02.pdf / _03.pdf
+// 差し替えると before/after が同一文字列として表示され、
+// **何を確認すればよいか分からない ask** になる(= 空押しを育てる)。
+// 実値は長くても 100 文字程度なので、そこまでは丸ごと出す。
+// それを超えるときだけ中央を省略し、末尾を必ず残す。
+const MAX_SHOWN = 100;
+const HEAD = 60;
+const TAIL = 30;
+
 function fmtVal(arr) {
   if (!arr.length) return '∅';
-  return arr.map(v => (v.length > 60 ? v.slice(0, 57) + '...' : v)).join(' | ');
+  return arr
+    .map(v => (v.length > MAX_SHOWN ? `${v.slice(0, HEAD)}…${v.slice(-TAIL)}` : v))
+    .join(' | ');
 }
 
 function buildReason(diffs, filePath) {

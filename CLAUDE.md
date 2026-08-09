@@ -88,8 +88,10 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
 `lastVerified` が黙って進めば stale-check は「未確認を確認済み」と報告する。
 
 回帰テストは `.claude/hooks/__tests__/` に置き、`npm run test:hooks` で走る。
-`node --test` は glob が 0 件マッチでも exit 0 で終わるため、
-`scripts/assert-test-files.mjs` を前段に挟んでテストの消失を検出する。
+`node --test` は **0 件マッチ・中身が空・全件 skip のいずれでも exit 0** で終わるので、
+前段に `scripts/assert-test-files.mjs`(ファイルの存在)、後段に
+`scripts/assert-test-results.mjs`(pass の下限と skip / todo 0)を噛ませてある。
+テストを増やしたときに下限を上げる必要はないが、まとめて消したときは落ちる。
 
 ## 対象法令 — 12 法令
 
