@@ -609,6 +609,57 @@ test('CLI: 前後に空白のある JSON でも読む', () => {
   assert.match(JSON.parse(res.stdout).hookSpecificOutput.permissionDecisionReason, /^  order:$/m);
 });
 
+// --- 判定 JSON が切れないこと ----------------------------------------------
+//
+// **`process.exit()` は非同期の stdout を flush しない。** stdout がパイプのとき
+// `process.stdout.write()` は非同期なので、直後に exit すると書き残しが捨てられ、
+// **ちょうど 65536B(パイプバッファ)で切れる**。実測: 65409B は無事 / 次の刻みで 65536B。
+//
+// 切れた JSON は誰もエラーにしない。ディスパッチャの isDecision() が false を返し、
+// 「判定ではない付随出力」として stdout ごと捨てて exit 0 = **ask が無音で消える**。
+// このガードが防ごうとしている失敗そのものなので、境界の外側を実測で固定する。
+//
+// 本文の理由文は 1 本の URL につき before / after の 2 回、さらに JSON にくるまれて
+// もう 1 組出るので、payload に対しておよそ 2 倍に増幅する。ここは増幅率に依存せず
+// **出力が 64KB を確実に超える大きさ**を採る。
+
+const bigUrlList = (tag, count) =>
+  Array.from(
+    { length: count },
+    (_, i) => `https://www.mext.go.jp/content/2026${tag}-mxt_syoto01-000028${String(i).padStart(4, '0')}_01.pdf`,
+  ).join('\n');
+
+test('CLI: 判定が 64KB を超えても stdout が切れない', () => {
+  const res = runCli(edit(bigUrlList('0423', 800), bigUrlList('0424', 800)));
+
+  assert.equal(res.status, 0);
+
+  // **JSON.parse を先に置く。** サイズ検査を先にすると、切断された stdout は
+  // ちょうど 65536B なので「フィクスチャが小さい」と読めるメッセージで落ち、
+  // **本数を増やす方向に誤誘導する**(この検査を書いた時に実際に踏んだ)。
+  // 末尾の固定文も見て、切れた JSON がたまたま構文的に閉じている場合を潰す。
+  const parsed = JSON.parse(res.stdout);
+  assert.equal(parsed.hookSpecificOutput.permissionDecision, 'ask');
+  assert.match(parsed.hookSpecificOutput.permissionDecisionReason, /原典で引き直してから適用すること。$/);
+
+  // ここに来た時点で JSON は無傷。残る失敗は「フィクスチャが境界に届いていない」だけ。
+  assert.ok(
+    Buffer.byteLength(res.stdout) > 65536,
+    `フィクスチャがパイプバッファ(65536B)に届いていない(${Buffer.byteLength(res.stdout)}B)。URL の本数を増やすこと`,
+  );
+});
+
+// stderr も同じ epilogue を通る。judgment そのものではないが、
+// 理由文が途中で切れると **何を確認すればよいか分からない ask** になるので固定する。
+test('CLI: 64KB を超える判定は stderr 側も切れない', () => {
+  const res = runCli(edit(bigUrlList('0423', 800), bigUrlList('0424', 800)));
+  assert.match(res.stderr, /原典で引き直してから適用すること。\n$/);
+  assert.ok(
+    Buffer.byteLength(res.stderr) > 65536,
+    `フィクスチャがパイプバッファ(65536B)に届いていない(${Buffer.byteLength(res.stderr)}B)。URL の本数を増やすこと`,
+  );
+});
+
 // --- settings.json への登録 ------------------------------------------------
 //
 // ここまでのテストはフックの**中身**しか見ていない。settings.json から
