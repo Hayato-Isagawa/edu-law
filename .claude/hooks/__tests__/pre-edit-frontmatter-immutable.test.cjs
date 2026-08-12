@@ -693,11 +693,14 @@ test('settings.json: PreToolUse に Edit|Write|MultiEdit で登録されてい�
   assert.match(entry.command, /^node "\$CLAUDE_PROJECT_DIR"\/\.claude\/hooks\//);
 });
 
-test('settings.json: 既存の branch-guard の登録を壊していない', () => {
+test('settings.json: branch-guard はここでは登録しない(global の dispatcher が持つ)', () => {
+  // 以前はここで「branch-guard.sh の登録が失われていない」ことを固定していた。
+  // 2 か所から配線されていたため、リポ内セッションでは **リポ側の登録が実行され**、
+  // global 側(~/.claude/hooks/dispatch-repo-guards.cjs)に入れた分岐が効かなかった。
+  // 配線を dispatcher 一本にしたので、ここに戻すと同じ状態に逆戻りする。
   const settings = JSON.parse(require('node:fs').readFileSync(SETTINGS, 'utf8'));
   const found = (settings.hooks?.PreToolUse ?? [])
-    .filter(b => b.matcher === 'Edit|Write|MultiEdit')
     .flatMap(b => b.hooks ?? [])
     .some(h => h.command?.includes('branch-guard.sh'));
-  assert.ok(found, 'branch-guard.sh の登録が失われている');
+  assert.equal(found, false, 'branch-guard.sh をリポ側で登録し直すと dispatcher 側の判定が効かなくなる');
 });
