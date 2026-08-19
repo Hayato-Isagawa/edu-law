@@ -13,7 +13,7 @@ EduLaw JP への貢献に関心を持っていただきありがとうござい�
 ### Pull Request を送る
 
 1. Fork
-2. ブランチ作成 (`git checkout -b feat/my-change`)
+2. ブランチ作成 (`git switch -c feat/my-change --no-track origin/main`)
 3. コミット
 4. Push して Pull Request
 
@@ -60,7 +60,7 @@ chore: bump astro from 6.2.1 to 6.2.2
 `main` への直接編集・直接コミットは禁止。すべての変更はフィーチャーブランチを切ってから PR 経由で `main` に取り込む。
 
 ```bash
-git checkout -b <type>/<short-description>
+git switch -c <type>/<short-description> --no-track origin/main
 # 例: feat/ijime-law-page, fix/e-gov-link, chore/deps-bump
 ```
 
