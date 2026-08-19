@@ -15,7 +15,7 @@ case "$branch" in
     {
       echo "[branch-guard] BLOCKED: editing on '$branch' is forbidden."
       echo "[branch-guard] Create a feature branch first:"
-      echo "    git checkout -b <type>/<short-description>"
+      echo "    git fetch origin && git switch -c <type>/<short-description> --no-track origin/main"
       echo "[branch-guard] Examples: feat/ijime-law-page, fix/e-gov-link, chore/deps-bump"
     } >&2
     exit 2
