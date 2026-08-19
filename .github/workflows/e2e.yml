@@ -25,6 +25,11 @@ jobs:
   test:
     name: Playwright E2E
     runs-on: ubuntu-latest
+    # 律速はテストではなく Playwright / apt のインストール。平常時は 20〜30 秒だが、
+    # 2026-08-19 の実測ではファミリー横断で遅延し、portfolio の同じステップが
+    # 28.45 分動いてなお完了しなかった(concurrency で cancel)。成功実行でも
+    # portfolio 15.35 分 / edu-evidence 13.6 分。テストの実行時間から決めない。
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
