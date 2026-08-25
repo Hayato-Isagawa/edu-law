@@ -5,14 +5,14 @@ summary: 公立学校の教員を含む一般職の地方公務員の任用・�
 eGovUrl: https://laws.e-gov.go.jp/law/325AC0000000261/
 officialExplanations:
   - publisher: soumu
-    title: 地方公務員制度
+    title: 地方公務員制度等
     url: https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/index.html
     format: html
   - publisher: soumu
     title: 給与・定員の制度概要
     url: https://www.soumu.go.jp/main_sosiki/jichi_gyousei/c-gyousei/teiin-kyuuyo01.html
     format: html
-lastVerified: "2026-05-27"
+lastVerified: "2026-08-25"
 tags: []
 ---
 
@@ -28,8 +28,8 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 
 ## 公式解説
 
-- [地方公務員制度(総務省)](https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/index.html)
-  - 任用・採用試験、分限・懲戒、服務、勤務条件などの制度概要
+- [地方公務員制度等(総務省)](https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/index.html)
+  - 任用・採用試験、勤務条件、兼業などの制度概要
   - 会計年度任用職員制度、女性職員の活躍・両立支援、再就職規制
   - 福利厚生・公務災害補償・安全衛生に関する資料
 - [給与・定員の制度概要(総務省)](https://www.soumu.go.jp/main_sosiki/jichi_gyousei/c-gyousei/teiin-kyuuyo01.html)
@@ -51,4 +51,4 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 ## 出典
 
 - 法令本文: [e-Gov 法令検索](https://laws.e-gov.go.jp/law/325AC0000000261/)
-- 公式解説: 総務省『地方公務員制度』『給与・定員の制度概要』(取得日: 2026-05-27)
+- 公式解説: 総務省『地方公務員制度等』『給与・定員の制度概要』(取得日: 2026-08-25)

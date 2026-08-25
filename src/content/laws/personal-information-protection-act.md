@@ -9,7 +9,7 @@ officialExplanations:
     url: https://www.mext.go.jp/content/20260423-mxt_syoto01-000028144_01.pdf
     publishedAt: "2026-04-23"
     format: pdf
-lastVerified: "2026-05-18"
+lastVerified: "2026-08-25"
 tags: []
 ---
 
@@ -37,4 +37,4 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 ## 出典
 
 - 法令本文: [e-Gov 法令検索](https://laws.e-gov.go.jp/law/415AC0000000057/)
-- 公式解説: 文部科学省『教育データの利活用に係る留意事項(第4版)公立学校編』令和8(2026)年4月23日(取得日: 2026-05-18)
+- 公式解説: 文部科学省『教育データの利活用に係る留意事項(第4版)公立学校編』令和8(2026)年4月23日(取得日: 2026-08-25)
