@@ -29,6 +29,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-08-25",
+    items: [
+      {
+        type: "update",
+        text: "児童福祉法のページに、令和7年4月に成立した改正(一時保護の登録制度、一時保護中の児童への面会通信制限)の公式案内を追加しました。著作権法のページには、授業目的公衆送信補償金制度をまとめた文化庁の案内ページを加えています",
+      },
+    ],
+  },
+  {
     date: "2026-08-09",
     items: [
       {

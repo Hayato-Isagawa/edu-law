@@ -12,7 +12,7 @@ officialExplanations:
     title: 教育基本法について(規定の概要)
     url: https://www.mext.go.jp/b_menu/kihon/about/1354049.htm
     format: html
-lastVerified: "2026-05-28"
+lastVerified: "2026-08-25"
 tags: []
 ---
 
@@ -44,4 +44,4 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 ## 出典
 
 - 法令本文: [e-Gov 法令検索](https://laws.e-gov.go.jp/law/418AC0000000120/)
-- 公式解説: 文部科学省『教育基本法資料室』『教育基本法について(規定の概要)』(取得日: 2026-05-28)
+- 公式解説: 文部科学省『教育基本法資料室』『教育基本法について(規定の概要)』(取得日: 2026-08-25)
