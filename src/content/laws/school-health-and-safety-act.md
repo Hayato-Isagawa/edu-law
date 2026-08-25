@@ -5,11 +5,11 @@ summary: 学校における児童生徒等及び職員の健康の保持増進(�
 eGovUrl: https://laws.e-gov.go.jp/law/333AC0000000056/
 officialExplanations:
   - publisher: mext
-    title: 学校保健(健康診断・感染症対策・学校環境衛生 等)
+    title: 学校保健、学校給食、食育
     url: https://www.mext.go.jp/a_menu/01_k.htm
     format: html
   - publisher: mext
-    title: 学校安全(学校安全計画・危機管理マニュアル・安全教育)
+    title: 学校安全
     url: https://www.mext.go.jp/a_menu/kenko/anzen/1289303.htm
     format: html
 lastVerified: "2026-06-09"

@@ -5,7 +5,7 @@ summary: 教育の目的及び理念と、教育の実施に関する基本的�
 eGovUrl: https://laws.e-gov.go.jp/law/418AC0000000120/
 officialExplanations:
   - publisher: mext
-    title: 教育基本法資料室(法令本文・新旧対照・国会での議論・参考資料の入口)
+    title: 教育基本法資料室へようこそ！
     url: https://www.mext.go.jp/b_menu/kihon/index.htm
     format: html
   - publisher: mext
