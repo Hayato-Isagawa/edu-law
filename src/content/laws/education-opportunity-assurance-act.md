@@ -15,7 +15,7 @@ officialExplanations:
     publishedAt: "2019-10-25"
     format: html
   - publisher: mext
-    title: 「教育機会確保法」って何?(リーフレット)
+    title: 「教育機会確保法」って何?
     url: https://www.mext.go.jp/content/20231018-mxt_syoto02-000021384_001010.pdf
     format: pdf
 lastVerified: "2026-06-17"

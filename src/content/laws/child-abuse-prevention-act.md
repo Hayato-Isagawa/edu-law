@@ -5,12 +5,12 @@ summary: 児童虐待の早期発見・通告義務・学校の責務を定め�
 eGovUrl: https://laws.e-gov.go.jp/law/412AC1000000082/
 officialExplanations:
   - publisher: mext
-    title: 学校・教育委員会等向け 虐待対応の手引き(令和8年5月改訂版)本体 PDF
+    title: 学校・教育委員会等向け虐待対応の手引き(令和8年5月改訂版)
     url: https://www.mext.go.jp/content/20260601-mxt_jidou01-100002838-002.pdf
     publishedAt: "2026-06-01"
     format: pdf
   - publisher: mext
-    title: 学校・教育委員会等向け虐待対応の手引き(案内ページ)
+    title: 学校・教育委員会等向け虐待対応の手引き
     url: https://www.mext.go.jp/a_menu/shotou/seitoshidou/1416474.htm
     format: html
   - publisher: mext
@@ -19,12 +19,12 @@ officialExplanations:
     publishedAt: "2019-02-28"
     format: html
   - publisher: cfa
-    title: 「子ども虐待対応の手引き」の一部改正(令和6年4月改正版、案内ページ)
+    title: 「子ども虐待対応の手引き」の一部改正(令和6年4月改正版)
     url: https://www.cfa.go.jp/policies/jidougyakutai/hourei-tsuuchi/taiou_tebiki
     publishedAt: "2024-04-22"
     format: html
   - publisher: cfa
-    title: 児童虐待防止対策(政策トップ、189 ダイヤル案内含む)
+    title: 児童虐待防止対策
     url: https://www.cfa.go.jp/policies/jidougyakutai
     format: html
 lastVerified: "2026-06-09"
