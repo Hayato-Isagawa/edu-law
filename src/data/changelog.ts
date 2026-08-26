@@ -29,6 +29,16 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-08-26",
+    items: [
+      {
+        type: "fix",
+        text: "トップページの児童福祉法の代表解説を、その法令ページに載っている公式案内に差し替えました。トップで見た資料を法令ページで探せるようになります",
+        links: [{ label: "児童福祉法", href: "/laws/child-welfare-act/" }],
+      },
+    ],
+  },
+  {
     date: "2026-08-25",
     items: [
       {
@@ -196,7 +206,7 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         type: "update",
-        text: "児童虐待防止法ページで案内する文部科学省『学校・教育委員会等向け 虐待対応の手引き』を、最新の令和8年5月改訂版に更新しました",
+        text: "児童虐待防止法ページで案内する文部科学省『学校・教育委員会等向け虐待対応の手引き』を、最新の令和8年5月改訂版に更新しました",
         links: [{ label: "児童虐待防止法", href: "/laws/child-abuse-prevention-act/" }],
       },
     ],
@@ -216,7 +226,7 @@ export const changelogEntries: ChangelogEntry[] = [
     items: [
       {
         type: "add",
-        text: "教育基本法のページを法令一覧に追加しました。教育の目的・理念や国・地方公共団体の責務など教育の基本について、文部科学省『教育基本法資料室』の公式解説や e-Gov 法令本文への入口を 1 ページで確認できます",
+        text: "教育基本法のページを法令一覧に追加しました。教育の目的・理念や国・地方公共団体の責務など教育の基本について、文部科学省『教育基本法資料室へようこそ！』の公式解説や e-Gov 法令本文への入口を 1 ページで確認できます",
         links: [{ label: "教育基本法", href: "/laws/basic-act-on-education/" }],
       },
     ],
@@ -231,7 +241,7 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         type: "add",
-        text: "地方公務員法のページを法令一覧に追加しました。公立学校の教員を含む地方公務員の任用・給与・分限・懲戒・服務などの根本基準について、総務省「地方公務員制度」の公式解説や e-Gov 法令本文への入口を 1 ページで確認できます",
+        text: "地方公務員法のページを法令一覧に追加しました。公立学校の教員を含む地方公務員の任用・給与・分限・懲戒・服務などの根本基準について、総務省「地方公務員制度等」の公式解説や e-Gov 法令本文への入口を 1 ページで確認できます",
         links: [{ label: "地方公務員法", href: "/laws/local-public-service-act/" }],
       },
       {
