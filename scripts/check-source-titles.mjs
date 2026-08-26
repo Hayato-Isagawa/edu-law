@@ -1,19 +1,21 @@
 #!/usr/bin/env node
 // 公式解説の書名は、正本(`src/content/laws/*.md` の frontmatter `officialExplanations[].title`)
-// のほかに **4 箇所へ独立に写されている** — 本文末尾の `## 出典` 節、frontmatter の `summary`、
-// トップの Highlights(`src/pages/index.astro`)、場面データと更新履歴(`src/data/*.ts`)。
-// 片方だけ直すと静かにずれ、`astro check` も e2e も週次 link-check も通って本番に出る。
-// 2026-08-25 の #190 / #191(出典節)と 2026-08-26 の #194(残り 3 箇所・drift 11 件)が実例。
+// のほかに **5 箇所へ独立に写されている** — 本文末尾の `## 出典` 節、frontmatter の `summary`、
+// 法令 md 本文、トップの Highlights(`src/pages/index.astro`)、場面データと更新履歴(`src/data/*.ts`)。
+// どれか 1 箇所だけ直すと静かにずれ、`astro check` も e2e も週次 link-check も通って本番に出る。
+// 2026-08-25 の #190 / #191(出典節)と 2026-08-26 の #194(出典節の外・drift 11 件)が実例。
 // 事故の経緯と設計判断は CLAUDE.md「書名一致ガード」。
 //
 // **書名の同定は「発行元名プレフィックス」で行う。** `発行元『書名』` / `発行元「書名」` の形
 // (外側括弧の直前が `src/data/publishers.ts` の `PUBLISHER_LABELS` の値)だけを書名として照合する。
 // 括弧引用を全部拾う方式にすると、UI ラベル・ページ名・法令名・プレースホルダまで対象になって
-// 例外が 40 件超必要になり、しかも `法令` / `学校安全` のように**普通名詞と衝突する正本**が
+// **例外が 89 件**必要になり(実測)、しかも `法令` / `学校安全` のように**普通名詞と衝突する正本**が
 // 直せない赤を生む(`法令` は児童福祉法の公式解説の書名で、散文にも頻出する)。
-// 逆に括弧を無視した全文走査は、同じ短い書名のせいで偶然一致が 160 件出て使えない。
+// 逆に括弧を無視した全文走査も使えない — 正本ユニーク 29 件を `src/`(法令 md を除く 34 本)へ
+// 逐語で当てると 165 件ヒットし、うち 139 件は `法令` が普通名詞として出ているだけ。
 //
-// **例外は同じファイルの中でマークする。** 正本に載らない名前(本文限りの資料・ガイド固有の
+// **例外はその引用と同じ範囲でマークする**(法令 md は 出典節 / `summary` 行 / 本文 の 3 範囲、
+// `src/` 側はファイル単位)。正本に載らない名前(本文限りの資料・ガイド固有の
 // 資料・散文中の短縮形)は `body-only:` で明示する。構文だけ言語に合わせる — md 本文は
 // `<!-- body-only: 書名 -->`、YAML は行末の `# body-only: 書名`、JS / TS と `.astro` の
 // frontmatter は `// body-only: 書名`。allowlist を別ファイルに持たないのは、書名を消したときに
@@ -143,13 +145,19 @@ function parseOfficialTitles(frontmatter) {
  * この検査が黙って 0 件になる(マークを持たない法令ファイルは緑で通り抜ける)。
  */
 function parseSummaryLine(frontmatter) {
-  const line = frontmatter.split(/\r?\n/).find((l) => /^summary:/.test(l));
-  if (line === undefined) throw new Error('frontmatter に summary: が無い');
-  const value = line.replace(/^summary:[ \t]*/, '').trim();
+  const lines = frontmatter.split(/\r?\n/);
+  const at = lines.findIndex((l) => /^summary:/.test(l));
+  if (at === -1) throw new Error('frontmatter に summary: が無い');
+  const value = lines[at].replace(/^summary:[ \t]*/, '').trim();
   if (value === '' || value.startsWith('|') || value.startsWith('>')) {
     throw new Error('summary を 1 行で読み取れない');
   }
-  return line;
+  // ブロックスカラーだけでなく**インデント継続のプレーンスカラー**も止める。
+  // 折り返した 2 行目以降を黙って見ないと、そこに書いた書名が検査の外へ出る。
+  if (/^[ \t]+\S/.test(lines[at + 1] ?? '')) {
+    throw new Error('summary が複数行にまたがっている(1 行で読み取れない)');
+  }
+  return lines[at];
 }
 
 /** `## 出典` 節と、その外側の本文に分ける。節が 1 つでなければ理由を返す。 */
@@ -217,7 +225,8 @@ function extractQuotedNames(text) {
     }
   }
 
-  return { names, unclosed: stack.length > 0 };
+  // `start` は閉じられなかった外側の開き括弧の位置でもある(閉じたら -1 に戻さないため)。
+  return { names, unclosed: stack.length > 0, unclosedStart: start };
 }
 
 /**
@@ -244,30 +253,56 @@ export function extractMarks(text, syntax) {
 const stripMarks = (text, syntax) => text.replace(new RegExp(MARK_SYNTAX[syntax]), '');
 
 /**
+ * md では**全 HTML コメント**を落としてから引用を拾う。マークだけを落とす形にすると、
+ * 出典節を丸ごとコメントアウトしたときに中身が「正規の引用」として拾われ、
+ * 「引用が 1 件も無い」ガードが発火しないまま緑で通る(節の見出しだけが公開ページに残る)。
+ * マークは生テキストから先に集めるので、この除去では失われない。
+ * `//` コメント一般を落とさないのとは対照的だが、md には `https://` のような衝突が無い。
+ */
+const stripHtmlComments = (text) => text.replace(/<!--[\s\S]*?-->/g, '');
+
+/**
  * `src/data/publishers.ts` の `PUBLISHER_LABELS` から発行元名を読む。
  * 発行元を足したら書名として認識される範囲も自動で広がるよう、写しを持たない。
  * `other`(= その他)は発行元名ではないので除く。**0 件なら例外** — 読めないまま走らせると
  * 発行元名プレフィックスに一致する引用が 1 件も無くなり、出典節以外の全箇所が緑になる。
  */
 export function parsePublisherLabels(source) {
+  const open = source.indexOf('PUBLISHER_LABELS');
+  if (open === -1) throw new Error('PUBLISHER_LABELS が無い');
+  const start = source.indexOf('{', open);
+  const end = source.indexOf('}', start);
+  if (start === -1 || end === -1) throw new Error('PUBLISHER_LABELS を読み取れない');
+
   const labels = [];
-  for (const m of source.matchAll(/^\s*([A-Za-z0-9_-]+):\s*"([^"]*)"/gm)) {
+  for (const line of source.slice(start + 1, end).split(/\r?\n/)) {
+    if (line.trim() === '') continue;
+    const m = line.match(/^\s*([A-Za-z0-9_-]+):\s*"([^"]*)"\s*,?\s*$/);
+    // **読めない行は黙って飛ばさない。** 単引用符や式で書かれた 1 件を落とすと、
+    // その発行元の引用だけが静かに検査の外へ出る。
+    if (!m) throw new Error(`PUBLISHER_LABELS の行を読み取れない: ${line.trim()}`);
     if (m[1] === 'other') continue;
+    if (m[2] === '') throw new Error('PUBLISHER_LABELS に空のラベルがある');
     labels.push(norm(m[2]));
   }
   if (labels.length === 0) throw new Error('PUBLISHER_LABELS から発行元名を読み取れない');
   return labels;
 }
 
-/** 発行元名が直前に置かれた引用だけを返す(= このリポで書名を書くときの形)。 */
+/**
+ * 発行元名が直前に置かれた引用だけを返す(= このリポで書名を書くときの形)。
+ * `unclosed` は「**発行元名の付いた**開き括弧が閉じていない」ときだけ真にする。散文では
+ * 対応しないかぎ括弧が普通に出るので、無条件に報告すると書名と無関係な赤が量産される。
+ */
 function citations(text, publishers) {
-  const { names, unclosed } = extractQuotedNames(text);
+  const prefixOf = (at) => publishers.find((p) => at >= p.length && text.slice(at - p.length, at) === p);
+  const { names, unclosed, unclosedStart } = extractQuotedNames(text);
   const cited = [];
   for (const q of names) {
-    const publisher = publishers.find((p) => text.slice(q.start - p.length, q.start) === p);
+    const publisher = prefixOf(q.start);
     if (publisher !== undefined) cited.push({ ...q, publisher });
   }
-  return { cited, unclosed };
+  return { cited, unclosed: unclosed && prefixOf(unclosedStart) !== undefined };
 }
 
 /** 不一致が空白だけのときに、そう言う。目で 1 個の空白を探させない。 */
@@ -336,7 +371,7 @@ export function inspect(label, source, publishers) {
   if (body.error) return { problems: [`${label}: ${body.error}`], quoted: [] };
 
   const marks = extractMarks(body.section, 'html');
-  const { names: quoted, unclosed } = extractQuotedNames(stripMarks(body.section, 'html'));
+  const { names: quoted, unclosed } = extractQuotedNames(stripHtmlComments(body.section));
   const quotedNames = quoted.map((q) => q.name);
   const problems = [];
 
@@ -363,8 +398,8 @@ export function inspect(label, source, publishers) {
 
   // --- 本文(出典節の外): 発行元名付きの引用だけ -----------------------------
   const outsideMarks = extractMarks(body.outside, 'html');
-  const outside = citations(stripMarks(body.outside, 'html'), publishers);
-  if (outside.unclosed && outside.cited.length > 0) {
+  const outside = citations(stripHtmlComments(body.outside), publishers);
+  if (outside.unclosed) {
     problems.push(`${label}: 本文に閉じていない括弧がある(その書名は照合できない)`);
   }
   problems.push(...matchAgainst(label, '本文', outside.cited, outsideMarks, official));
@@ -382,7 +417,7 @@ export function inspectProse(label, source, official, publishers) {
   const problems = [];
   // 散文では対応しない括弧が普通に出る(かぎ括弧を記号として使う等)ので、
   // 書名の引用が 1 件でもあるファイルに限って報告する。
-  if (unclosed && cited.length > 0) {
+  if (unclosed) {
     problems.push(`${label}: 閉じていない括弧がある(その書名は照合できない)`);
   }
   problems.push(...matchAgainst(label, '本文', cited, marks, official));
@@ -401,10 +436,13 @@ export function collectProseFiles(root) {
       a.name < b.name ? -1 : 1,
     )) {
       const p = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        if (p !== lawsDir) walk(p);
+      // symlink は `isDirectory()` が偽になるので、実体を見て分岐する。
+      // 見ないと symlink 先のディレクトリを `readFileSync` に渡して EISDIR で死ぬ。
+      if (entry.isDirectory() || (entry.isSymbolicLink() && !isFile(p))) {
+        if (p !== lawsDir && !entry.isSymbolicLink()) walk(p);
         continue;
       }
+      if (entry.name.startsWith('.')) continue; // .DS_Store 等で件数がぶれないように
       if (NON_PROSE_EXTENSIONS.includes(path.extname(entry.name))) continue;
       out.push(p);
     }
@@ -444,9 +482,24 @@ export function parseHighlights(source) {
   if (depth !== 0) throw new Error('highlights 配列の括弧が対応していない');
   if (entries.length === 0) throw new Error('highlights にエントリが無い');
 
+  // **入れ子のオブジェクトを先に落とす。** 落とさないと `{ meta: { title: "…" }, title: "…" }`
+  // で内側の値を先に拾い、壊れていない側を指すエラーが出る。
+  const topLevel = (entry) => {
+    let out = '';
+    let depth = 0;
+    for (const ch of entry) {
+      if (ch === '{') depth++;
+      if (depth <= 1) out += ch;
+      if (ch === '}') depth--;
+    }
+    return out;
+  };
+
   // prettier は長い値を次の行へ折るので、キーと値の間に改行が入る形も読む。
   const field = (entry, key) => {
-    const m = entry.match(new RegExp(`\\b${key}:\\s*(?:\\n\\s*)?("(?:[^"\\\\]|\\\\.)*")`));
+    const m = topLevel(entry).match(
+      new RegExp(`\\b${key}:\\s*(?:\\n\\s*)?("(?:[^"\\\\]|\\\\.)*")`),
+    );
     if (!m) throw new Error(`highlights のエントリから ${key} を読み取れない`);
     return norm(JSON.parse(m[1]));
   };
@@ -489,8 +542,10 @@ export function inspectHighlights(label, source, lawsBySlug) {
     }
     if (title !== titles[0]) {
       problems.push(
+        // 診断は `[0]` とだけ比べる。全 title と比べると、`[1]` と空白だけ違うときに
+        // 「空白だけが違う」と出て、正本として示す `[0]` の側を見誤らせる。
         `${label}: ${slug} の highlight が officialExplanations[0] と違う` +
-          `${mismatchHint(title, titles)} — 「${title}」/ 正本「${titles[0]}」` +
+          `${mismatchHint(title, [titles[0]])} — 「${title}」/ 正本「${titles[0]}」` +
           ' — 代表解説を変えるなら officialExplanations の並び順を先に変える(ADR 0009 第三基準)',
       );
     }
@@ -568,7 +623,7 @@ const fail = (message) => {
 /**
  * 全箇所を検査する。CI が走らせるのはこちら。
  *
- * **0 件ガードを 3 本置いている。** 実リポでは他の検査が代わりに赤くするが、それに頼ると
+ * **0 件・欠落のガードを 3 本置いている。** 実リポでは他の検査が代わりに赤くするが、それに頼ると
  * (1) フィクスチャ root では緑になりうる (2)「法令ファイルが移動・改名されていないか」という
  * 診断が無関係な赤に埋もれて原因に辿り着けない。
  */
@@ -607,8 +662,10 @@ export function mainAll(root = ROOT) {
     }
   }
 
+  // 走査対象の 0 件ガードは置いていない。`publishers.ts` と `index.astro` を必須にしている
+  // 以上、ここが 0 件になる入力は作れない(どちらも走査対象に含まれる)。**起こり得ない経路に
+  // ガードを置くと、塞いだつもりの一覧だけが増える。**
   const proseFiles = collectProseFiles(root);
-  if (proseFiles.length === 0) return fail(`${SRC_DIR}/ に走査対象のファイルが 0 件`);
   const official = [...officialAll];
   let citedTotal = 0;
   for (const file of proseFiles) {

@@ -14,7 +14,7 @@
     "check": "astro check",
     "check:tokens": "npx tsx scripts/check-tokens.ts",
     "check:sources": "node scripts/check-source-titles.mjs",
-    "test:content": "node scripts/assert-test-files.mjs 'scripts/__tests__/content/*.test.mjs' && node scripts/assert-test-results.mjs 90 'scripts/__tests__/content/*.test.mjs'",
+    "test:content": "node scripts/assert-test-files.mjs 'scripts/__tests__/content/*.test.mjs' && node scripts/assert-test-results.mjs 109 'scripts/__tests__/content/*.test.mjs'",
     "test:workflows": "node scripts/assert-test-files.mjs 'scripts/__tests__/*.test.mjs' && node scripts/assert-test-results.mjs 51 'scripts/__tests__/*.test.mjs'",
     "test:hooks": "node scripts/assert-test-files.mjs '.claude/hooks/__tests__/*.test.cjs' && node scripts/assert-test-results.mjs 50 '.claude/hooks/__tests__/*.test.cjs'",
     "test:e2e": "npx playwright test",

@@ -58,7 +58,8 @@ gh issue list --label stale-check --state open
 - 旧版が公式ハブに併載され続けていても、現行版が明示されていれば現行版へ置換する(PR #80・#82 の前例)
 - 新 URL は HTTP ステータスだけでなく Content-Type・タイトル・発行年月を逐語確認してから反映する
 - 出典の取得日(`retrievedAt` / 本文の出典行)も実施日に更新する
-- 書名が変わったときは、frontmatter の `officialExplanations[].title` だけでなく**同じ書名の写し先を全部直す** — 本文末尾の `## 出典` 節・frontmatter の `summary`・トップの Highlights(`src/pages/index.astro`)・`src/data/*.ts`。`npm run check:sources` が全箇所を照合するが、**発行元名を伴わない引用と、どの写しにも現れない書名(30 件中 5 件)は検査に掛からない**
+- 書名が変わったときは、frontmatter の `officialExplanations[].title` だけでなく**同じ書名の写し先を全部直す** — 本文末尾の `## 出典` 節・frontmatter の `summary`・法令 md 本文・トップの Highlights(`src/pages/index.astro`)・`src/data/*.ts`
+- `npm run check:sources` が照合するのは、**出典節では全引用、それ以外では発行元名を括弧の直前に隙間なく置いた引用だけ**。本文のリンク文言のように発行元名を伴わない写しは見ない(正本 30 件のうち 5 件はこの形でしか写されておらず、改名しても無反応)
 - 本文リンクの文言は説明的でよいが、**リンク先で同じ見出しを探せない**ものは公式名に置換する(changelog で読者に約束している挙動。文言そのものは機械では見ていない)
 
 ## `lastVerified` を動かしてよい条件

@@ -68,11 +68,12 @@ jobs:
         if: ${{ !cancelled() }}
         run: npm run test:hooks
 
-      # 公式解説の書名は frontmatter の正本のほかに**独立して 4 箇所へ写されている**
-      # (出典節 / summary / トップの Highlights / src/data/*.ts)。片方だけ直したずれは
-      # astro check も e2e も週次 link-check も通り、表示も正常に出る(2026-08-25 と
-      # 2026-08-26 に本番へ出て、公開 URL を人手で 2 値判定するまで気づけなかった。
-      # #190 / #191 / #194)。ネットワーク不要で数十 ms。
+      # 公式解説の書名は frontmatter の正本のほかに**独立して 5 箇所へ写されている**
+      # (出典節 / summary / 法令 md 本文 / トップの Highlights / src/data/*.ts)。
+      # どれか 1 箇所だけ直したずれは astro check も e2e も週次 link-check も通り、
+      # 表示も正常に出る(2026-08-25 の変更が本番へ出て、翌 08-26 に残りの写しでも同じずれが
+      # 見つかった。公開 URL を人手で 2 値判定するまで気づけなかった。#190 / #191 / #194)。
+      # ネットワーク不要で数十 ms。
       - name: Source title consistency
         if: ${{ !cancelled() }}
         run: npm run check:sources

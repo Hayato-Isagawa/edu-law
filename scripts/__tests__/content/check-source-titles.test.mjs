@@ -381,6 +381,23 @@ test('出典節に引用された名前が 1 件も無ければ落ちる', () =>
   assert.match(problems[0], /引用された名前が 1 件も無い/);
 });
 
+test('出典節を丸ごとコメントアウトすると落ちる', () => {
+  // マークだけを剥がす実装だと、コメントの中身が「正規の引用」として拾われ、
+  // 「引用が 1 件も無い」ガードが発火しないまま緑で通る(見出しだけが公開ページに残る)。
+  const source = law().replace(
+    '- 文部科学省『基本方針』(取得日: 2026-01-01)',
+    '<!-- - 文部科学省『基本方針』(取得日: 2026-01-01) -->',
+  );
+  const problems = problemsOf(source);
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /引用された名前が 1 件も無い/);
+});
+
+test('コメントアウトされた出典行は引用として数えない', () => {
+  const source = law({ sources: ['文部科学省『基本方針』(取得日: 2026-01-01)', '<!-- 文部科学省『旧版』 -->'] });
+  assert.deepEqual(problemsOf(source), []);
+});
+
 test('## 出典 節が無ければ落ちる', () => {
   const problems = problemsOf(law().replace('## 出典', '## 参考'));
   assert.equal(problems.length, 1);
@@ -456,6 +473,23 @@ test('title がブロックスカラーなら、空文字で照合せずに落�
   assert.match(problems[0], /1 行で読み取れない/);
 });
 
+test('main() も発行元名を読めなければ落ちる', () => {
+  // 読めないまま走らせると summary と本文の検査が黙って 0 件になる。
+  // スクリプトを別の場所へ複製すると ROOT が変わるので、この経路に入れる。
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'edu-law-nopub-'));
+  try {
+    const copy = path.join(dir, 'check.mjs');
+    fs.copyFileSync(SCRIPT, copy);
+    withFixtures([law()], (pattern) => {
+      const res = spawnSync(process.execPath, [copy, pattern], { encoding: 'utf8' });
+      assert.equal(res.status, 1, res.stdout + res.stderr);
+      assert.match(res.stderr, /publishers\.ts が無い/);
+    });
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test('対象ファイルが 0 件なら落ちる', () => {
   withFixtures([], (pattern) => {
     const { code, output } = runMain(pattern);
@@ -498,6 +532,15 @@ test('summary の引用は YAML 行末の # body-only: マークで例外にで�
   );
 });
 
+test('summary のマークの中身は引用として読み直さない', () => {
+  // 剥がさないと、マークの中に書かれた `発行元「…」` が新しい引用として拾われ、
+  // 指示どおりに直しても消えない赤になる。
+  const text = '文部科学省『基本方針』。 # body-only: 総務省「別の資料」';
+  const problems = problemsOf(withSummary(text));
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /対応する引用がsummaryに無い/); // 孤児マークの 1 件だけ
+});
+
 test('summary の腐ったマーク(正本に在る書名を指す)は落ちる', () => {
   const problems = problemsOf(withSummary('文部科学省『基本方針』。 # body-only: 基本方針'));
   assert.equal(problems.length, 1);
@@ -523,6 +566,18 @@ test('summary がブロックスカラーなら、空で照合せずに落ちる
   assert.match(problems[0], /summary を 1 行で読み取れない/);
 });
 
+test('summary が複数行に折り返されていれば落ちる', () => {
+  // ブロックスカラーだけを止めても、インデント継続のプレーンスカラーで
+  // 2 行目以降が黙って検査の外へ出る。
+  const source = law().replace(
+    'summary: テスト用。',
+    'summary: テスト用。\n  文部科学省『幻の書名』も参照。',
+  );
+  const problems = problemsOf(source);
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /summary が複数行にまたがっている/);
+});
+
 test('summary が無ければ落ちる', () => {
   const problems = problemsOf(law().replace('summary: テスト用。\n', ''));
   assert.equal(problems.length, 1);
@@ -540,6 +595,19 @@ test('PUBLISHER_LABELS から発行元名を読む(その他は除く)', () => {
 
 test('PUBLISHER_LABELS を読めなければ、空で返さずに落ちる', () => {
   assert.throws(() => parsePublisherLabels('export const PUBLISHER_LABELS = {};'), /読み取れない/);
+  assert.throws(() => parsePublisherLabels('const OTHER = { a: "b" };'), /PUBLISHER_LABELS が無い/);
+});
+
+test('PUBLISHER_LABELS の読めない行は、黙って飛ばさずに落ちる', () => {
+  // 1 行を落とすと、その発行元の引用だけが静かに検査の外へ出る。
+  const withSingleQuote = publishersTs(['文部科学省']).replace('  other:', "  soumu: '総務省',\n  other:");
+  assert.throws(() => parsePublisherLabels(withSingleQuote), /行を読み取れない/);
+  assert.throws(() => parsePublisherLabels(publishersTs(['', '総務省'])), /空のラベル/);
+});
+
+test('PUBLISHER_LABELS 以外のマップは発行元名として拾わない', () => {
+  const src = `${publishersTs(['文部科学省'])}\nexport const URLS = { mext: "https://www.mext.go.jp/" };`;
+  assert.deepEqual(parsePublisherLabels(src), ['文部科学省']);
 });
 
 test('発行元を足すと、書名として認識される範囲も広がる', () => {
@@ -592,6 +660,24 @@ test('.ts の腐ったマーク・孤児マークは落ちる', () => {
     /frontmatter に在る書名を指している/,
   );
   assert.match(prose('// body-only: どこにも無い\nconst t = "";')[0], /対応する引用が本文に無い/);
+});
+
+test('.ts に閉じていない括弧があれば落ちる', () => {
+  const problems = prose('const t = "文部科学省『基本方針の公式解説";');
+  assert.ok(problems.some((p) => /閉じていない括弧がある/.test(p)), problems.join(' | '));
+});
+
+test('本文(出典節の外)に閉じていない括弧があれば落ちる', () => {
+  const source = law().replace('## 法令本文', '## 解説\n\n文部科学省『基本方針を参照。\n\n## 法令本文');
+  const problems = problemsOf(source);
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /本文に閉じていない括弧がある/);
+});
+
+test('.ts のマークは引用として数え直さない', () => {
+  // マークを剥がさずに走査すると、括弧を含む書名を指すマークが自分自身を
+  // 「未説明の引用」として呼び戻し、消せない赤になる。
+  assert.deepEqual(prose('// body-only: 「入れ子」を含む資料\nconst t = "文部科学省『「入れ子」を含む資料』";'), []);
 });
 
 test('https:// を含む文字列はマーク抽出を壊さない', () => {
@@ -651,25 +737,55 @@ test('href が /laws/<slug>/ の形でなければ落ちる', () => {
   assert.match(hl([...HL, { title: '甲の一', href: '/guides/x/' }])[0], /href が/);
 });
 
+test('入れ子オブジェクトの title を先に拾わない', () => {
+  // 拾うと、壊れていない側(内側の値)を指すエラーが出る。
+  const src = highlightsAstro(HL).replace(
+    '    title: "甲の一",',
+    '    meta: { title: "ニセの書名" },\n    title: "甲の一",',
+  );
+  assert.deepEqual(inspectHighlights('index.astro', src, LAWS), []);
+});
+
+test('空白差の診断は officialExplanations[0] とだけ比べる', () => {
+  // 全 title と比べると、[1] と空白だけ違うときに「空白だけが違う」と出て、
+  // 正本として示す [0] の側を見誤らせる。
+  const problems = hl([{ title: '甲の 二', href: '/laws/alpha/' }, HL[1]]);
+  assert.equal(problems.length, 1);
+  assert.doesNotMatch(problems[0], /空白だけが違う/);
+});
+
 test('prettier が折り返した title も読める', () => {
   const src = highlightsAstro(HL).replace('    title: "甲の一",', '    title:\n      "甲の一",');
   assert.deepEqual(inspectHighlights('index.astro', src, LAWS), []);
 });
 
 test('Highlights が読めない形は、0 件で素通りせずに落ちる', () => {
+  // **落ちた理由まで縛る。** `problems.length > 0` だけを見ると、名前が指すガードを外しても
+  // 「[0] と違う」「highlight に出ていない」といった代替の赤が立って緑のまま通る。
   const base = highlightsAstro(HL);
-  const broken = {
-    '配列名の rename': base.replace('const highlights = [', 'const cards = ['),
-    'as const の除去': base.replace('] as const;', '];'),
-    satisfies化: base.replace('] as const;', '] satisfies Card[];'),
-    空配列: highlightsAstro([]),
-    title欠落: base.replace('    title: "甲の一",\n', ''),
-    単一引用符: base.replace('"甲の一"', "'甲の一'"),
-  };
-  for (const [name, src] of Object.entries(broken)) {
+  const broken = [
+    ['配列名の rename', base.replace('const highlights = [', 'const cards = ['), /が見つからない/],
+    ['as const の除去', base.replace('] as const;', '];'), /閉じ.*が見つからない/],
+    ['satisfies 化', base.replace('] as const;', '] satisfies Card[];'), /閉じ.*が見つからない/],
+    // `}{` は最終的な深さが 0 に戻るので、`depth !== 0` では捕まらない。
+    // 2 つのガードを 1 つの入力で同時に殺さないよう、片方だけが効く形を選ぶ。
+    ['閉じ括弧が先に来る', base.replace('  {\n    title: "甲の一",', '  }{\n  {\n    title: "甲の一",'), /括弧が対応していない/],
+    ['空配列', highlightsAstro([]), /エントリが無い/],
+    ['title 欠落', base.replace('    title: "甲の一",\n', ''), /title を読み取れない/],
+    ['単一引用符', base.replace('"甲の一"', "'甲の一'"), /title を読み取れない/],
+  ];
+  // 形を静かに減らせないよう件数も固定する。
+  assert.equal(broken.length, 7);
+  for (const [name, src, expected] of broken) {
     const problems = inspectHighlights('index.astro', src, LAWS);
     assert.ok(problems.length > 0, `${name}: 落ちていない`);
+    assert.match(problems[0], expected, `${name}: 別の理由で落ちている`);
   }
+});
+
+test('href は /laws/<slug>/ の全体に一致していなければ落ちる', () => {
+  assert.match(hl([...HL, { title: '甲の一', href: '/foo/laws/alpha/' }])[0], /href が/);
+  assert.match(hl([...HL, { title: '甲の一', href: '/laws/alpha/x' }])[0], /href が/);
 });
 
 // ---------------------------------------------------------------------------
@@ -681,6 +797,24 @@ test('知らない拡張子(.tsx)も既定で走査対象に入る', () => {
   withRoot({ prose: { 'src/components/Card.tsx': 'export const C = () => null;' } }, (root) => {
     const files = collectProseFiles(root).map((f) => path.relative(root, f));
     assert.ok(files.includes(path.join('src', 'components', 'Card.tsx')), files.join(' '));
+  });
+});
+
+test('src/ 配下の symlink ディレクトリでクラッシュしない', () => {
+  // `readdirSync(withFileTypes)` は symlink を isDirectory() === false と報告するので、
+  // 素朴に書くとディレクトリを readFileSync に渡して EISDIR で死ぬ。
+  withRoot({}, (root) => {
+    fs.mkdirSync(path.join(root, 'outside'));
+    fs.symlinkSync(path.join(root, 'outside'), path.join(root, 'src', 'linked'));
+    const { code, output } = runAll(root);
+    assert.equal(code, 0, output);
+  });
+});
+
+test('.DS_Store のようなドットファイルは数に入れない', () => {
+  withRoot({ prose: { 'src/.DS_Store': 'binary' } }, (root) => {
+    const files = collectProseFiles(root).map((f) => path.basename(f));
+    assert.ok(!files.includes('.DS_Store'), files.join(' '));
   });
 });
 
@@ -723,6 +857,57 @@ test('mainAll は全箇所が揃っていれば 0 を返す', () => {
   withRoot({}, (root) => {
     const { code, output } = runAll(root);
     assert.equal(code, 0, output);
+  });
+});
+
+test('mainAll が src/ の走査を実際に呼んでいる', () => {
+  // **関数単体のテストだけでは足りない。** `mainAll` からの呼び出しを消すと、この PR が
+  // 広げた保護の 2/3 が消えるのに、関数側のテストは全部緑のまま通る。
+  withRoot({ prose: { 'src/data/x.ts': 'const t = "文部科学省『基本方針(旧)』";' } }, (root) => {
+    const { code, output } = runAll(root);
+    assert.equal(code, 1, output);
+    assert.match(output, /『基本方針\(旧\)』/);
+  });
+});
+
+test('mainAll が Highlights の検査を実際に呼んでいる', () => {
+  withRoot({ highlights: highlightsAstro([{ title: '基本 方針', href: '/laws/law-0/' }]) }, (root) => {
+    const { code, output } = runAll(root);
+    assert.equal(code, 1, output);
+    assert.match(output, /officialExplanations\[0\] と違う/);
+  });
+});
+
+test('mainAll の要約行は、実際に見た件数を出す', () => {
+  // 件数を常に 0 と報告する変異は、語だけを見るテストでは捕まらない。
+  withRoot(
+    {
+      laws: [law(), law()],
+      prose: { 'src/data/x.ts': 'const t = "文部科学省『基本方針』";' },
+    },
+    (root) => {
+      const { code, output } = runAll(root);
+      assert.equal(code, 0, output);
+      assert.match(output, /法令 2 ファイル\(出典節の引用 2 件/);
+      assert.match(output, /発行元名付きの引用 1 件/);
+    },
+  );
+});
+
+test('mainAll は複数の法令を覆い、slug ごとに照合する', () => {
+  // フィクスチャの法令が 1 本だけだと、被覆・重複・正本の合成が 1 度も走らない。
+  const two = ['甲', '乙'].map((t) => law({ officialTitles: [t], sources: [`文部科学省『${t}』`] }));
+  withRoot({ laws: two }, (root) => {
+    assert.equal(runAll(root).code, 0);
+    const src = fs.readFileSync(path.join(root, 'src', 'pages', 'index.astro'), 'utf8');
+    fs.writeFileSync(
+      path.join(root, 'src', 'pages', 'index.astro'),
+      src.replace('/laws/law-1/', '/laws/law-0/'),
+    );
+    const { code, output } = runAll(root);
+    assert.equal(code, 1, output);
+    assert.match(output, /同じ法令を 2 回/);
+    assert.match(output, /law-1 が highlight に出ていない/);
   });
 });
 
@@ -772,11 +957,11 @@ test('ずれがあるとき CLI は exit 1 で終わり、診断を stderr に�
   });
 });
 
-test('一致しているとき CLI は exit 0 で終わり、件数を stdout に出す', () => {
+test('一致しているとき CLI は exit 0 で終わり、実際に見た件数を stdout に出す', () => {
   withFixtures([law(), law()], (pattern) => {
     const res = runCli(pattern);
     assert.equal(res.status, 0, res.stderr);
-    assert.match(res.stdout, /2 ファイル/);
+    assert.match(res.stdout, /2 ファイル \/ 出典節の引用 2 件/);
   });
 });
 
@@ -913,10 +1098,17 @@ test('npm script check:sources が、引数なしで検査スクリプトを呼�
   assert.equal(pkg.scripts['check:sources'], 'node scripts/check-source-titles.mjs');
 });
 
-test('npm script test:content が scripts/__tests__/content/ を対象にしている', () => {
-  const script = pkg.scripts['test:content'] ?? '';
-  assert.match(script, /assert-test-files\.mjs 'scripts\/__tests__\/content\/\*\.test\.mjs'/);
-  assert.match(script, /assert-test-results\.mjs \d+ 'scripts\/__tests__\/content\/\*\.test\.mjs'/);
+test('npm script test:content が、実測ちょうどの下限で 2 段を通す', () => {
+  // **完全一致で縛る。** `match` だと ` || true` を後ろに足すだけで恒久 no-op にでき、
+  // 下限も 1 まで静かに下げられる(`assert-test-results.mjs` は 1 以上しか要求しない)。
+  // 下限はこのファイルの `test(` の数と一致させる — CLAUDE.md の「実測ちょうど・余裕ゼロ」。
+  const own = readRoot('scripts/__tests__/content/check-source-titles.test.mjs');
+  const count = (own.match(/^test\(/gm) ?? []).length;
+  assert.equal(
+    pkg.scripts['test:content'],
+    "node scripts/assert-test-files.mjs 'scripts/__tests__/content/*.test.mjs' && " +
+      `node scripts/assert-test-results.mjs ${count} 'scripts/__tests__/content/*.test.mjs'`,
+  );
 });
 
 test('test:workflows の glob は scripts/__tests__/content/ を拾わない', () => {
