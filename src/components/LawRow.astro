@@ -4,7 +4,7 @@ interface Props {
   href: string;
   title: string;
   summary?: string;
-  badge?: "mext" | "cfa" | "bunkacho" | "egov";
+  badge?: "mext" | "cfa" | "bunkacho" | "soumu" | "egov";
   meta?: string;
   variant?: "law" | "scenario" | "highlight";
 }
@@ -39,6 +39,12 @@ const publisherBadgeConfig = {
     fullLabel: "文化庁",
     style:
       "text-badge-bunkacho border-badge-bunkacho/40 bg-badge-bunkacho/10",
+  },
+  soumu: {
+    label: "SOUMU",
+    fullLabel: "総務省",
+    style:
+      "text-badge-soumu border-badge-soumu/40 bg-badge-soumu/10",
   },
   egov: {
     label: "E-GOV",
