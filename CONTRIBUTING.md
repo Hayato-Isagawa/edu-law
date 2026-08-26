@@ -74,7 +74,14 @@ npm ci
 npm run dev      # 開発サーバー
 npm run build    # ビルド
 npm run check    # Astro 型チェック
+npm run check:sources # 公式解説の書名が frontmatter と出典節で一致しているか
 ```
+
+公式解説の書名は frontmatter の `officialExplanations[].title` と本文末尾の `## 出典` 節の
+2 箇所にあります。出典節に『』や「」で引用されている書名を片方だけ直すと CI が赤くなるので、
+両方を揃えてください。出典節に出ていない書名(30 件中 7 件)は検査に掛からないので、
+frontmatter を直したら出典節も自分で確認してください。`officialExplanations` に載せない
+名前は、その出典行の末尾に `<!-- body-only: 書名 -->` を置きます。
 
 ## 行動規範
 

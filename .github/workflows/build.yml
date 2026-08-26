@@ -60,9 +60,25 @@ jobs:
       # 「ガードが止めるはずだった改変」が公開された後でしか気づけないので、
       # ジョブ Build site の中に載せる。ネットワーク不要で数百 ms。
       #
-      # 末尾に置き、自分自身に `!cancelled()` を付ける(姉妹リポ edu-watch と
-      # 同じ形)。先頭に置くと、フックテストが 1 本落ちただけで Type check と
+      # Build より後ろに置き、自分自身に `!cancelled()` を付ける(姉妹リポ edu-watch と
+      # 同じ形)。前に置くと、フックテストが 1 本落ちただけで Type check と
       # Build がスキップされ、「サイトがビルドできるか」が分からなくなる。
+      # 以降のガード 2 本も同じ理由でここに並べている。
       - name: Hook regression tests
         if: ${{ !cancelled() }}
         run: npm run test:hooks
+
+      # 公式解説の書名は frontmatter と本文末尾の `## 出典` 節に**独立して 2 箇所**
+      # 書かれている。片方だけ直したずれは astro check も e2e も週次 link-check も
+      # 通り、表示も正常に出る(2026-08-25 に本番へ出て、公開 URL を人手で
+      # 2 値判定するまで気づけなかった。#190 / #191)。ネットワーク不要で数十 ms。
+      - name: Source title consistency
+        if: ${{ !cancelled() }}
+        run: npm run check:sources
+
+      # check:sources 自身の回帰テスト。書名のずれを見つける側も「赤になるべきときに
+      # 赤になる」ことは自分では観測できない(素通りに落ちても出力は緑と区別がつかない)。
+      # 検査の各経路と、npm script / この workflow への配線までを固定する。
+      - name: Content guard regression tests
+        if: ${{ !cancelled() }}
+        run: npm run test:content
