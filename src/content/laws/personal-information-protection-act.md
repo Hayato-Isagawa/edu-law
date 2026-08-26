@@ -1,7 +1,7 @@
 ---
 title: 個人情報の保護に関する法律
 order: 6
-summary: 個人情報の取扱いを定める法律。学校現場では文部科学省「教育データの利活用に係る留意事項」が公式解説の中心。
+summary: 個人情報の取扱いを定める法律。学校現場では文部科学省「教育データの利活用に係る留意事項」が公式解説の中心。 # body-only: 教育データの利活用に係る留意事項
 eGovUrl: https://laws.e-gov.go.jp/law/415AC0000000057/
 officialExplanations:
   - publisher: mext

@@ -205,6 +205,7 @@ export const changelogEntries: ChangelogEntry[] = [
     items: [
       {
         type: "update",
+        // body-only: いじめの重大事態の調査に関するガイドライン
         text: "いじめ防止対策推進法ページで案内する文部科学省『いじめの重大事態の調査に関するガイドライン』を、最新の令和6年8月改訂版に更新しました",
         links: [{ label: "いじめ防止対策推進法", href: "/laws/bullying-prevention-act/" }],
       },
@@ -270,16 +271,19 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         type: "add",
+        // body-only: 学校における労働安全衛生管理体制の整備のために(第3版)
         text: "「学校の労働安全衛生管理体制(衛生管理者・産業医ほか)をめぐる公的な情報」ガイドページを公開しました。衛生管理者・産業医・衛生委員会・衛生推進者の選任や面接指導・ストレスチェックの体制について、文部科学省『学校における労働安全衛生管理体制の整備のために(第3版)』・e-Gov 等の公的な情報の所在を 1 ページで確認できます",
         links: [{ label: "労働安全衛生管理体制", href: "/guides/occupational-safety-health/" }],
       },
       {
         type: "add",
+        // body-only: 会計年度任用職員制度の運用に係る事務処理マニュアル
         text: "「非正規の教員(臨時的任用・会計年度任用)の任用と勤務条件をめぐる公的な情報」ガイドページを公開しました。臨時的任用職員・会計年度任用職員の任用・勤務条件・給付について、総務省『会計年度任用職員制度の運用に係る事務処理マニュアル』・文部科学省・e-Gov 等の公的な情報の所在を 1 ページで確認できます",
         links: [{ label: "非正規の教員", href: "/guides/non-regular-teachers/" }],
       },
       {
         type: "add",
+        // body-only: 地方公務員 両立支援パスポート
         text: "「教員の妊娠・出産・育児と仕事の両立をめぐる公的な情報」ガイドページを公開しました。産前産後休暇・育児休業・部分休業などの制度について、総務省『地方公務員 両立支援パスポート』・e-Gov 等の公的な情報の所在を 1 ページで確認できます",
         links: [{ label: "妊娠・出産・育児との両立", href: "/guides/childcare-work-balance/" }],
       },
