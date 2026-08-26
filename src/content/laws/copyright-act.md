@@ -5,6 +5,11 @@ summary: 著作物の保護と教育現場での利用(第35条)を定める法�
 eGovUrl: https://laws.e-gov.go.jp/law/345AC0000000048/
 officialExplanations:
   - publisher: bunkacho
+    title: 授業目的公衆送信補償金制度の概要(令和2年12月)
+    url: https://www.bunka.go.jp/seisaku/chosakuken/pdf/92728101_03.pdf
+    publishedAt: "2020-12"
+    format: pdf
+  - publisher: bunkacho
     title: 授業目的公衆送信補償金制度について
     url: https://www.bunka.go.jp/seisaku/chosakuken/kakushushitei/94237801.html
     format: html
@@ -18,11 +23,6 @@ officialExplanations:
     url: https://www.bunka.go.jp/seisaku/chosakuken/92728101.html
     publishedAt: "2020-12-18"
     format: html
-  - publisher: bunkacho
-    title: 授業目的公衆送信補償金制度の概要(令和2年12月)
-    url: https://www.bunka.go.jp/seisaku/chosakuken/pdf/92728101_03.pdf
-    publishedAt: "2020-12"
-    format: pdf
   - publisher: bunkacho
     title: 授業目的公衆送信補償金制度活用のための基礎知識(令和6年度教職員・ICT支援員著作権講習会 第1部講義資料)
     url: https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/seminar/2024/pdf/94089902_01.pdf

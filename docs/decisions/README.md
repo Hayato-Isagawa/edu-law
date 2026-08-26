@@ -46,7 +46,7 @@
 - [0006. ダークモードはシステム追従デフォルト + 手動切替トグル(`data-theme` 属性)で提供する](0006-dark-mode-data-theme-with-system-default.md)
 - [0007. トップページを法令の目次・台帳として設計する(カード型から行型 + 3px アクセントバーへの置換)](0007-top-page-as-law-index.md)
 - [0008. Layout skeleton: sticky Header + mobile menu + multi-col Footer + RSS](0008-layout-skeleton-with-sticky-header-mobile-menu-multicol-footer-and-rss.md)
-- [0009. Highlights セクションの選定基準と表示順](0009-highlights-selection-criteria.md)
+- [0009. Highlights セクションの選定基準と表示順](0009-highlights-selection-criteria.md) — 定常状態の件数は 0026 で 12 件に拡張(選定基準は有効)
 - [0010. ガイド一覧の新設と「教師を守る」スコープの追加](0010-guides-index-and-teacher-protection-scope.md)
 - [0011. 「子供への指導・対応」と「教師を守る」の 2 入口 IA(トップでの分岐)](0011-two-entrance-ia-child-guidance-and-teacher-protection.md) — 撤回(0018 で上書き)
 - [0012. 引用根拠を公共データ利用規約 第1.0版 へ移行](0012-migrate-to-public-data-license.md)
@@ -63,3 +63,4 @@
 - [0023. ビジュアルリグレッションテスト(VRT)を視覚変更 PR に限定して導入する(edu-evidence ADR 0024 ミラー)](0023-visual-regression-testing.md)
 - [0024. Cloudflare Web Analytics を手動スニペット方式で導入し CSP を最小限緩和する(edu-evidence ADR 0026 ミラー)](0024-web-analytics-beacon-and-csp.md)
 - [0025. Astro 7 へ移行し XSS advisory 3 件を解消する(Markdown は `processor: unified()` で維持・edu-evidence ADR 0027 ミラー)](0025-astro-7-migration.md)
+- [0026. Highlights を全 12 法令に拡張し、代表解説の起点を laws collection の並び順に一致させる](0026-highlights-cover-all-laws.md)

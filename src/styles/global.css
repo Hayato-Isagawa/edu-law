@@ -25,6 +25,14 @@
   --color-badge-cfa: #906a3b;
   --color-badge-bunkacho: #6f6a3e;
   --color-badge-egov: #5e5a52;
+  /* soumu は地方公務員法を Highlights に載せたとき(ADR 0026)に新設した。
+     他の 4 色が茶〜オリーブ〜灰の暖色寄りなので、判別できるよう寒色側へ振ってある。
+     実測 5.43(bg) / 5.72(card #ffffff)。
+     **上の 4.5:1 は素地に対する値で、チップ本体は自色 10% のティントの上に載る**
+     (LawRow の bg-badge-<publisher> スラッシュ 10)。そこでの実測は soumu 4.77 だが
+     mext 4.12 / cfa 4.07 で、既存 2 色は満たしていない(ADR 0026)。
+     色を足すときは素地とティントの両方を測ること。 */
+  --color-badge-soumu: #4f6b70;
 
   --font-serif: "Hiragino Mincho ProN", "Yu Mincho", serif;
   --font-sans: system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", "Meiryo", sans-serif;
@@ -46,6 +54,8 @@
   --color-badge-cfa: #d4a574;
   --color-badge-bunkacho: #a8a472;
   --color-badge-egov: #908a80;
+  /* 実測 7.87(bg) / 7.00(card #1f2328)。既存 4 色の 5.19〜7.98 の範囲に収めてある。 */
+  --color-badge-soumu: #8fb3b8;
 }
 
 html {

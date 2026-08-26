@@ -5,12 +5,12 @@ summary: 教育公務員の任免・給与・分限・懲戒・服務・研修�
 eGovUrl: https://laws.e-gov.go.jp/law/324AC0000000001/
 officialExplanations:
   - publisher: mext
-    title: 教育公務員特例法及び教育職員免許法の一部を改正する法律(令和4年法律第40号)の概要・施行通知(関係法令改正を含む)
-    url: https://www.mext.go.jp/a_menu/shotou/kyoin/mext_01924.html
-    format: html
-  - publisher: mext
     title: 教師の資質向上に関する指針・ガイドライン
     url: https://www.mext.go.jp/a_menu/shotou/kyoin/mext_01933.html
+    format: html
+  - publisher: mext
+    title: 教育公務員特例法及び教育職員免許法の一部を改正する法律(令和4年法律第40号)の概要・施行通知(関係法令改正を含む)
+    url: https://www.mext.go.jp/a_menu/shotou/kyoin/mext_01924.html
     format: html
 lastVerified: "2026-06-10"
 tags: []

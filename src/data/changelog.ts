@@ -32,6 +32,10 @@ export const changelogEntries: ChangelogEntry[] = [
     date: "2026-08-26",
     items: [
       {
+        type: "update",
+        text: "トップページで、対象の全 12 法令それぞれの代表的な公式解説を一覧できるようにしました。これまでは 7 法令ぶんしか出ていませんでした",
+      },
+      {
         type: "fix",
         text: "トップページの児童福祉法の代表解説を、その法令ページに載っている公式案内に差し替えました。トップで見た資料を法令ページで探せるようになります",
         links: [{ label: "児童福祉法", href: "/laws/child-welfare-act/" }],
