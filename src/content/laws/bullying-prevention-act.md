@@ -1,7 +1,7 @@
 ---
 title: いじめ防止対策推進法
 order: 3
-summary: いじめの定義・組織的対策・重大事態調査を定める法律。文部科学省「いじめの防止等のための基本的な方針」が運用の中心。
+summary: いじめの定義・組織的対策・重大事態調査を定める法律。文部科学省「いじめの防止等のための基本的な方針」が運用の中心。 # body-only: いじめの防止等のための基本的な方針
 eGovUrl: https://laws.e-gov.go.jp/law/425AC1000000071/
 officialExplanations:
   - publisher: mext

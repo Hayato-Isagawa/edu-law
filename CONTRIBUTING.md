@@ -74,14 +74,24 @@ npm ci
 npm run dev      # 開発サーバー
 npm run build    # ビルド
 npm run check    # Astro 型チェック
-npm run check:sources # 公式解説の書名が frontmatter と出典節で一致しているか
+npm run check:sources # 公式解説の書名が正本と 4 つの写し先で一致しているか
 ```
 
-公式解説の書名は frontmatter の `officialExplanations[].title` と本文末尾の `## 出典` 節の
-2 箇所にあります。出典節に『』や「」で引用されている書名を片方だけ直すと CI が赤くなるので、
-両方を揃えてください。出典節に出ていない書名(30 件中 7 件)は検査に掛からないので、
-frontmatter を直したら出典節も自分で確認してください。`officialExplanations` に載せない
-名前は、その出典行の末尾に `<!-- body-only: 書名 -->` を置きます。
+公式解説の書名の正本は frontmatter の `officialExplanations[].title` です。同じ書名は
+本文末尾の `## 出典` 節・frontmatter の `summary`・トップの Highlights(`src/pages/index.astro`)・
+`src/data/*.ts` などにも独立して写されており、片方だけ直すと CI が赤くなります。
+
+- **出典節**では『』や「」で引用された名前を全部照合します
+- **それ以外**では `文部科学省『書名』` のように**発行元名を直前に置いた引用だけ**を照合します
+  (`「最近の更新」` のようなページ名・UI ラベルは対象外)。書名を書くときは発行元名を添えてください
+- **Highlights** は各法令の `officialExplanations[0]` と完全一致であることを見ます。代表解説を
+  変えたいときは、トップの配列ではなく `officialExplanations` の並び順を先に変えてください
+- `officialExplanations` に載せない名前(本文限りの資料など)は `body-only:` マークで明示します。
+  md 本文は `<!-- body-only: 書名 -->`、YAML は行末に `# body-only: 書名`、JS / TS と `.astro` の
+  frontmatter は `// body-only: 書名` です
+
+正本 30 件のうち 25 件はどこかの写しに現れるので改名すれば赤になりますが、残り 5 件はどの写しにも
+現れないため検査に掛かりません。frontmatter を直したら本文側も自分で確認してください。
 
 ## 行動規範
 
