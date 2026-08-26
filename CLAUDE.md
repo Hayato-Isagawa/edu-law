@@ -33,7 +33,9 @@ npm run dev      # 開発サーバー(localhost:4324。ファミリー各リポ�
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
 npm run check    # Astro 型チェック(CI の required check「Build site」に含まれる)
-npm run test:hooks # .claude/hooks/ の回帰テスト(CI の required check「Build site」に含まれる)
+npm run check:sources # 公式解説の書名が frontmatter と出典節で一致しているか(同上)
+npm run test:hooks # .claude/hooks/ の回帰テスト(同上・下限つき)
+npm run test:content # check:sources の回帰テスト(同上・下限つき)
 npm run test:workflows # link-check.yml の通知分岐の回帰テスト(同上・下限つき)
 npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
@@ -70,13 +72,24 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
 で job も緑になる＝週次チェックが恒久的に no-op になる。`steps.lychee.outcome` は
 `continue-on-error` 適用**前**の結果なので、そこで拾っている。
 
-`test:workflows` / `test:hooks` は `assert-test-files.mjs` / `assert-test-results.mjs` を通している。
-`node --test` は「glob が 0 件」「中身が空」「全件 skip」のどれでも exit 0 で終わるので、守って
-いるつもりのガードが no-op に落ちても気づけないため。
+`test:workflows` / `test:hooks` / `test:content` は `assert-test-files.mjs` /
+`assert-test-results.mjs` を通している。`node --test` は「glob が 0 件」「中身が空」「全件 skip」の
+どれでも exit 0 で終わるので、守っているつもりのガードが no-op に落ちても気づけないため。
 
-**下限の決め方は口ごとに違う。** `test:workflows` は実測ちょうど(余裕ゼロ)なので、
-**テストを足したら下限も上げること**。`test:hooks` の下限は実数追随ではなく
-「1 ファイルを空にしても割る」境界値なので、実測と離れていてよい。
+**下限の決め方は口ごとに違う。** `test:workflows` と `test:content` は実測ちょうど(余裕ゼロ)に
+してある。余裕を取らないのは、離した分だけ静かに減らせるため — **テストを足したら下限も上げること**。
+`test:hooks` だけは 50 のままで実測(74)と離れている。ファイルが 1 本なので「全部消える」は下限 1 でも
+捕まるが、24 本までは静かに減らせる状態でもある。揃えるなら実測ちょうどへ上げる。
+
+**口は glob で分けている。** `scripts/__tests__/*.test.mjs` の `*` は `/` を跨がないので、
+`scripts/__tests__/content/` は `test:workflows` に拾われない。混ぜると 1 つの下限が両者の合計と
+比べられ、片方が減っても他方が増えていれば割らない(glob を `**` に広げて下限を 51 に据え置くと、
+link-check の 51 本のうち 39 本を消しても 12 + 46 = 58 で緑)。
+
+**配線の検査は、守る対象と違う口に置く。** ステップを丸ごと消されると、その口で走る検査は
+実行されないので赤にならない。`test:workflows` と `test:content` は互いのステップを見ており、
+`check:sources` のステップは `test:content` 側から見ている。**`test:hooks` / `check:tokens` /
+`Type check` / `Build` のステップは、まだどの口からも見ていない。**
 
 ## アクセシビリティ検査(a11y)
 
@@ -142,6 +155,47 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
 前段に `scripts/assert-test-files.mjs`(ファイルの存在)、後段に
 `scripts/assert-test-results.mjs`(pass の下限と skip / todo 0)を噛ませてある。
 テストを増やしたときに下限を上げる必要はないが、まとめて消したときは落ちる。
+
+## 書名一致ガード(`check:sources`)
+
+公式解説の書名は、1 つの法令ページの中に**独立して 2 箇所**書かれている。
+
+| 場所 | 形 |
+| --- | --- |
+| frontmatter `officialExplanations[].title` | `[slug].astro` が `発行元『title』` で描画する |
+| 本文末尾の `## 出典` 節 | md に `発行元『書名』(取得日: …)` と直接書いてある |
+
+**片方だけ直すと静かにずれる。** 2026-08-25 に実際に出た: #190 が frontmatter の 13 件を
+発行元の表記に揃えたが、出典節が同じ書名を独立に持っていることを見落とし、出典節 7 件 +
+本文リンク 1 件が旧表記のまま本番へ出た。#191 で追随し、併せて #190 とは無関係の版表記 1 件も
+PDF 表紙と照合して直した。**`astro check` も e2e 90 件も週次 link-check も通り、表示も正常**
+なので、マージ後に公開 URL を人手で 2 値判定するまで誰も気づけなかった。
+
+`scripts/check-source-titles.mjs` が出典節の引用を frontmatter の `title` と突き合わせる。
+
+- **『』だけでなく「」も見る。** 児童虐待防止法は関係省庁連名通知の名前を「」で引用しており、
+  それは `officialExplanations` にも載っている。入れ子は両向きに実在する
+  (`『「子ども虐待…」の一部改正』` と `「保護者…へ 『児童虐待の根絶に向けて』」`)ので、
+  深さを数えていちばん外側だけを取る
+- **例外は出典節の中でマークする。** `officialExplanations` に載せない名前は、その引用がある
+  出典行の末尾に `<!-- body-only: 書名 -->` を付ける(現在 3 件: いじめ重大事態ガイドライン /
+  改正著作権法第35条運用指針 / 授業目的公衆送信補償金制度)。検査は節全体を見るので位置は
+  自由だが、どの引用に掛かるかが読めるよう行末に置いている
+- **allowlist を別ファイルに置かない。** 書名を消したときにマークだけが残る経路を作らないため。
+  「frontmatter に在る書名を指すマーク(昇格後の消し忘れ)」と「どの引用とも一致しないマーク
+  (消し忘れの残骸)」をどちらも赤にする
+- **マークは公開 HTML にコメントとして残る**(不可視・pagefind の索引にも入らない)。
+  取り除くには rehype プラグインが要るので、残す方を採っている
+- **逆方向(frontmatter → 出典節)は見ない。** 出典節は frontmatter の全件を挙げるとは
+  限らないため。実測では frontmatter の `title` 30 件のうち出典節に出るのは 23 件で、
+  残り 7 件(著作権法 5 / 児童虐待防止法 2)は改名しても無反応
+- **素通りに落ちる主要な経路も塞いである。** 対象ファイル 0 件・出典節が無い / 2 つある・
+  出典節に引用が 1 件も無い・閉じていない括弧・frontmatter や `officialExplanations` の欠落・
+  エントリ 0 件・エントリ数と `title` 数の不一致・ブロックスカラーは、すべて赤にする。
+  **法令が 12 → 11 に減ったことは見ていない**(0 件になったときだけ落ちる)
+- 回帰テストは `scripts/__tests__/content/` に置き、`npm run test:content` で走る。
+  検査の各経路と、**プロセスの exit code**(CI が読むのはここだけ)、npm script と
+  `build.yml` への配線を固定している
 
 ## 対象法令 — 12 法令
 

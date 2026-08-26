@@ -58,6 +58,8 @@ gh issue list --label stale-check --state open
 - 旧版が公式ハブに併載され続けていても、現行版が明示されていれば現行版へ置換する(PR #80・#82 の前例)
 - 新 URL は HTTP ステータスだけでなく Content-Type・タイトル・発行年月を逐語確認してから反映する
 - 出典の取得日(`retrievedAt` / 本文の出典行)も実施日に更新する
+- 書名が変わったときは frontmatter の `officialExplanations[].title` と本文末尾の `## 出典` 節を両方直す(`npm run check:sources` が出典節 → frontmatter の向きで突き合わせる)
+- 本文リンクの文言は説明的でよいが、**リンク先で同じ見出しを探せない**ものは公式名に置換する(changelog で読者に約束している挙動。ここは機械では見ていない)
 
 ## `lastVerified` を動かしてよい条件
 
