@@ -51,6 +51,18 @@ const pages: Target[] = [
   { name: "not-found", path: "/404" },
 ];
 
+// 代表 URL は手で並べているので、行を消すと撮影がその分だけ静かに減る。全消失は
+// Playwright が "No tests found" で止めるが、19 を 10 に減らしても 20 件が緑で
+// 終わるだけで気づけない。
+//
+// 下限(>=)ではなく件数を固定しているのは、**増やしたときにも赤にするため**。
+// このリポは CLAUDE.md に代表 URL 数と撮影件数を書いており、実際に 2 世代ぶん
+// (`/search` の追加と `/changelog` の除外)古いまま残っていた。代表 URL を足したら
+// ここと CLAUDE.md の両方を直すことになる。
+test("代表 URL の数が変わっていない", () => {
+  expect(pages).toHaveLength(19);
+});
+
 for (const p of pages) {
   test(p.name, async ({ page }) => {
     await page.goto(p.path, { waitUntil: "networkidle" });
