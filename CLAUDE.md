@@ -250,16 +250,24 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
 
 ## ビジュアルリグレッションテスト(VRT)
 
-共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー)。edu-law には e2e が無く、これが唯一の自動視覚検出系統となる:
+共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー)。**ピクセル一致は VRT、コントラストは `e2e/a11y.spec.ts`(#160 / #161 で導入)が見る。別系統なので片方が捕まえたものをもう片方が捕まえるとは限らない** — #160 のバッジ色は a11y が検出し、VRT は取り逃がしていた:
 
-- **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 の 2 projects、`maxDiffPixelRatio: 0.001`、`retries: 0`、アニメーション無効)
-- **閾値は実測で決めている**。同一ビルド同士の撮り比べは差分 0(閾値 0 で 38 件全通過 × 2 回)。
-  一方 `h2` の `letter-spacing` を 0.06em 変える実験では、旧閾値 0.01 だと 38 件中 4 件しか
-  落ちなかった(0.001 では 29 件)。**全画面撮影に対して 1% は緩すぎる**。
-  実際 #160 で省庁ラベルの色を変えたときも、11px の文字 4 個だったので旧閾値では検出されなかった
-- **リトライは入れない**。差分が実測 0 なら、リトライは間欠的な問題を握り潰すだけになる
-- **対象**: `vrt/pages.spec.ts` がテンプレート代表 18 URL(トップ / about / changelog / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本)をフルページ撮影。テンプレートを追加したら代表 URL を 1 行追記する
-- **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で `src/layouts/**`・`src/components/**`・`src/styles/**`・`astro.config.*`・`vrt/**`・`playwright.vrt.config.ts` に限定起動。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)
+- **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 の 2 projects、`threshold: 0`、`maxDiffPixels: 0`、`retries: 0`、アニメーション無効)
+- **ノイズを先に測ってから閾値を置いている**。ローカル(macOS)で同一ソースを 2 回ビルドして
+  撮り比べると、`maxDiffPixelRatio` 0 でも `threshold` 0 でも差分は 0。**CI(Linux)は 0 ではない** —
+  `home` の連続 2 枚は高さが 5〜6px 揺れる(#194 / #195 の run で観測)が、撮影の安定化ループが
+  吸収している。**「閾値」と一語で書かないこと。** ノブは 2 つあり、指すものが違う
+- **取り逃がしは 2 系統あり、`maxDiffPixelRatio` は片方しか塞がない**:
+  - **比率**: 0.001 でも #194 の `/scenes`(公式解説名を 8 文字増やした)は通った。差分 1036px に
+    対して許容が 5,636px だったため。フルページ撮影は総ピクセル数がページごとに 15 倍違い
+    (mobile `/search` 462px 〜 desktop `/laws` 7,063px が許容量)、**長いページほど甘くなる**
+  - **色差**: #160 で省庁バッジの色を変えたときに検出しなかったのは、11px の文字 4 個と
+    小さかったからではない。pixelmatch は `threshold`(既定 0.2)未満の色差を差分として
+    **数えない**ので、`maxDiffPixelRatio` を 0 まで下げても検出できない。`threshold: 0` に
+    すると `home` が desktop 1980px / mobile 1953px の赤になる
+- **リトライは入れない**。ローカルの差分が実測 0 で、CI の揺れは安定化ループが吸収している。リトライを足すと、そのループでも収まらなかった間欠的な問題まで握り潰すことになる
+- **対象**: `vrt/pages.spec.ts` がテンプレート代表 19 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本 / 404)をフルページ撮影 = 2 projects で 38 件。テンプレートを追加したら代表 URL を 1 行追記する。**`/changelog` は入れない** — PR ごとに 1 件増えるので内容の追加だけで必ず差分が出る(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
+- **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
 - **比較方式(案A)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため
 - **ローカル**: `npm run vrt` で現在の `dist` を撮影・比較できる。権威ある 2 ビルド差分は CI 側
 - **required check 非対象**: 視覚変更 PR でしか起動しないため required には含めない。マージ可否は編集者判断(rule 13)
