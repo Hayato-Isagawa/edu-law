@@ -11,9 +11,10 @@ export default defineConfig({
   // CI(Linux)のノイズは 0 ではない — home の連続 2 枚は高さが 5〜9px 揺れる
   // (#194 / #195 の run で観測)。これを吸収しているのは Playwright の安定化
   // ループで、その収束条件は下の threshold / maxDiffPixels でも決まる。
-  // **観測はどちらも旧設定(ratio 0.001)下のもの**で、完全一致に変えた後の CI
-  // 挙動は測れていない。同一高さになった 2 枚が何画素違っていたかは CI ログに
-  // 出ないため。リトライを入れると、そのループでも収まらなかった問題まで握り潰す。
+  // 揺れの観測はどちらも旧設定(ratio 0.001)下のもの。完全一致にした後は #197 で
+  // 3 回まわし、ベースライン撮影と比較の両ステップとも 38 件全通過で、収束失敗
+  // ("Failed to take two consecutive stable screenshots")は 0 件だった。
+  // リトライを入れると、そのループでも収まらなかった問題まで握り潰す。
   retries: 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
