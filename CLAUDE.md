@@ -36,12 +36,12 @@ npm run check    # Astro 型チェック(CI の required check「Build site」�
 npm run check:sources # 公式解説の書名が正本と 5 つの写し先で一致しているか(同上)
 npm run test:hooks # .claude/hooks/ の回帰テスト(同上・下限つき)
 npm run test:content # check:sources の回帰テスト(同上・下限つき)
-npm run test:workflows # link-check の通知分岐と VRT の撮影対象の回帰テスト(同上・下限つき)
+npm run test:workflows # link-check の通知分岐と VRT の撮影対象・撮影設定の回帰テスト(同上・下限つき)
 npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
 
-### `test:workflows` — link-check の通知分岐と VRT の撮影対象
+### `test:workflows` — link-check の通知分岐と VRT の撮影対象・撮影設定
 
 `link-check.yml` に埋め込まれた「検出をどう届けるか」の判定を固定する。**壊れても静かに壊れる** —
 lychee は走り、レポートもアーティファクトに残り、job も緑のまま**通知だけ**が消える。姉妹リポ
@@ -83,13 +83,21 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
 
 **口は glob で分けている。** `scripts/__tests__/*.test.mjs` の `*` は `/` を跨がないので、
 `scripts/__tests__/content/` は `test:workflows` に拾われない。混ぜると 1 つの下限が両者の合計と
-比べられ、片方が減っても他方が増えていれば割らない(glob を `**` に広げて下限を 59 に据え置くと、
-直下の 59 本のうち 51 本を消しても 8 + 109 = 117 で緑)。
+比べられ、片方が減っても他方が増えていれば割らない(glob を `**` に広げて下限を 62 に据え置くと、
+直下の 62 本のうち 51 本を消しても 11 + 111 = 122 で緑)。
 
 **配線の検査は、守る対象と違う口に置く。** ステップを丸ごと消されると、その口で走る検査は
 実行されないので赤にならない。`test:workflows` と `test:content` は互いのステップを見ており、
 `check:sources` のステップは `test:content` 側から見ている。**`test:hooks` / `check:tokens` /
 `Type check` / `Build` のステップは、まだどの口からも見ていない。**
+
+**npm script 自体も完全一致で固定してある。** `match` で書くと ` || true` を足すだけで恒久 no-op に
+でき、下限も 1 まで静かに下げられる。`test:content` は自分自身を、`test:workflows` は
+`test:content` 側から縛る。**`test:workflows` は口にファイルが 2 本あるので、ファイル一覧も
+併せて固定している** — 1 本消して下限を巻き戻す 2 手は、残ったファイルの実測と下限が一致するため
+文字列の固定だけでは素通りする(実測: `vrt-targets.test.mjs` を消して下限を 51 に戻すと
+`test:workflows` は緑のまま通り、`test:content` 側だけが赤になった)。`test:content` は口に
+ファイルが 1 本しかないので、消せば glob 0 件で赤になる。
 
 **VRT の撮影対象も別の口から見ている。** `scripts/__tests__/vrt-targets.test.mjs`(`test:workflows`)が
 **`playwright test --list` に「何を撮るか」を列挙させ**、`vrt/targets.mjs` の配列と突き合わせる
@@ -101,8 +109,22 @@ VRT 自身は required check ではなく、`vrt.yml` の `paths` に載る PR �
 落ちるテストが 38 件から 19 件になるだけで、`npm run vrt` の終了コードは 0 のまま。
 **ソースを正規表現で読む形は 1 度書いて捨てた**: コメント行にダミーの `path:` を書いて件数を保つ /
 projects を削除ではなくコメントアウトする / `test.skip(` でなく `test["skip"](` と書く、の
-いずれでも素通りした(実測)。**捕まえられないのは `hide` セレクタを増やす経路** — 撮影自体は
-走るので列挙からは見えない。
+いずれでも素通りした(実測)。
+
+**撮影件数を減らさずに中身を薄める経路は、列挙では見えないので値そのものを固定する。** 3 つある:
+
+- **`hide` セレクタで本文を隠す** — 全件に `hide: "main"` を付けても 38 件は走り、`home` の PNG が
+  1,072,845 B → 71,031 B になってなお緑だった(実測)。`vrt/targets.mjs` の `hide` 付きエントリを
+  一覧で固定し、更新履歴のリスト 1 件だけを許す
+- **`fullPage` を落とす** — ビューポート内(1280x800 / 390x844)しか撮らなくなるが件数は変わらない。
+  config の `expect.toHaveScreenshot` には置けない値なので `vrt/targets.mjs` の `shotOptions` に
+  データとして持ち、spec はそれを渡す
+- **比較設定を緩める** — `threshold` / `maxDiffPixels` / `maxDiffPixelRatio`。**config を import して
+  評価済みの値を見る**(`--list --reporter=json` に `expect` は入らない)。正規表現ではキーを消したのか
+  コメントアウトしたのかを区別できないため
+
+**残る穴は、spec が `hide` / `shotOptions` を使うのをやめる経路。** 固定できるのは値であって、
+呼び出し側の書き方ではない。
 
 ## アクセシビリティ検査(a11y)
 
@@ -265,7 +287,7 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
 
 共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー。**ADR に載る設定値・対象 URL・ポートは導入時のもので、現行は以下**)。**ピクセル一致は VRT、コントラストは `e2e/a11y.spec.ts` が見る。別系統なので、片方が捕まえたものをもう片方が捕まえるとは限らない** — 省庁バッジの色変更(#160)は a11y が検出し、VRT は取り逃がしていた:
 
-- **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 の 2 projects、`threshold: 0`、`maxDiffPixels: 0`、`retries: 0`、アニメーション無効)。**`maxDiffPixelRatio` は外した**(理由は次項)
+- **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 の 2 projects、`threshold: 0`、`maxDiffPixels: 0`、`retries: 0`、アニメーション無効)。**`maxDiffPixelRatio` は外した**(理由は次項)。**これらの値は `scripts/__tests__/vrt-targets.test.mjs` が config を import して固定している** — 緩める変異は required check で赤になる
 - **残る盲点**: pixelmatch の `includeAA`(既定 false・Playwright は上書きしない)により、アンチエイリアスと判定された画素は `threshold: 0` でも差分に数えない。**エッジだけが変わる変更は通る**
 - **設定値は 2 つあり、どちらも 0 にしている**。`maxDiffPixelRatio`(比率)は許容量が総ピクセル数に
   比例して長いページほど甘くなるので使わない(0.001 での許容は mobile `/search` 462px 〜
@@ -281,7 +303,7 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
   `playwright.vrt.config.ts` のコメント
 - **リトライは入れない**。安定化ループでも収まらなかった問題まで握り潰すことになる
 - **対象**: `vrt/pages.spec.ts` がテンプレート代表 19 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本 / 404)をフルページ撮影 = 2 projects で 38 件。**代表 URL が静かに減る経路は `scripts/__tests__/vrt-targets.test.mjs` が見ている**(上の「配線の検査は、守る対象と違う口に置く」)。件数は下限ではなく **19 に固定**してあるので、テンプレートを追加して代表 URL を 1 行追記したら、**あちらの件数とこの行の両方を直すことになる**(実際に `/search` の追加と `/changelog` の除外で 2 世代ぶん古いまま残っていた)。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
-- **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
+- **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。**`package-lock.json` も対象**(Tailwind / Astro の週次 bump はそこしか触らないので、載せないとピクセル検査を一度も通らないまま main に入る)。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
 - **比較方式(案A)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため
 - **ローカル**: `npm run vrt` で現在の `dist` を撮影・比較できる。権威ある 2 ビルド差分は CI 側
 - **required check 非対象**: 視覚変更 PR でしか起動しないため required には含めない。マージ可否は編集者判断(rule 13)

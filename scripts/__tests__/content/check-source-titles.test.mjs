@@ -1111,6 +1111,34 @@ test('npm script test:content が、実測ちょうどの下限で 2 段を通�
   );
 });
 
+test('test:workflows の口にあるテストファイルが 2 本である', () => {
+  // **下限を導出するために固定する。** ファイルを 1 本消して下限を巻き戻す 2 手は、
+  // 残ったファイルの実測と下限が一致するので下の完全一致だけでは素通りする
+  // (`test:content` は口にファイルが 1 本しかないので、消せば glob 0 件で赤になる。
+  // こちらは 2 本あるため同じ守り方が効かない)。
+  const files = fs
+    .readdirSync(path.join(ROOT, 'scripts/__tests__'), { withFileTypes: true })
+    .filter((e) => e.isFile() && e.name.endsWith('.test.mjs'))
+    .map((e) => e.name)
+    .sort();
+  assert.deepEqual(files, ['link-check-workflow.test.mjs', 'vrt-targets.test.mjs']);
+});
+
+test('npm script test:workflows が、実測ちょうどの下限で 2 段を通す', () => {
+  // `test:content` の自己固定と同じ形だが、**こちらは別の口から見る**。あちらは
+  // 自分自身を縛っているので、ファイルごと消えれば下限もろとも消える。
+  // 下限は上のテストが固定した 2 本の `test(` の合計と一致させる — CLAUDE.md の
+  // 「実測ちょうど・余裕ゼロ」。
+  const count = ['link-check-workflow.test.mjs', 'vrt-targets.test.mjs']
+    .map((name) => readRoot(`scripts/__tests__/${name}`))
+    .reduce((sum, text) => sum + (text.match(/^test\(/gm) ?? []).length, 0);
+  assert.equal(
+    pkg.scripts['test:workflows'],
+    "node scripts/assert-test-files.mjs 'scripts/__tests__/*.test.mjs' && " +
+      `node scripts/assert-test-results.mjs ${count} 'scripts/__tests__/*.test.mjs'`,
+  );
+});
+
 test('test:workflows の glob は scripts/__tests__/content/ を拾わない', () => {
   // 混ぜると下限が両者の合計に効き、link-check のテストが減っても本ファイルの
   // 増分で埋め合わされて緑のままになる。

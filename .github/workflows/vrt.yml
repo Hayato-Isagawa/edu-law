@@ -24,6 +24,11 @@ on:
       - "src/data/**"
       - "!src/data/changelog.ts"
       - "astro.config.*"
+      # 依存の更新も描画を変える。Tailwind / Astro の週次 bump は
+      # package.json と package-lock.json しか触らないので、ここに載せないと
+      # ピクセル検査を一度も通らないまま main に入る。lock はキャレット指定の
+      # 範囲内の更新も拾うので、package.json より広い。
+      - "package-lock.json"
       - "vrt/**"
       - "playwright.vrt.config.ts"
       - ".github/workflows/vrt.yml"

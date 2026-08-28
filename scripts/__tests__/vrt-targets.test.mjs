@@ -19,10 +19,14 @@
 // **Playwright 自身に「何を撮るか」を列挙させて突き合わせる**(`--list` は実測 0.5 秒で、
 // ブラウザも webServer も起動しない)。
 //
-// **捕まえられない経路が 1 つある**: `hide` セレクタを増やして本文を隠すと、撮影自体は
-// 19 件走るので列挙からは見えない(実測では全件に `hide: "main"` を付けると `home` の
-// PNG が 1,072,845 B → 71,031 B になってなお緑)。`hide` を足すときは
-// `vrt/targets.mjs` 冒頭の理由書きに従うこと。
+// **列挙で見えないものは、例外そのものを固定する。** `hide` セレクタで本文を隠す /
+// `fullPage` を落とす / 比較設定を緩める、はいずれも撮影件数を減らさないので `--list`
+// からは見えない(実測: 全件に `hide: "main"` を付けると `home` の PNG が
+// 1,072,845 B → 71,031 B になってなお緑)。この 3 つはデータと config の値を
+// 直接固定して見ている。
+//
+// **残る穴**: spec が `hide` / `shotOptions` を使うのをやめる経路。固定できるのは
+// 値であって、呼び出し側の書き方ではない。
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -31,7 +35,8 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-import { targets } from '../../vrt/targets.mjs';
+import { targets, shotOptions } from '../../vrt/targets.mjs';
+import vrtConfig from '../../playwright.vrt.config.ts';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
@@ -146,6 +151,47 @@ test('VRT が main と PR の 2 ビルドを撮り比べている', () => {
   for (const step of ['Capture baseline from main', 'Compare PR against baseline']) {
     assert.ok(WORKFLOW.includes(step), `${step} ステップが無い`);
   }
+});
+
+test('本文を隠す指定が home の更新履歴だけである', () => {
+  // **`hide` は撮影を減らさないので `--list` からは見えない。** 全件に
+  // `hide: "main"` を付けても 38 件は走り、`home` の PNG が 1,072,845 B →
+  // 71,031 B になってなお緑だった(実測)。列挙で見えないものは、例外そのものを
+  // 固定するしかない(`check-source-titles.test.mjs` の `EXPECTED_MARKS` と同じ形)。
+  //
+  // 隠してよいのは更新履歴のリストだけ。理由は `vrt/targets.mjs` 冒頭。
+  assert.deepEqual(
+    targets.filter((t) => t.hide).map((t) => `${t.name}: ${t.hide}`),
+    ['home: section[aria-labelledby="updates-heading"] ul'],
+  );
+});
+
+test('比較設定が完全一致のまま固定されている', () => {
+  // #160 の形に静かに戻す変異を塞ぐ。`threshold` の既定は 0.2 で、それ未満の色差は
+  // 差分として**数えられない** — 省庁バッジの色変更が VRT を素通りしたのはこれ。
+  // `maxDiffPixels` の既定は 0 だが型定義は "unset by default" としか書いておらず
+  // 契約ではないので、明示されていることまで見る。
+  //
+  // **ソースを読まずに config を import して評価済みの値を見る**(#199 の教訓)。
+  // 正規表現では、キーを消したのかコメントアウトしたのか、別の場所で上書きしたのかを
+  // 区別できない。`--list --reporter=json` には `expect` が入らない(実測)ので、
+  // Playwright 経由では取れない。
+  assert.deepEqual(vrtConfig.expect.toHaveScreenshot, {
+    threshold: 0,
+    maxDiffPixels: 0,
+    animations: 'disabled',
+    caret: 'hide',
+  });
+  // 比率(`maxDiffPixelRatio`)が戻ってきた場合も、余分なキーとしてここで赤になる。
+  // 使わないのは、許容量が総ピクセル数に比例して長いページほど甘くなるため
+  // (#194 の /scenes は差分 1036px に対して許容 5636px で通った)。
+});
+
+test('全ページをフルページで撮っている', () => {
+  // `fullPage` を落とすとビューポート内(1280x800 / 390x844)しか撮らなくなるが、
+  // 38 件は走り続けて全部緑のまま通る。config の `expect.toHaveScreenshot` には
+  // 置けない値なので、`vrt/targets.mjs` にデータとして持たせてここで固定する。
+  assert.deepEqual(shotOptions, { fullPage: true });
 });
 
 test('npm run vrt が VRT の config を指している', () => {

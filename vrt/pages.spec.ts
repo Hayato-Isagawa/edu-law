@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { targets as pages } from "./targets.mjs";
+import { targets as pages, shotOptions } from "./targets.mjs";
 
 // 撮影対象は `vrt/targets.mjs` にある(spec と、required check から走るガードが
 // 同じ配列を読むため)。撮影が静かに減る経路 — 対象を消す / ループを絞る /
@@ -22,6 +22,6 @@ for (const p of pages) {
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForLoadState("networkidle");
     await page.evaluate(() => window.scrollTo(0, 0));
-    await expect(page).toHaveScreenshot(`${p.name}.png`, { fullPage: true });
+    await expect(page).toHaveScreenshot(`${p.name}.png`, shotOptions);
   });
 }

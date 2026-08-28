@@ -54,3 +54,21 @@ export const targets = [
   { name: "guide-work-style-reform", path: "/guides/work-style-reform" },
   { name: "not-found", path: "/404" },
 ];
+
+/**
+ * 撮影オプション。`vrt/pages.spec.ts` が全件に渡し、
+ * `scripts/__tests__/vrt-targets.test.mjs` が値を固定する。
+ *
+ * **spec の引数に直接書くと、値を弱めたことが required check から見えない。**
+ * `fullPage` を落とすとビューポート内(desktop 1280x800 / mobile 390x844)しか
+ * 撮らなくなるが、テストは 38 件走り続けて全部緑のまま通る — `threshold` の
+ * 既定 0.2 がガードを黙って殺していた #160 と同じ形。config の
+ * `expect.toHaveScreenshot` には `fullPage` を置けない(Playwright が
+ * 受け付けるのはメソッド側だけ。型定義で確認済み)ので、データとして持つ。
+ *
+ * **残る穴**: spec がこのオブジェクトを渡すのをやめる経路は見ていない。
+ * 固定できるのは値であって、呼び出し側の書き方ではない(`hide` と同じ)。
+ *
+ * @type {{ fullPage: boolean }}
+ */
+export const shotOptions = { fullPage: true };
