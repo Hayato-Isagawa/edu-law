@@ -24,10 +24,9 @@
 // 消す(`ignoreSnapshots`・`updateSnapshots`)/ ワークフローの比較ステップを撮り直しに
 // する — いずれも撮影件数を減らさないので `--list` からは見えない。
 //
-// **残る穴は spec の中にある。** `toHaveScreenshot` の第 2 引数は config を上書きする
-// ので、`{ ...shotOptions, threshold: 0.2 }` と書けば `shotOptions` を使ったまま
-// 比較を骨抜きにできる。実行時 skip(`test.skip(条件, …)`)も `--list` に出ない。
-// どちらも `vrt/pages.spec.ts` 冒頭に注意書きを置いてある。
+// **残る穴は spec の書き方そのもの。** 第 2 引数での上書き / 実行時 skip / import 元の
+// 差し替え、のいずれも撮影件数を変えずに値だけをずらせる(実測)。**列挙が尽きている
+// 保証は無い**ので、`vrt/pages.spec.ts` 冒頭に注意書きを置いてある。
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -37,7 +36,24 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import { targets, shotOptions } from '../../vrt/targets.mjs';
-import vrtConfig from '../../playwright.vrt.config.ts';
+// config は **VRT ジョブと同じ環境でも**読み直す(理由は下の 3 環境の比較テスト)。
+// クエリを変えると ESM のモジュールキャッシュを跨げる。
+const CONFIG_URL = new URL('../../playwright.vrt.config.ts', import.meta.url).href;
+let configReads = 0;
+async function readConfig(env = {}) {
+  const saved = { ...process.env };
+  Object.assign(process.env, env);
+  try {
+    return (await import(`${CONFIG_URL}?read=${configReads++}`)).default;
+  } finally {
+    for (const key of Object.keys(env)) {
+      if (key in saved) process.env[key] = saved[key];
+      else delete process.env[key];
+    }
+  }
+}
+
+const vrtConfig = await readConfig();
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
@@ -156,12 +172,33 @@ test('VRT が main と PR の 2 ビルドを撮り比べている', () => {
   //
   // **ステップ名だけでは足りない。** 名前を残したまま比較側に `--update-snapshots` を
   // 足す / `VRT_DIST` を `dist-main` に向ける、のどちらでも恒久的に緑になり、
-  // 名前を見るだけの検査は素通りした(実測)。撮り直しの指定はベースライン側にだけ
-  // 在ること、2 つのステップが別々の dist を見ていることまで固定する。
-  const baseline = /VRT_DIST: dist-main\n\s+run: npx playwright test --config playwright\.vrt\.config\.ts --update-snapshots$/m;
-  const compare = /VRT_DIST: dist-pr\n\s+run: npx playwright test --config playwright\.vrt\.config\.ts$/m;
-  assert.match(WORKFLOW, baseline, 'ベースライン撮影が main の dist を撮り直す形になっていない');
-  assert.match(WORKFLOW, compare, '比較が PR の dist をそのまま比べる形になっていない');
+  // 名前を見るだけの検査は素通りした(実測)。
+  //
+  // **1 本の正規表現で `env:` と `run:` を続けて拾う形も捨てた。** YAML として等価な
+  // 書き方 3 つ(`run:` をクォートする / `run: |` のブロックスカラー / `env:` と `run:` の
+  // 順序入れ替え)で赤になった(実測)。マッピングのキー順に意味は無いので、
+  // **ステップの塊に切ってから、その中に何が在るかを見る**。
+  const steps = WORKFLOW.split(/^(?= {6}- )/m);
+  const stepFor = (dist) => steps.find((step) => step.includes(`VRT_DIST: ${dist}`));
+
+  const baseline = stepFor('dist-main');
+  const compare = stepFor('dist-pr');
+  assert.ok(baseline, 'main の dist を撮るステップが無い');
+  assert.ok(compare, 'PR の dist を撮るステップが無い');
+
+  for (const [label, step] of [['ベースライン撮影', baseline], ['比較', compare]]) {
+    assert.match(step, /npx playwright test --config playwright\.vrt\.config\.ts/, `${label}が VRT の config を使っていない`);
+  }
+  // 撮り直しの指定はベースライン側にだけ在る。比較側に付くと毎回上書きになり、
+  // 差分が出ることが無くなる。
+  assert.match(baseline, /--update-snapshots/, 'ベースライン撮影が撮り直しになっていない');
+  assert.doesNotMatch(compare, /--update-snapshots/, '比較が撮り直しになっている');
+
+  // 撮ってから比べる。逆順だとベースラインが無い状態で比較が走る。
+  assert.ok(
+    WORKFLOW.indexOf(baseline) < WORKFLOW.indexOf(compare),
+    '比較がベースライン撮影より先に置かれている',
+  );
 
   // `continue-on-error` が付くと job は緑のまま比較だけが無効になる。
   // `build.yml` 側は `check-source-titles.test.mjs` が見ているが、こちらは
@@ -214,6 +251,32 @@ test('比較設定が完全一致のまま固定されている', () => {
   // 実効値だけを緩められる(実測)。
   for (const project of vrtConfig.projects) {
     assert.equal(project.expect, undefined, `${project.name} が expect を上書きしている`);
+  }
+});
+
+test('比較設定が VRT ジョブの環境でも同じ値になる', async () => {
+  // **import した時点の値を見るだけでは足りない。** config が実行環境で分岐すると、
+  // このガードが走る「Build site」(`VRT_DIST` 未設定)では厳格な値が見え、
+  // 実際に撮る VRT ジョブ(`VRT_DIST: dist-main` / `dist-pr`)では緩い値が使われる。
+  // `VRT_DIST` はこの config が元から読んでいる変数なので、「CI では少し緩める」形の
+  // 分岐が自然な修正として紛れ込みうる(実測: 三項演算子 1 つで
+  // `threshold` が 0 → 0.9 に化けたまま `test:workflows` は緑だった)。
+  //
+  // **残る穴**: ガードが走る時点に存在しないものから値を作る経路(VRT ジョブ内にしか
+  // 無いディレクトリの `existsSync` など)。ここで再現できるのは環境変数までで、
+  // それ以外は `vrt/pages.spec.ts` 冒頭の注意書きと同じ扱いになる。
+  const variants = await Promise.all(
+    [{ VRT_DIST: 'dist-main' }, { VRT_DIST: 'dist-pr' }].map((env) => readConfig(env)),
+  );
+  for (const config of variants) {
+    assert.deepEqual(config.expect.toHaveScreenshot, vrtConfig.expect.toHaveScreenshot);
+    assert.equal(config.retries, vrtConfig.retries);
+    assert.equal(config.ignoreSnapshots, vrtConfig.ignoreSnapshots);
+    assert.equal(config.updateSnapshots, vrtConfig.updateSnapshots);
+    assert.deepEqual(
+      config.projects.map((p) => ({ name: p.name, expect: p.expect, ...p.use.viewport })),
+      vrtConfig.projects.map((p) => ({ name: p.name, expect: p.expect, ...p.use.viewport })),
+    );
   }
 });
 

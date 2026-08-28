@@ -18,7 +18,9 @@ import { targets as pages, shotOptions } from "./targets.mjs";
 // `shotOptions` を直す(そちらは required check が固定している)。
 //
 // 実行時 skip(`test.skip(条件, …)`)も同じ死角にある。`--list` には出ないので、
-// CI でだけ全件 skip する形が緑のまま通る。
+// CI でだけ全件 skip する形が緑のまま通る。**import 元の差し替え**も同じ —
+// `shotOptions` を widen して再エクスポートするファイルを挟めば、撮影件数を
+// 保ったまま値だけがずれる(実測)。
 
 for (const p of pages) {
   test(p.name, async ({ page }) => {
