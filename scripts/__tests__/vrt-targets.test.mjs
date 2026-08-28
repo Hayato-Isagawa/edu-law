@@ -7,7 +7,7 @@
 // `test:workflows` ステップで常に走る(`CLAUDE.md`「配線の検査は、守る対象と違う口に
 // 置く」)。
 //
-// 撮影が減っても**表向きは何も起きない**。落ちるテストが 38 件から 19 件になるだけで、
+// 撮影が減っても**表向きは何も起きない**。落ちるテストが 76 件から 38 件になるだけで、
 // 残った分は緑のまま通り、`npm run vrt` の終了コードも 0 のまま。CI からは「VRT は
 // 通った」としか見えない。
 //
@@ -135,7 +135,10 @@ test('Playwright が撮る予定のものが撮影対象と一致する', () => 
     if (!byProject.has(shot.project)) byProject.set(shot.project, []);
     byProject.get(shot.project).push(shot.name);
   }
-  assert.deepEqual([...byProject.keys()].sort(), ['desktop', 'mobile']);
+  assert.deepEqual(
+    [...byProject.keys()].sort(),
+    ['desktop', 'desktop-dark', 'mobile', 'mobile-dark'],
+  );
   const expected = targets.map((t) => t.name).sort();
   for (const [project, names] of byProject) {
     assert.deepEqual(names.sort(), expected, `${project} の撮影対象がずれている`);
@@ -208,7 +211,7 @@ test('VRT が main と PR の 2 ビルドを撮り比べている', () => {
 
 test('本文を隠す指定が home の更新履歴だけである', () => {
   // **`hide` は撮影を減らさないので `--list` からは見えない。** 全件に
-  // `hide: "main"` を付けても 38 件は走り、`home` の PNG が 1,072,845 B →
+  // `hide: "main"` を付けても件数は 1 枚も減らず、`home` の PNG が 1,072,845 B →
   // 71,031 B になってなお緑だった(実測)。列挙で見えないものは、例外そのものを
   // 固定するしかない(`check-source-titles.test.mjs` の `EXPECTED_MARKS` と同じ形)。
   //
@@ -273,24 +276,36 @@ test('比較設定が VRT ジョブの環境でも同じ値になる', async () 
     assert.equal(config.retries, vrtConfig.retries);
     assert.equal(config.ignoreSnapshots, vrtConfig.ignoreSnapshots);
     assert.equal(config.updateSnapshots, vrtConfig.updateSnapshots);
-    assert.deepEqual(
-      config.projects.map((p) => ({ name: p.name, expect: p.expect, ...p.use.viewport })),
-      vrtConfig.projects.map((p) => ({ name: p.name, expect: p.expect, ...p.use.viewport })),
-    );
+    const shape = (c) =>
+      c.projects
+        .map((p) => ({
+          name: p.name,
+          expect: p.expect,
+          theme: p.use.colorScheme,
+          ...p.use.viewport,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    assert.deepEqual(shape(config), shape(vrtConfig));
   }
 });
 
 test('撮影の断面とリトライが固定されている', () => {
-  // **断面が減っても件数は減らない。** mobile の viewport を desktop と同じにすると、
-  // 38 件は撮り続けたまま同じ画像を 2 度撮ることになり、モバイルの崩れは
-  // 一切写らなくなる(`targets` の path 重複を禁じているのと同じ形)。
-  // viewport は `--list --reporter=json` の `config.projects[]` に入らないので、
-  // config を import して見る。
+  // **断面が減っても件数は減らない。** mobile の viewport を desktop と同じにする /
+  // `colorScheme` を両方 light にすると、76 件は撮り続けたまま同じ画像を 2 度撮る
+  // ことになり、モバイルやダークの崩れは一切写らなくなる(`targets` の path 重複を
+  // 禁じているのと同じ形)。viewport も `colorScheme` も `--list --reporter=json` の
+  // `config.projects[]` に入らないので、config を import して見る。
+  // **並び順は見ない。** projects の順序は撮るものを変えないので、入れ替えただけで
+  // 赤くするのは偽陽性になる(`vrt.yml` を平文で照合していたときと同じ型)。
   assert.deepEqual(
-    vrtConfig.projects.map((p) => ({ name: p.name, ...p.use.viewport })),
+    vrtConfig.projects
+      .map((p) => ({ name: p.name, theme: p.use.colorScheme, ...p.use.viewport }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
     [
-      { name: 'desktop', width: 1280, height: 800 },
-      { name: 'mobile', width: 390, height: 844 },
+      { name: 'desktop', theme: 'light', width: 1280, height: 800 },
+      { name: 'desktop-dark', theme: 'dark', width: 1280, height: 800 },
+      { name: 'mobile', theme: 'light', width: 390, height: 844 },
+      { name: 'mobile-dark', theme: 'dark', width: 390, height: 844 },
     ],
   );
   // リトライは入れない(理由は config のコメント)。増やすと、安定化ループでも
@@ -300,7 +315,7 @@ test('撮影の断面とリトライが固定されている', () => {
 
 test('全ページをフルページで撮っている', () => {
   // `fullPage` を落とすとビューポート内(1280x800 / 390x844)しか撮らなくなるが、
-  // 38 件は走り続けて全部緑のまま通る。config の `expect.toHaveScreenshot` には
+  // 76 件は走り続けて全部緑のまま通る。config の `expect.toHaveScreenshot` には
   // 置けない値なので、`vrt/targets.mjs` にデータとして持たせてここで固定する。
   assert.deepEqual(shotOptions, { fullPage: true });
 });

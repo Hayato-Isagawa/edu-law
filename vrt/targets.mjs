@@ -61,7 +61,7 @@ export const targets = [
  *
  * **spec の引数に直接書くと、値を弱めたことが required check から見えない。**
  * `fullPage` を落とすとビューポート内(desktop 1280x800 / mobile 390x844)しか
- * 撮らなくなるが、テストは 38 件走り続けて全部緑のまま通る — `threshold` の
+ * 撮らなくなるが、テストは 76 件走り続けて全部緑のまま通る — `threshold` の
  * 既定 0.2 がガードを黙って殺していた #160 と同じ形。config の
  * `expect.toHaveScreenshot` には `fullPage` を置けない(Playwright が
  * 受け付けるのはメソッド側だけ。型定義で確認済み)ので、データとして持つ。
