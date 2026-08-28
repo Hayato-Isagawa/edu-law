@@ -36,12 +36,12 @@ npm run check    # Astro 型チェック(CI の required check「Build site」�
 npm run check:sources # 公式解説の書名が正本と 5 つの写し先で一致しているか(同上)
 npm run test:hooks # .claude/hooks/ の回帰テスト(同上・下限つき)
 npm run test:content # check:sources の回帰テスト(同上・下限つき)
-npm run test:workflows # link-check.yml の通知分岐の回帰テスト(同上・下限つき)
+npm run test:workflows # link-check の通知分岐と VRT の撮影対象の回帰テスト(同上・下限つき)
 npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
 
-### `test:workflows` — link-check の通知分岐
+### `test:workflows` — link-check の通知分岐と VRT の撮影対象
 
 `link-check.yml` に埋め込まれた「検出をどう届けるか」の判定を固定する。**壊れても静かに壊れる** —
 lychee は走り、レポートもアーティファクトに残り、job も緑のまま**通知だけ**が消える。姉妹リポ
@@ -83,13 +83,26 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
 
 **口は glob で分けている。** `scripts/__tests__/*.test.mjs` の `*` は `/` を跨がないので、
 `scripts/__tests__/content/` は `test:workflows` に拾われない。混ぜると 1 つの下限が両者の合計と
-比べられ、片方が減っても他方が増えていれば割らない(glob を `**` に広げて下限を 51 に据え置くと、
-link-check の 51 本のうち 39 本を消しても 12 + 108 = 120 で緑)。
+比べられ、片方が減っても他方が増えていれば割らない(glob を `**` に広げて下限を 59 に据え置くと、
+直下の 59 本のうち 51 本を消しても 8 + 109 = 117 で緑)。
 
 **配線の検査は、守る対象と違う口に置く。** ステップを丸ごと消されると、その口で走る検査は
 実行されないので赤にならない。`test:workflows` と `test:content` は互いのステップを見ており、
 `check:sources` のステップは `test:content` 側から見ている。**`test:hooks` / `check:tokens` /
 `Type check` / `Build` のステップは、まだどの口からも見ていない。**
+
+**VRT の撮影対象も別の口から見ている。** `scripts/__tests__/vrt-targets.test.mjs`(`test:workflows`)が
+**`playwright test --list` に「何を撮るか」を列挙させ**、`vrt/targets.mjs` の配列と突き合わせる
+(実測 0.5 秒。ブラウザも webServer も起動しない)。併せてテンプレートとの 1 対 1 対応・
+`vrt.yml` の起動 paths と 2 ビルド比較ステップ・`npm run vrt` の指す config も見る。
+
+VRT 自身は required check ではなく、`vrt.yml` の `paths` に載る PR でしか起動しないので、
+**その中にガードを置くと VRT が走ったときしか働かない**。撮影が減っても表向きは何も起きない —
+落ちるテストが 38 件から 19 件になるだけで、`npm run vrt` の終了コードは 0 のまま。
+**ソースを正規表現で読む形は 1 度書いて捨てた**: コメント行にダミーの `path:` を書いて件数を保つ /
+projects を削除ではなくコメントアウトする / `test.skip(` でなく `test["skip"](` と書く、の
+いずれでも素通りした(実測)。**捕まえられないのは `hide` セレクタを増やす経路** — 撮影自体は
+走るので列挙からは見えない。
 
 ## アクセシビリティ検査(a11y)
 
@@ -267,7 +280,7 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
   #197 で 3 回まわして**両ステップとも 38 件全通過・収束失敗 0 件**。内訳の実測値は
   `playwright.vrt.config.ts` のコメント
 - **リトライは入れない**。安定化ループでも収まらなかった問題まで握り潰すことになる
-- **対象**: `vrt/pages.spec.ts` がテンプレート代表 19 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本 / 404)をフルページ撮影 = 2 projects で 38 件。テンプレートを追加したら代表 URL を 1 行追記する。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
+- **対象**: `vrt/pages.spec.ts` がテンプレート代表 19 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本 / 404)をフルページ撮影 = 2 projects で 38 件。**代表 URL が静かに減る経路は `scripts/__tests__/vrt-targets.test.mjs` が見ている**(上の「配線の検査は、守る対象と違う口に置く」)。件数は下限ではなく **19 に固定**してあるので、テンプレートを追加して代表 URL を 1 行追記したら、**あちらの件数とこの行の両方を直すことになる**(実際に `/search` の追加と `/changelog` の除外で 2 世代ぶん古いまま残っていた)。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
 - **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
 - **比較方式(案A)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため
 - **ローカル**: `npm run vrt` で現在の `dist` を撮影・比較できる。権威ある 2 ビルド差分は CI 側
