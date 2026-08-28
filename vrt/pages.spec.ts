@@ -51,17 +51,12 @@ const pages: Target[] = [
   { name: "not-found", path: "/404" },
 ];
 
-// 代表 URL は手で並べているので、行を消すと撮影がその分だけ静かに減る。全消失は
-// Playwright が "No tests found" で止めるが、19 を 10 に減らしても 20 件が緑で
-// 終わるだけで気づけない。
-//
-// 下限(>=)ではなく件数を固定しているのは、**増やしたときにも赤にするため**。
-// このリポは CLAUDE.md に代表 URL 数と撮影件数を書いており、実際に 2 世代ぶん
-// (`/search` の追加と `/changelog` の除外)古いまま残っていた。代表 URL を足したら
-// ここと CLAUDE.md の両方を直すことになる。
-test("代表 URL の数が変わっていない", () => {
-  expect(pages).toHaveLength(19);
-});
+// 代表 URL が静かに減る経路(行を消す / path を重複させる / skip に変える /
+// projects を減らす / テンプレートを足して載せ忘れる)は
+// `scripts/__tests__/vrt-targets.test.mjs` が見ている。**この spec の中には置けない** —
+// VRT は required check ではなく、`vrt.yml` の paths に載る PR でしか起動しないので、
+// ここに置いたガードは VRT が走ったときしか働かない。代表 URL を足したら、あちらの
+// 件数と `CLAUDE.md` の記述も直すこと。
 
 for (const p of pages) {
   test(p.name, async ({ page }) => {
