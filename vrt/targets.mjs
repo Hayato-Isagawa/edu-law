@@ -66,7 +66,9 @@ export const targets = [
  * `expect.toHaveScreenshot` には `fullPage` を置けない(Playwright が
  * 受け付けるのはメソッド側だけ。型定義で確認済み)ので、データとして持つ。
  *
- * **残る穴**: spec がこのオブジェクトを渡すのをやめる経路は見ていない。
+ * **残る穴**: 呼び出し側の書き方は見ていない。渡すのをやめる経路も、
+ * `{ ...shotOptions, threshold: 0.2 }` のように渡したうえで上書きする経路も
+ * 素通りする(メソッド側の引数は config の `expect.toHaveScreenshot` に優先する)。
  * 固定できるのは値であって、呼び出し側の書き方ではない(`hide` と同じ)。
  *
  * @type {{ fullPage: boolean }}

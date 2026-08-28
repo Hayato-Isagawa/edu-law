@@ -1098,24 +1098,13 @@ test('npm script check:sources が、引数なしで検査スクリプトを呼�
   assert.equal(pkg.scripts['check:sources'], 'node scripts/check-source-titles.mjs');
 });
 
-test('npm script test:content が、実測ちょうどの下限で 2 段を通す', () => {
-  // **完全一致で縛る。** `match` だと ` || true` を後ろに足すだけで恒久 no-op にでき、
-  // 下限も 1 まで静かに下げられる(`assert-test-results.mjs` は 1 以上しか要求しない)。
-  // 下限はこのファイルの `test(` の数と一致させる — CLAUDE.md の「実測ちょうど・余裕ゼロ」。
-  const own = readRoot('scripts/__tests__/content/check-source-titles.test.mjs');
-  const count = (own.match(/^test\(/gm) ?? []).length;
-  assert.equal(
-    pkg.scripts['test:content'],
-    "node scripts/assert-test-files.mjs 'scripts/__tests__/content/*.test.mjs' && " +
-      `node scripts/assert-test-results.mjs ${count} 'scripts/__tests__/content/*.test.mjs'`,
-  );
-});
+/** `test:workflows` の口で走るべきテストの総数。**守る対象から導出しない**(下記) */
+const WORKFLOW_TESTS = 65;
 
 test('test:workflows の口にあるテストファイルが 2 本である', () => {
-  // **下限を導出するために固定する。** ファイルを 1 本消して下限を巻き戻す 2 手は、
-  // 残ったファイルの実測と下限が一致するので下の完全一致だけでは素通りする
-  // (`test:content` は口にファイルが 1 本しかないので、消せば glob 0 件で赤になる。
-  // こちらは 2 本あるため同じ守り方が効かない)。
+  // ファイルを足すと下限に静かな余裕が生まれる(実測: ダミーを 3 本足しても
+  // `test:workflows` は緑のまま通った)。消したときは下の完全一致も ENOENT で
+  // 落ちるが、**足したときに落ちるのはここだけ**。
   const files = fs
     .readdirSync(path.join(ROOT, 'scripts/__tests__'), { withFileTypes: true })
     .filter((e) => e.isFile() && e.name.endsWith('.test.mjs'))
@@ -1125,17 +1114,22 @@ test('test:workflows の口にあるテストファイルが 2 本である', ()
 });
 
 test('npm script test:workflows が、実測ちょうどの下限で 2 段を通す', () => {
-  // `test:content` の自己固定と同じ形だが、**こちらは別の口から見る**。あちらは
-  // 自分自身を縛っているので、ファイルごと消えれば下限もろとも消える。
-  // 下限は上のテストが固定した 2 本の `test(` の合計と一致させる — CLAUDE.md の
-  // 「実測ちょうど・余裕ゼロ」。
-  const count = ['link-check-workflow.test.mjs', 'vrt-targets.test.mjs']
+  // **別の口から縛る。** 自分自身を縛る形だと、ファイルごと消えたときに縛りも消える。
+  //
+  // **下限を守る対象から導出しない。** ファイルの `test(` を数えて突き合わせる形だと、
+  // 中身を消せば数も一緒に下がるので、`中身を空にする + 下限を巻き戻す` の 2 手が
+  // 素通りする(この定数を置く前に実測: `vrt-targets.test.mjs` を 1 行のコメントに
+  // 置き換えて下限を 51 にすると、VRT のガードが丸ごと消えたまま両方の口が緑で通った)。
+  // **塞いでいるのは、この定数がここに直接書いてあること**。テストを足したら
+  // npm script とこの定数の両方を直す。
+  const measured = ['link-check-workflow.test.mjs', 'vrt-targets.test.mjs']
     .map((name) => readRoot(`scripts/__tests__/${name}`))
     .reduce((sum, text) => sum + (text.match(/^test\(/gm) ?? []).length, 0);
+  assert.equal(measured, WORKFLOW_TESTS, '実測と定数がずれている');
   assert.equal(
     pkg.scripts['test:workflows'],
     "node scripts/assert-test-files.mjs 'scripts/__tests__/*.test.mjs' && " +
-      `node scripts/assert-test-results.mjs ${count} 'scripts/__tests__/*.test.mjs'`,
+      `node scripts/assert-test-results.mjs ${WORKFLOW_TESTS} 'scripts/__tests__/*.test.mjs'`,
   );
 });
 
