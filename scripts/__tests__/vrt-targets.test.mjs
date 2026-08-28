@@ -15,14 +15,18 @@
 // 実測で 5 経路が素通りした — ループを `pages.slice(0, 2)` に絞る / config に
 // `grepInvert` を足す / コメント行にダミーの `path:` を書いて件数を保つ /
 // projects を削除ではなくコメントアウトする / `test.skip(` でなく `test["skip"](` と
-// 書く。逆に、引用符をシングルに変えただけで赤にもなった。so ここでは
+// 書く。逆に、引用符をシングルに変えただけで赤にもなった。そこでここでは
 // **Playwright 自身に「何を撮るか」を列挙させて突き合わせる**(`--list` は実測 0.5 秒で、
 // ブラウザも webServer も起動しない)。
 //
-// **捕まえられない経路が 1 つある**: `hide` セレクタを増やして本文を隠すと、撮影自体は
-// 19 件走るので列挙からは見えない(実測では全件に `hide: "main"` を付けると `home` の
-// PNG が 1,072,845 B → 71,031 B になってなお緑)。`hide` を足すときは
-// `vrt/targets.mjs` 冒頭の理由書きに従うこと。
+// **列挙で見えないものは、値そのものを固定する。** `hide` セレクタで本文を隠す /
+// `fullPage` を落とす / 比較設定を緩める / 断面(viewport)を潰す / 比較そのものを
+// 消す(`ignoreSnapshots`・`updateSnapshots`)/ ワークフローの比較ステップを撮り直しに
+// する — いずれも撮影件数を減らさないので `--list` からは見えない。
+//
+// **残る穴は spec の書き方そのもの。** 第 2 引数での上書き / 実行時 skip / import 元の
+// 差し替え、のいずれも撮影件数を変えずに値だけをずらせる(実測)。**列挙が尽きている
+// 保証は無い**ので、`vrt/pages.spec.ts` 冒頭に注意書きを置いてある。
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -31,7 +35,25 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-import { targets } from '../../vrt/targets.mjs';
+import { targets, shotOptions } from '../../vrt/targets.mjs';
+// config は **VRT ジョブと同じ環境でも**読み直す(理由は下の 3 環境の比較テスト)。
+// クエリを変えると ESM のモジュールキャッシュを跨げる。
+const CONFIG_URL = new URL('../../playwright.vrt.config.ts', import.meta.url).href;
+let configReads = 0;
+async function readConfig(env = {}) {
+  const saved = { ...process.env };
+  Object.assign(process.env, env);
+  try {
+    return (await import(`${CONFIG_URL}?read=${configReads++}`)).default;
+  } finally {
+    for (const key of Object.keys(env)) {
+      if (key in saved) process.env[key] = saved[key];
+      else delete process.env[key];
+    }
+  }
+}
+
+const vrtConfig = await readConfig();
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
@@ -124,8 +146,12 @@ test('撮影が skip / fixme に落ちていない', () => {
   // Playwright は skip を **exit 0** で返す。`test(` を `test.skip(` に変えるだけで
   // 38 skipped になり、CI からは通ったようにしか見えない(実測)。node 側は
   // `scripts/assert-test-results.mjs` が skip / todo を 0 に強制しているが、
-  // Playwright の口には同等の検査が無い。--list の expectedStatus はどの記法で
-  // 差し替えても skipped になるので、文字列ではなくここを見る。
+  // Playwright の口には同等の検査が無い。
+  //
+  // **見えるのは宣言時の skip だけ。** `test["skip"](` のような別記法も
+  // expectedStatus に出るが、**本体の中で `test.skip(条件, …)` と書く実行時 skip は
+  // `--list` に出ない**(実測: `test.skip(!!process.env.CI, …)` を足すと
+  // expectedStatus は `passed` のままで、CI では 19 件すべて skipped になる)。
   const notPassed = planned.filter((s) => s.expected !== 'passed');
   assert.deepEqual(notPassed, []);
 });
@@ -143,9 +169,178 @@ test('VRT が config と spec の変更で起動する', () => {
 
 test('VRT が main と PR の 2 ビルドを撮り比べている', () => {
   // 比較ステップを消すとベースライン撮影だけが残り、**恒久的に緑**になる。
-  for (const step of ['Capture baseline from main', 'Compare PR against baseline']) {
-    assert.ok(WORKFLOW.includes(step), `${step} ステップが無い`);
+  //
+  // **ステップ名だけでは足りない。** 名前を残したまま比較側に `--update-snapshots` を
+  // 足す / `VRT_DIST` を `dist-main` に向ける、のどちらでも恒久的に緑になり、
+  // 名前を見るだけの検査は素通りした(実測)。
+  //
+  // **1 本の正規表現で `env:` と `run:` を続けて拾う形も捨てた。** YAML として等価な
+  // 書き方 3 つ(`run:` をクォートする / `run: |` のブロックスカラー / `env:` と `run:` の
+  // 順序入れ替え)で赤になった(実測)。マッピングのキー順に意味は無いので、
+  // **ステップの塊に切ってから、その中に何が在るかを見る**。
+  const steps = WORKFLOW.split(/^(?= {6}- )/m);
+  const stepFor = (dist) => steps.find((step) => step.includes(`VRT_DIST: ${dist}`));
+
+  const baseline = stepFor('dist-main');
+  const compare = stepFor('dist-pr');
+  assert.ok(baseline, 'main の dist を撮るステップが無い');
+  assert.ok(compare, 'PR の dist を撮るステップが無い');
+
+  for (const [label, step] of [['ベースライン撮影', baseline], ['比較', compare]]) {
+    assert.match(step, /npx playwright test --config playwright\.vrt\.config\.ts/, `${label}が VRT の config を使っていない`);
   }
+  // 撮り直しの指定はベースライン側にだけ在る。比較側に付くと毎回上書きになり、
+  // 差分が出ることが無くなる。
+  assert.match(baseline, /--update-snapshots/, 'ベースライン撮影が撮り直しになっていない');
+  assert.doesNotMatch(compare, /--update-snapshots/, '比較が撮り直しになっている');
+
+  // 撮ってから比べる。逆順だとベースラインが無い状態で比較が走る。
+  assert.ok(
+    WORKFLOW.indexOf(baseline) < WORKFLOW.indexOf(compare),
+    '比較がベースライン撮影より先に置かれている',
+  );
+
+  // `continue-on-error` が付くと job は緑のまま比較だけが無効になる。
+  // `build.yml` 側は `check-source-titles.test.mjs` が見ているが、こちらは
+  // どの口からも見ていなかった。
+  assert.doesNotMatch(WORKFLOW, /continue-on-error/, 'vrt.yml に continue-on-error が付いている');
+});
+
+test('本文を隠す指定が home の更新履歴だけである', () => {
+  // **`hide` は撮影を減らさないので `--list` からは見えない。** 全件に
+  // `hide: "main"` を付けても 38 件は走り、`home` の PNG が 1,072,845 B →
+  // 71,031 B になってなお緑だった(実測)。列挙で見えないものは、例外そのものを
+  // 固定するしかない(`check-source-titles.test.mjs` の `EXPECTED_MARKS` と同じ形)。
+  //
+  // 隠してよいのは更新履歴のリストだけ。理由は `vrt/targets.mjs` 冒頭。
+  assert.deepEqual(
+    targets.filter((t) => t.hide).map((t) => `${t.name}: ${t.hide}`),
+    ['home: section[aria-labelledby="updates-heading"] ul'],
+  );
+});
+
+test('比較設定が完全一致のまま固定されている', () => {
+  // #160 の形に静かに戻す変異を塞ぐ。`threshold` の既定は 0.2 で、それ未満の色差は
+  // 差分として**数えられない** — 省庁バッジの色変更が VRT を素通りしたのはこれ。
+  // `maxDiffPixels` の既定は 0 だが型定義は "unset by default" としか書いておらず
+  // 契約ではないので、明示されていることまで見る。
+  //
+  // **ソースを読まずに config を import して評価済みの値を見る**(#199 の教訓)。
+  // 正規表現では、キーを消したのかコメントアウトしたのか、別の場所で上書きしたのかを
+  // 区別できない。`--list --reporter=json` には `expect` が入らない(実測)ので、
+  // Playwright 経由では取れない。
+  assert.deepEqual(vrtConfig.expect.toHaveScreenshot, {
+    threshold: 0,
+    maxDiffPixels: 0,
+    animations: 'disabled',
+    caret: 'hide',
+  });
+  // 比率(`maxDiffPixelRatio`)が戻ってきた場合も、余分なキーとしてここで赤になる。
+  // 使わないのは、許容量が総ピクセル数に比例して長いページほど甘くなるため
+  // (#194 の /scenes は差分 1036px に対して許容 5636px で通った)。
+
+  // **比較そのものを消す 2 つのキーも見る。** どちらも 1 行で VRT を完全な no-op に
+  // する(実測: `ignoreSnapshots: true` / `updateSnapshots: 'all'` のどちらでも、
+  // 本文に letter-spacing を注入した dist が 1 passed になる)。`expect` 配下だけを
+  // 見ていると素通りした。
+  assert.ok(!vrtConfig.ignoreSnapshots, 'ignoreSnapshots が有効になっている');
+  assert.equal(vrtConfig.updateSnapshots, undefined, 'updateSnapshots が設定されている');
+
+  // **project 単位の `expect` は上位を上書きする。** 同じファイルの中で
+  // `projects[].expect.toHaveScreenshot` を書けば、上の deepEqual を通したまま
+  // 実効値だけを緩められる(実測)。
+  for (const project of vrtConfig.projects) {
+    assert.equal(project.expect, undefined, `${project.name} が expect を上書きしている`);
+  }
+});
+
+test('比較設定が VRT ジョブの環境でも同じ値になる', async () => {
+  // **import した時点の値を見るだけでは足りない。** config が実行環境で分岐すると、
+  // このガードが走る「Build site」(`VRT_DIST` 未設定)では厳格な値が見え、
+  // 実際に撮る VRT ジョブ(`VRT_DIST: dist-main` / `dist-pr`)では緩い値が使われる。
+  // `VRT_DIST` はこの config が元から読んでいる変数なので、「CI では少し緩める」形の
+  // 分岐が自然な修正として紛れ込みうる(実測: 三項演算子 1 つで
+  // `threshold` が 0 → 0.9 に化けたまま `test:workflows` は緑だった)。
+  //
+  // **残る穴**: ガードが走る時点に存在しないものから値を作る経路(VRT ジョブ内にしか
+  // 無いディレクトリの `existsSync` など)。ここで再現できるのは環境変数までで、
+  // それ以外は `vrt/pages.spec.ts` 冒頭の注意書きと同じ扱いになる。
+  const variants = await Promise.all(
+    [{ VRT_DIST: 'dist-main' }, { VRT_DIST: 'dist-pr' }].map((env) => readConfig(env)),
+  );
+  for (const config of variants) {
+    assert.deepEqual(config.expect.toHaveScreenshot, vrtConfig.expect.toHaveScreenshot);
+    assert.equal(config.retries, vrtConfig.retries);
+    assert.equal(config.ignoreSnapshots, vrtConfig.ignoreSnapshots);
+    assert.equal(config.updateSnapshots, vrtConfig.updateSnapshots);
+    assert.deepEqual(
+      config.projects.map((p) => ({ name: p.name, expect: p.expect, ...p.use.viewport })),
+      vrtConfig.projects.map((p) => ({ name: p.name, expect: p.expect, ...p.use.viewport })),
+    );
+  }
+});
+
+test('撮影の断面とリトライが固定されている', () => {
+  // **断面が減っても件数は減らない。** mobile の viewport を desktop と同じにすると、
+  // 38 件は撮り続けたまま同じ画像を 2 度撮ることになり、モバイルの崩れは
+  // 一切写らなくなる(`targets` の path 重複を禁じているのと同じ形)。
+  // viewport は `--list --reporter=json` の `config.projects[]` に入らないので、
+  // config を import して見る。
+  assert.deepEqual(
+    vrtConfig.projects.map((p) => ({ name: p.name, ...p.use.viewport })),
+    [
+      { name: 'desktop', width: 1280, height: 800 },
+      { name: 'mobile', width: 390, height: 844 },
+    ],
+  );
+  // リトライは入れない(理由は config のコメント)。増やすと、安定化ループでも
+  // 収まらなかった問題まで握り潰す。
+  assert.equal(vrtConfig.retries, 0);
+});
+
+test('全ページをフルページで撮っている', () => {
+  // `fullPage` を落とすとビューポート内(1280x800 / 390x844)しか撮らなくなるが、
+  // 38 件は走り続けて全部緑のまま通る。config の `expect.toHaveScreenshot` には
+  // 置けない値なので、`vrt/targets.mjs` にデータとして持たせてここで固定する。
+  assert.deepEqual(shotOptions, { fullPage: true });
+});
+
+// ---------------------------------------------------------------------------
+// もう一方の口(`test:content`)を固定する。自分自身を縛ると、ファイルごと消えたとき
+// に縛りも一緒に消える。逆向きは `check-source-titles.test.mjs` にある。
+// ---------------------------------------------------------------------------
+
+/** この口で走るべきテストの総数。**守る対象から導出しない**(理由は下のテスト) */
+const CONTENT_TESTS = 110;
+
+test('test:content の口にあるテストファイルが 1 本である', () => {
+  // ファイルを足すと下限に静かな余裕が生まれる(実測: ダミーを 4 本足しても
+  // `test:content` は緑のまま通った)。囮を 1 本足してから本体を消す経路も、
+  // ここで赤になる。
+  const files = fs
+    .readdirSync(path.join(ROOT, 'scripts/__tests__/content'), { withFileTypes: true })
+    .filter((e) => e.isFile() && e.name.endsWith('.test.mjs'))
+    .map((e) => e.name)
+    .sort();
+  assert.deepEqual(files, ['check-source-titles.test.mjs']);
+});
+
+test('npm script test:content が、実測ちょうどの下限で 2 段を通す', () => {
+  // **完全一致で縛る。** `match` だと ` || true` を後ろに足すだけで恒久 no-op に
+  // でき、下限も 1 まで静かに下げられる(`assert-test-results.mjs` は 1 以上しか
+  // 要求しない)。
+  //
+  // **下限を守る対象から導出しない。** ファイルの `test(` を数えて突き合わせる形だと、
+  // 中身を消せば数も一緒に下がるので、`中身を空にする + 下限を巻き戻す` の 2 手が
+  // 素通りする(実測)。**節穴を塞ぐのは、この定数がここに直接書いてあること**。
+  // テストを足したら npm script とこの定数の両方を直す。
+  const own = read('scripts/__tests__/content/check-source-titles.test.mjs');
+  assert.equal((own.match(/^test\(/gm) ?? []).length, CONTENT_TESTS, '実測と定数がずれている');
+  assert.equal(
+    PKG.scripts['test:content'],
+    "node scripts/assert-test-files.mjs 'scripts/__tests__/content/*.test.mjs' && " +
+      `node scripts/assert-test-results.mjs ${CONTENT_TESTS} 'scripts/__tests__/content/*.test.mjs'`,
+  );
 });
 
 test('npm run vrt が VRT の config を指している', () => {

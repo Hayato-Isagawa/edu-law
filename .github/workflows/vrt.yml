@@ -24,6 +24,16 @@ on:
       - "src/data/**"
       - "!src/data/changelog.ts"
       - "astro.config.*"
+      # 依存の更新も描画を変える。Tailwind / Astro の週次 bump は package.json と
+      # package-lock.json しか触らないので、ここに載せないと VRT が一度も走らない。
+      # lock はキャレット指定の範囲内の更新も拾うので、package.json より広い。
+      #
+      # **ただし gate にはならない。** VRT は required check ではなく
+      # (required は "Build site" のみ)、dependabot-auto-merge.yml の
+      # `gh pr merge --auto` は required しか待たない。Build site は 31〜47 秒、
+      # VRT は 3〜4 分かかるので、非 major の bump は VRT の結果が出る前に
+      # マージされる。得られるのは事後に差分画像が残ることだけ。
+      - "package-lock.json"
       - "vrt/**"
       - "playwright.vrt.config.ts"
       - ".github/workflows/vrt.yml"
