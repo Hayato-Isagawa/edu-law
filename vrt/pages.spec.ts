@@ -21,6 +21,11 @@ import { targets as pages, shotOptions } from "./targets.mjs";
 // CI でだけ全件 skip する形が緑のまま通る。**import 元の差し替え**も同じ —
 // `shotOptions` を widen して再エクスポートするファイルを挟めば、撮影件数を
 // 保ったまま値だけがずれる(実測)。
+//
+// **テーマも同じ死角にある。** `page.emulateMedia({ colorScheme: "light" })` を
+// この関数の中に 1 行足すと、config の 4 projects はそのままなのに `-dark` の
+// 断面が light に化ける(実測: ガードは 15/15 緑のまま、ダークの 38 枚が全部
+// 赤くなる ＝ 撮っているものが変わっている)。**ここでメディアを上書きしないこと。**
 
 for (const p of pages) {
   test(p.name, async ({ page }) => {

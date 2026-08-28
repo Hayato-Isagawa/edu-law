@@ -7,13 +7,16 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   // リトライしない。ローカル(macOS)では同一ソースの 2 ビルドを撮り比べて差分 0
-  // を実測している(maxDiffPixelRatio 0 でも threshold 0 でも 38 件全通過)。
+  // を実測している(maxDiffPixelRatio 0 でも threshold 0 でも 38 件全通過。当時は 2 projects)。
   // CI(Linux)のノイズは 0 ではない — home の連続 2 枚は高さが 5〜9px 揺れる
   // (#194 / #195 の run で観測)。これを吸収しているのは Playwright の安定化
   // ループで、その収束条件は下の threshold / maxDiffPixels でも決まる。
   // 揺れの観測はどちらも旧設定(ratio 0.001)下のもの。完全一致にした後は #197 で
   // 3 回まわし、ベースライン撮影と比較の両ステップとも 38 件全通過で、収束失敗
-  // ("Failed to take two consecutive stable screenshots")は 0 件だった。
+  // ("Failed to take two consecutive stable screenshots")は 0 件だった(当時は 2 projects)。
+  // **ダークを足した 76 件でも CI で同じ**(#202 の run。ベースライン 76 passed 2.4 分 /
+  // 比較 76 passed 2.6 分・収束失敗 0)。撮影が倍になった分は job にそのまま乗り、
+  // VRT ジョブは 3〜4 分から 5 分 58 秒になった。
   // リトライを入れると、そのループでも収まらなかった問題まで握り潰す。
   retries: 0,
   workers: process.env.CI ? 1 : undefined,
