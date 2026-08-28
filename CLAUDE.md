@@ -36,12 +36,12 @@ npm run check    # Astro 型チェック(CI の required check「Build site」�
 npm run check:sources # 公式解説の書名が正本と 5 つの写し先で一致しているか(同上)
 npm run test:hooks # .claude/hooks/ の回帰テスト(同上・下限つき)
 npm run test:content # check:sources の回帰テスト(同上・下限つき)
-npm run test:workflows # link-check.yml の通知分岐の回帰テスト(同上・下限つき)
+npm run test:workflows # link-check の通知分岐と VRT の撮影対象の回帰テスト(同上・下限つき)
 npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
 
-### `test:workflows` — link-check の通知分岐
+### `test:workflows` — link-check の通知分岐と VRT の撮影対象
 
 `link-check.yml` に埋め込まれた「検出をどう届けるか」の判定を固定する。**壊れても静かに壊れる** —
 lychee は走り、レポートもアーティファクトに残り、job も緑のまま**通知だけ**が消える。姉妹リポ
@@ -83,8 +83,8 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
 
 **口は glob で分けている。** `scripts/__tests__/*.test.mjs` の `*` は `/` を跨がないので、
 `scripts/__tests__/content/` は `test:workflows` に拾われない。混ぜると 1 つの下限が両者の合計と
-比べられ、片方が減っても他方が増えていれば割らない(glob を `**` に広げて下限を 58 に据え置くと、
-直下の 58 本のうち 50 本を消しても 8 + 109 = 117 で緑)。
+比べられ、片方が減っても他方が増えていれば割らない(glob を `**` に広げて下限を 59 に据え置くと、
+直下の 59 本のうち 51 本を消しても 8 + 109 = 117 で緑)。
 
 **配線の検査は、守る対象と違う口に置く。** ステップを丸ごと消されると、その口で走る検査は
 実行されないので赤にならない。`test:workflows` と `test:content` は互いのステップを見ており、
@@ -92,11 +92,17 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
 `Type check` / `Build` のステップは、まだどの口からも見ていない。**
 
 **VRT の撮影対象も別の口から見ている。** `scripts/__tests__/vrt-targets.test.mjs`(`test:workflows`)が
-代表 URL の数と一意性・projects 数・テンプレートとの対応・`test.skip` への差し替え・
-`vrt.yml` の起動 paths を検査する。VRT 自身は required check ではなく、`vrt.yml` の `paths` に
-載る PR でしか起動しないので、**その中にガードを置くと VRT が走ったときしか働かない**。
-撮影が減っても表向きは何も起きない — 落ちるテストが 38 件から 20 件になるだけで、
-`npm run vrt` の終了コードは 0 のまま。
+**`playwright test --list` に「何を撮るか」を列挙させ**、`vrt/targets.mjs` の配列と突き合わせる
+(実測 0.5 秒。ブラウザも webServer も起動しない)。併せてテンプレートとの 1 対 1 対応・
+`vrt.yml` の起動 paths と 2 ビルド比較ステップ・`npm run vrt` の指す config も見る。
+
+VRT 自身は required check ではなく、`vrt.yml` の `paths` に載る PR でしか起動しないので、
+**その中にガードを置くと VRT が走ったときしか働かない**。撮影が減っても表向きは何も起きない —
+落ちるテストが 38 件から 19 件になるだけで、`npm run vrt` の終了コードは 0 のまま。
+**ソースを正規表現で読む形は 1 度書いて捨てた**: コメント行にダミーの `path:` を書いて件数を保つ /
+projects を削除ではなくコメントアウトする / `test.skip(` でなく `test["skip"](` と書く、の
+いずれでも素通りした(実測)。**捕まえられないのは `hide` セレクタを増やす経路** — 撮影自体は
+走るので列挙からは見えない。
 
 ## アクセシビリティ検査(a11y)
 

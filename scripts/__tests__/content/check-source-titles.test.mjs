@@ -1143,12 +1143,14 @@ test('build.yml が test:workflows を、前段が落ちても走る形で呼ぶ
   );
 });
 
-test('新しい 2 ステップに continue-on-error が付いていない', () => {
+test('検査ステップに continue-on-error が付いていない', () => {
   // 付くと job は緑のまま検査だけが無効になる。link-check.yml で実際に起きた形。
+  // `test:workflows` は 2026-08-28 に追加した。VRT の撮影対象ガードがそこへ移り、
+  // このステップだけが検査から漏れていると、1 行足すだけで無効化できてしまう。
   // **ステップの切れ目は名前ではなく `- ` で取る。** 名前で引くと改名で誤検知するし、
   // 8 桁インデントの行だけを集める形だと、空行を 1 つ挟まれた続きを見落とす。
   const steps = buildWorkflow.split(/^(?= {6}- )/m);
-  for (const command of ['npm run check:sources', 'npm run test:content']) {
+  for (const command of ['npm run check:sources', 'npm run test:content', 'npm run test:workflows']) {
     const step = steps.find((s) => new RegExp(`^ {8}run: ${command}$`, 'm').test(s));
     assert.ok(step, `${command} を走らせるステップが build.yml に無い`);
     assert.doesNotMatch(step, /continue-on-error/, `${command} に continue-on-error が付いている`);
