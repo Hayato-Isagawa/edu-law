@@ -155,12 +155,14 @@ projects を削除ではなくコメントアウトする / `test.skip(` でな�
   足す / `VRT_DIST` を `dist-main` に向けると恒久的に緑になる。`run:` と `env:` の中身まで見る
 
 **残る穴は `vrt/pages.spec.ts` の書き方そのもの。** 固定できるのは値であって、呼び出し側の
-書き方ではない。実測できた形が 3 つある — ①`toHaveScreenshot` の第 2 引数は config を上書き
+書き方ではない。実測できた形が 4 つある — ①`toHaveScreenshot` の第 2 引数は config を上書き
 するので、`{ ...shotOptions, threshold: 0.2 }` と書けば `shotOptions` を使ったまま比較を骨抜きに
 できる(1/255 の色差を注入した dist が 1 passed)②実行時 skip(`test.skip(条件, …)`)は `--list` に
 出ないので、CI でだけ全件 skip する形が緑のまま通る ③`shotOptions` を widen して再エクスポート
-するファイルを作り、import 元を差し替える。**列挙が尽きている保証は無い**ので、spec 冒頭に
-「ここに値を書き足さない」と置いてある。
+するファイルを作り、import 元を差し替える ④`page.emulateMedia({ colorScheme: "light" })` を 1 行
+足すと、config の 4 projects はそのままなのに `-dark` の断面が light に化ける(ガードは緑のまま、
+ダークの 38 枚が全部赤くなる ＝ 撮っているものが変わっている)。**列挙が尽きている保証は無い**ので、
+spec 冒頭に「ここに値を書き足さない」と置いてある。
 
 同じ理由で、**ガードが走る時点に存在しないものから値を作る経路**も見えない(VRT ジョブ内にしか
 無いディレクトリの `existsSync` など)。環境変数までは上の 3 環境比較で塞いでいる。
@@ -339,14 +341,13 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
   吸収しているのは Playwright の安定化ループ(連続 2 枚が一致するまで撮り直す)で、**その収束条件も
   上の 2 つで決まる**。揺れの観測はどちらも旧設定(比率 0.001)下のもので、完全一致にした後は
   #197 で 3 回まわして**両ステップとも 38 件全通過・収束失敗 0 件**(当時は 2 projects)。
-  **ダークを足した 76 件でもローカルのノイズは 0**(同一ソースを 2 回ビルドして撮り比べ、
-  76 件全通過)。**CI での 76 件のノイズは未測定** — 課金で Actions が止まっている間に
-  入れた変更なので、最初に走る PR の run で確かめること。内訳の実測値は
-  `playwright.vrt.config.ts` のコメント
+  **ダークを足した 76 件でもノイズは 0** — ローカルは同一ソースを 2 回ビルドして 76 件全通過、
+  **CI も #202 の run でベースライン 76 passed(2.4 分)/ 比較 76 passed(2.6 分)・収束失敗 0**。
+  内訳の実測値は `playwright.vrt.config.ts` のコメント
 - **リトライは入れない**。安定化ループでも収まらなかった問題まで握り潰すことになる
 - ADR 0023 が挙げている「CI で揺れが残る場合は該当ページを viewport clip / mask にフォールバックする」は、`fullPage` を固定した今は required check を赤にする。取るなら `vrt/targets.mjs` の `shotOptions` と `scripts/__tests__/vrt-targets.test.mjs` を同時に直すこと
 - **対象**: `vrt/pages.spec.ts` がテンプレート代表 19 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本 / 404)をフルページ撮影 = 4 projects(desktop / mobile × ライト / ダーク)で 76 件。**ダークは `data-theme` を直接立てず `colorScheme` で与える** — `Layout.astro` の起動スクリプトが localStorage → `prefers-color-scheme` の順に見て `data-theme` を決めるので、エミュレーションを使えばその経路ごと撮れる。左上の画素で実測すると light は `#faf9f5`、dark は `#16181d`(= `--color-bg` のダーク値)。**代表 URL が静かに減る経路は `scripts/__tests__/vrt-targets.test.mjs` が見ている**(上の「配線の検査は、守る対象と違う口に置く」)。件数は下限ではなく **19 に固定**してあるので、テンプレートを追加して代表 URL を 1 行追記したら、**あちらの件数とこの行の両方を直すことになる**(実際に `/search` の追加と `/changelog` の除外で 2 世代ぶん古いまま残っていた)。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
-- **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。依存の更新でも起動する。**ただし gate にはならない** — VRT は required check ではなく、`dependabot-auto-merge.yml` の `gh pr merge --auto` は required しか待たないので、非 major の bump は VRT の結果が出る前にマージされる(Build site 31〜47 秒 対 VRT 3〜4 分)。得られるのは事後に差分画像が残ることだけ。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
+- **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。依存の更新でも起動する。**ただし gate にはならない** — VRT は required check ではなく、`dependabot-auto-merge.yml` の `gh pr merge --auto` は required しか待たないので、非 major の bump は VRT の結果が出る前にマージされる(Build site 31〜47 秒 対 **VRT 5 分 58 秒**。ダークを足して撮影が倍になった分がそのまま job に乗り、以前の 3〜4 分から伸びた)。得られるのは事後に差分画像が残ることだけ。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
 - **比較方式(案A)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため
 - **ローカル**: `npm run vrt` で現在の `dist` を撮影・比較できる。権威ある 2 ビルド差分は CI 側
 - **required check 非対象**: 視覚変更 PR でしか起動しないため required には含めない。マージ可否は編集者判断(rule 13)

@@ -147,14 +147,14 @@ test('Playwright が撮る予定のものが撮影対象と一致する', () => 
 
 test('撮影が skip / fixme に落ちていない', () => {
   // Playwright は skip を **exit 0** で返す。`test(` を `test.skip(` に変えるだけで
-  // 38 skipped になり、CI からは通ったようにしか見えない(実測)。node 側は
+  // 全件が skipped になり、CI からは通ったようにしか見えない(実測)。node 側は
   // `scripts/assert-test-results.mjs` が skip / todo を 0 に強制しているが、
   // Playwright の口には同等の検査が無い。
   //
   // **見えるのは宣言時の skip だけ。** `test["skip"](` のような別記法も
   // expectedStatus に出るが、**本体の中で `test.skip(条件, …)` と書く実行時 skip は
   // `--list` に出ない**(実測: `test.skip(!!process.env.CI, …)` を足すと
-  // expectedStatus は `passed` のままで、CI では 19 件すべて skipped になる)。
+  // expectedStatus は `passed` のままで、CI では全件が skipped になる)。
   const notPassed = planned.filter((s) => s.expected !== 'passed');
   assert.deepEqual(notPassed, []);
 });
@@ -268,9 +268,13 @@ test('比較設定が VRT ジョブの環境でも同じ値になる', async () 
   // **残る穴**: ガードが走る時点に存在しないものから値を作る経路(VRT ジョブ内にしか
   // 無いディレクトリの `existsSync` など)。ここで再現できるのは環境変数までで、
   // それ以外は `vrt/pages.spec.ts` 冒頭の注意書きと同じ扱いになる。
-  const variants = await Promise.all(
-    [{ VRT_DIST: 'dist-main' }, { VRT_DIST: 'dist-pr' }].map((env) => readConfig(env)),
-  );
+  // **並行に読まない。** `readConfig` は `process.env` を書き換えてから `import()` する
+  // ので、`Promise.all` で 2 本同時に走らせると後から設定した環境を両方が見る
+  // (実測: `dist-main` のときだけ値を変える分岐が 5/5 で素通りした)。
+  const variants = [];
+  for (const env of [{ VRT_DIST: 'dist-main' }, { VRT_DIST: 'dist-pr' }]) {
+    variants.push(await readConfig(env));
+  }
   for (const config of variants) {
     assert.deepEqual(config.expect.toHaveScreenshot, vrtConfig.expect.toHaveScreenshot);
     assert.equal(config.retries, vrtConfig.retries);
