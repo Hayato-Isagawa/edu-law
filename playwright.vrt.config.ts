@@ -55,9 +55,22 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:4175",
   },
+  // 断面は viewport × テーマ の 4 つ。**テーマは `data-theme` を直接立てず
+  // `colorScheme` で与える** — `Layout.astro` の起動スクリプトが
+  // localStorage → `prefers-color-scheme` の順に見て `data-theme` を決めるので、
+  // エミュレーションを使えばその経路ごと撮れる(新しいコンテキストには
+  // localStorage が無いので、必ず `prefers-color-scheme` に落ちる)。
+  //
+  // ダークを撮るまで **1 枚も写っていなかった**。ダーク側は `[data-theme="dark"]` で
+  // 色トークンを 14 宣言まとめて差し替える形なので、**全ページの見た目が変わるのに
+  // ピクセル検査は 1 度も通っていない**状態だった。色のコントラストは
+  // `e2e/a11y.spec.ts` が両テーマで見ているが、そちらはレイアウトの崩れを見ない
+  // (#160 の逆で、a11y が拾えて VRT が拾えない側)。
   projects: [
-    { name: "desktop", use: { viewport: { width: 1280, height: 800 } } },
-    { name: "mobile", use: { viewport: { width: 390, height: 844 } } },
+    { name: "desktop", use: { viewport: { width: 1280, height: 800 }, colorScheme: "light" } },
+    { name: "desktop-dark", use: { viewport: { width: 1280, height: 800 }, colorScheme: "dark" } },
+    { name: "mobile", use: { viewport: { width: 390, height: 844 }, colorScheme: "light" } },
+    { name: "mobile-dark", use: { viewport: { width: 390, height: 844 }, colorScheme: "dark" } },
   ],
   webServer: {
     command: `npx serve ${dist} -l 4175`,

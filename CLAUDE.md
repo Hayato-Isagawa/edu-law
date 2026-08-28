@@ -124,7 +124,7 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
 
 VRT 自身は required check ではなく、`vrt.yml` の `paths` に載る PR でしか起動しないので、
 **その中にガードを置くと VRT が走ったときしか働かない**。撮影が減っても表向きは何も起きない —
-落ちるテストが 38 件から 19 件になるだけで、`npm run vrt` の終了コードは 0 のまま。
+落ちるテストが 76 件から 38 件になるだけで、`npm run vrt` の終了コードは 0 のまま。
 **ソースを正規表現で読む形は 1 度書いて捨てた**: コメント行にダミーの `path:` を書いて件数を保つ /
 projects を削除ではなくコメントアウトする / `test.skip(` でなく `test["skip"](` と書く、の
 いずれでも素通りした(実測)。
@@ -132,14 +132,15 @@ projects を削除ではなくコメントアウトする / `test.skip(` でな�
 **撮影件数を減らさずに中身を薄める経路は、列挙では見えないので値そのものを固定する。**
 `scripts/__tests__/vrt-targets.test.mjs` が見ているのは以下:
 
-- **`hide` セレクタで本文を隠す** — 全件に `hide: "main"` を付けても 38 件は走り、`home` の PNG が
+- **`hide` セレクタで本文を隠す** — 全件に `hide: "main"` を付けても件数は 1 枚も減らず、`home` の PNG が
   1,072,845 B → 71,031 B になってなお緑だった(実測)。`vrt/targets.mjs` の `hide` 付きエントリを
   一覧で固定し、更新履歴のリスト 1 件だけを許す
 - **`fullPage` を落とす** — ビューポート内(1280x800 / 390x844)しか撮らなくなるが件数は変わらない。
   config の `expect.toHaveScreenshot` には置けない値なので `vrt/targets.mjs` の `shotOptions` に
   データとして持ち、spec はそれを渡す
-- **断面を潰す** — mobile の viewport を desktop と同じにすると、38 件を撮ったまま同じ画像を 2 度撮る
-  だけになる。projects の viewport と `retries` を固定する(viewport は `--list` の JSON に入らない)
+- **断面を潰す** — mobile の viewport を desktop と同じにする / `colorScheme` を両方 light にすると、
+  76 件を撮ったまま同じ画像を 2 度撮るだけになる。projects の viewport・`colorScheme`・`retries` を
+  固定する(viewport も `colorScheme` も `--list` の JSON に入らない)
 - **比較設定を緩める** — `threshold` / `maxDiffPixels` / `maxDiffPixelRatio`。**config を import して
   評価済みの値を見る**(`--list --reporter=json` に `expect` は入らない)。正規表現ではキーを消したのか
   コメントアウトしたのかを区別できないため
@@ -325,7 +326,7 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
 
 共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー。**ADR に載る設定値・対象 URL・ポートは導入時のもので、現行は以下**)。**ピクセル一致は VRT、コントラストは `e2e/a11y.spec.ts` が見る。別系統なので、片方が捕まえたものをもう片方が捕まえるとは限らない** — 省庁バッジの色変更(#160)は a11y が検出し、VRT は取り逃がしていた:
 
-- **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 の 2 projects、`threshold: 0`、`maxDiffPixels: 0`、`retries: 0`、アニメーション無効)。**`maxDiffPixelRatio` は外した**(理由は次項)。**`scripts/__tests__/vrt-targets.test.mjs` が config を import して、`expect.toHaveScreenshot` の 4 キー・projects の viewport・`retries`・`ignoreSnapshots` / `updateSnapshots` を固定している**。**spec 側からの上書きは見ていない**(残る穴。前掲)
+- **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 × ライト / ダークの 4 projects、`threshold: 0`、`maxDiffPixels: 0`、`retries: 0`、アニメーション無効)。**`maxDiffPixelRatio` は外した**(理由は次項)。**`scripts/__tests__/vrt-targets.test.mjs` が config を import して、`expect.toHaveScreenshot` の 4 キー・projects の viewport・`retries`・`ignoreSnapshots` / `updateSnapshots` を固定している**。**spec 側からの上書きは見ていない**(残る穴。前掲)
 - **残る盲点**: pixelmatch の `includeAA`(既定 false・Playwright は上書きしない)により、アンチエイリアスと判定された画素は `threshold: 0` でも差分に数えない。**エッジだけが変わる変更は通る**
 - **設定値は 2 つあり、どちらも 0 にしている**。`maxDiffPixelRatio`(比率)は許容量が総ピクセル数に
   比例して長いページほど甘くなるので使わない(0.001 での許容は mobile `/search` 462px 〜
@@ -337,11 +338,14 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
   **CI(Linux)は 0 ではない** — `home` の連続 2 枚は高さが 5〜9px 揺れる(#194 / #195 の run で観測)。
   吸収しているのは Playwright の安定化ループ(連続 2 枚が一致するまで撮り直す)で、**その収束条件も
   上の 2 つで決まる**。揺れの観測はどちらも旧設定(比率 0.001)下のもので、完全一致にした後は
-  #197 で 3 回まわして**両ステップとも 38 件全通過・収束失敗 0 件**。内訳の実測値は
+  #197 で 3 回まわして**両ステップとも 38 件全通過・収束失敗 0 件**(当時は 2 projects)。
+  **ダークを足した 76 件でもローカルのノイズは 0**(同一ソースを 2 回ビルドして撮り比べ、
+  76 件全通過)。**CI での 76 件のノイズは未測定** — 課金で Actions が止まっている間に
+  入れた変更なので、最初に走る PR の run で確かめること。内訳の実測値は
   `playwright.vrt.config.ts` のコメント
 - **リトライは入れない**。安定化ループでも収まらなかった問題まで握り潰すことになる
 - ADR 0023 が挙げている「CI で揺れが残る場合は該当ページを viewport clip / mask にフォールバックする」は、`fullPage` を固定した今は required check を赤にする。取るなら `vrt/targets.mjs` の `shotOptions` と `scripts/__tests__/vrt-targets.test.mjs` を同時に直すこと
-- **対象**: `vrt/pages.spec.ts` がテンプレート代表 19 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本 / 404)をフルページ撮影 = 2 projects で 38 件。**代表 URL が静かに減る経路は `scripts/__tests__/vrt-targets.test.mjs` が見ている**(上の「配線の検査は、守る対象と違う口に置く」)。件数は下限ではなく **19 に固定**してあるので、テンプレートを追加して代表 URL を 1 行追記したら、**あちらの件数とこの行の両方を直すことになる**(実際に `/search` の追加と `/changelog` の除外で 2 世代ぶん古いまま残っていた)。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
+- **対象**: `vrt/pages.spec.ts` がテンプレート代表 19 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本 / 404)をフルページ撮影 = 4 projects(desktop / mobile × ライト / ダーク)で 76 件。**ダークは `data-theme` を直接立てず `colorScheme` で与える** — `Layout.astro` の起動スクリプトが localStorage → `prefers-color-scheme` の順に見て `data-theme` を決めるので、エミュレーションを使えばその経路ごと撮れる。左上の画素で実測すると light は `#faf9f5`、dark は `#16181d`(= `--color-bg` のダーク値)。**代表 URL が静かに減る経路は `scripts/__tests__/vrt-targets.test.mjs` が見ている**(上の「配線の検査は、守る対象と違う口に置く」)。件数は下限ではなく **19 に固定**してあるので、テンプレートを追加して代表 URL を 1 行追記したら、**あちらの件数とこの行の両方を直すことになる**(実際に `/search` の追加と `/changelog` の除外で 2 世代ぶん古いまま残っていた)。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
 - **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。依存の更新でも起動する。**ただし gate にはならない** — VRT は required check ではなく、`dependabot-auto-merge.yml` の `gh pr merge --auto` は required しか待たないので、非 major の bump は VRT の結果が出る前にマージされる(Build site 31〜47 秒 対 VRT 3〜4 分)。得られるのは事後に差分画像が残ることだけ。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
 - **比較方式(案A)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため
 - **ローカル**: `npm run vrt` で現在の `dist` を撮影・比較できる。権威ある 2 ビルド差分は CI 側
