@@ -35,6 +35,11 @@ export const changelogEntries: ChangelogEntry[] = [
         type: "fix",
         text: "トップページの一覧に並ぶ省庁ラベル(MEXT・CFA)が、うすい下地に沈んで読みづらかったのを直しました",
       },
+      {
+        type: "update",
+        text: "児童虐待防止法ページで案内するこども家庭庁の手引きを、令和7年12月に全部改正された最新版に差し替えました。あわせて文部科学省の手引き案内と大臣メッセージを現行のものに揃え、令和7年4月に成立した改正児童福祉法の案内も加えました",
+        links: [{ label: "児童虐待防止法", href: "/laws/child-abuse-prevention-act/" }],
+      },
     ],
   },
   {
