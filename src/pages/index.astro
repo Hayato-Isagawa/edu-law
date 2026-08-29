@@ -308,12 +308,12 @@ const highlights = [
           entry.items.map((item) => {
             const t = typeLabel[item.type];
             return (
-              <li class="flex flex-wrap gap-x-3 gap-y-1 items-baseline text-sm leading-relaxed">
-                <span class="font-mono text-xs text-accent shrink-0">
+              <li class="flex flex-wrap gap-x-3 gap-y-1 items-start text-sm leading-[1.625em]">
+                <span class="font-mono text-xs leading-[inherit] text-accent shrink-0">
                   {entry.date}
                 </span>
                 <span
-                  class={`font-mono text-xs uppercase tracking-widest shrink-0 ${t.color}`}
+                  class={`font-mono text-xs leading-[inherit] uppercase tracking-widest shrink-0 ${t.color}`}
                 >
                   {t.label}
                 </span>
