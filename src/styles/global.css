@@ -19,19 +19,30 @@
   /* 発行元バッジ。--color- 接頭辞にするとユーティリティ(text-badge-mext 等)が
      生成される。BRAND.md 非共有の edu-law 固有トークンなので改名してよい。 */
   /* ライト背景(#faf9f5)に対して 4.5:1 を満たす値にしてある。トップの凡例は
-     11px なので大きい文字の緩和(3:1)は使えない。旧値は mext 4.45 / cfa 3.86 で
-     どちらも不足していた(bunkacho 5.24 / egov 6.51 は元から充足)。 */
-  --color-badge-mext: #876c4c;
-  --color-badge-cfa: #906a3b;
+     11px なので大きい文字の緩和(3:1)は使えない。初期値は素地に対して
+     mext 4.45 / cfa 3.86 でどちらも不足していた(bunkacho 5.24 / egov 6.51 は
+     元から充足)。**素地を満たしてもチップは別**。下の soumu のコメントを読むこと。 */
+  --color-badge-mext: #7e6444;
+  --color-badge-cfa: #876132;
   --color-badge-bunkacho: #6f6a3e;
   --color-badge-egov: #5e5a52;
   /* soumu は地方公務員法を Highlights に載せたとき(ADR 0026)に新設した。
      他の 4 色が茶〜オリーブ〜灰の暖色寄りなので、判別できるよう寒色側へ振ってある。
      実測 5.43(bg) / 5.72(card #ffffff)。
      **上の 4.5:1 は素地に対する値で、チップ本体は自色 10% のティントの上に載る**
-     (LawRow の bg-badge-<publisher> スラッシュ 10)。そこでの実測は soumu 4.77 だが
-     mext 4.12 / cfa 4.07 で、既存 2 色は満たしていない(ADR 0026)。
-     色を足すときは素地とティントの両方を測ること。 */
+     (LawRow の bg-badge-<publisher> スラッシュ 10)。**しかも下地は 2 つある** —
+     .law-row:hover が行の背景を --color-card に変えるので、既定と hover の両方で測る。
+     ティント上の実測(Chrome・canvas 合成)は既定側が最小で、mext 4.58 / cfa 4.59 /
+     bunkacho 4.57 / soumu 4.73。hover 側はいずれも 0.25 ほど高い。
+     **mext と cfa は 4.10 / 4.07 で割っていた**(ADR 0026 が記録・2026-08-29 に是正)。
+     4.5 ちょうどでなく 4.6 を狙うのは、8bit 量子化で連続モデルより 0.04 ほど下がるため。
+     **egov はまだチップに使っていない**(Highlights の badge は mext / cfa / bunkacho /
+     soumu だけ)。載せる前に値を上げること — 現行値は dark の hover 時に 4.03 まで落ちる。
+     **そしてこの 4 色は axe に検査されていない。** axe-core は position:absolute で
+     不透明な擬似要素が対象の面積の 25% を超えると incomplete を返す(findPseudoElement)。
+     .law-row::before の 3px バーは 284px² で、mext 230 / cfa 195 / soumu 266 を超える
+     (bunkacho だけ 371 なので検査され、4.57 で通っている)。e2e/a11y.spec.ts は
+     violations しか見ないので、**ここを割っても静かに緑になる**。 */
   --color-badge-soumu: #4f6b70;
 
   --font-serif: "Hiragino Mincho ProN", "Yu Mincho", serif;

@@ -29,6 +29,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-08-29",
+    items: [
+      {
+        type: "fix",
+        text: "トップページの一覧に並ぶ省庁ラベル(MEXT・CFA)が、うすい下地に沈んで読みづらかったのを直しました",
+      },
+    ],
+  },
+  {
     date: "2026-08-26",
     items: [
       {
