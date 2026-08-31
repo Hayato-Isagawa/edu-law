@@ -22,7 +22,7 @@
 
 2. **第二基準: 一次源(発行機関ドメイン)限定**
    - sourceUrl は publisher の公式ドメインに限る(`mext.go.jp` / `bunka.go.jp` / `cfa.go.jp` / `mhlw.go.jp` / `laws.e-gov.go.jp` 等)
-   - 二次まとめ・news・書籍紹介ページは不可(memory rule 14、`docs/CONTENT_GUIDELINES.md` Rule 1.2b と整合)
+   - 二次まとめ・news・書籍紹介ページは不可(memory rule 14、edu-evidence の `docs/CONTENT_GUIDELINES.md` Rule 1.2b と整合)
 
 3. **第三基準: `src/content/laws/{slug}.md` の `officialExplanations[0]`**
    - 各法令の laws collection で最上位に置かれた公式解説を起点として採用する
@@ -54,7 +54,7 @@
 ## なぜこの 3 段にしたか
 
 - 第一基準を最上位に置く理由: EduLaw JP は教師実務向けポータルであり、現場で実際に参照される文書を Highlights に出すべき。法律所管の網羅性は法令ページ側の `officialExplanations` 配列で確保されているため、Highlights は実務距離を最優先する
-- 第二基準で一次源に限る理由: PR #136 の教科担任制 RCT 訂正(memory rule 14)で、二次まとめ経由の引用が連鎖的に誤情報を生む事例を経験している。Highlights は外部向けの「公式解説の代表」を名乗るため、ドメイン由来の正確性を妥協できない
+- 第二基準で一次源に限る理由: edu-evidence PR #136 の教科担任制 RCT 訂正(memory rule 14)で、二次まとめ経由の引用が連鎖的に誤情報を生む事例を経験している。Highlights は外部向けの「公式解説の代表」を名乗るため、ドメイン由来の正確性を妥協できない
 - 第三基準で laws collection を起点に縛る理由: Highlights と法令ページで代表解説が食い違うと、読者が法令ページに遷移したときに「Highlights で見た文書はどこ?」となる。laws collection を SSoT とする
 
 ## トレードオフ — publisher が mext 偏重(7 件中 5 件)
