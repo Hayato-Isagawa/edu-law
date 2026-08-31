@@ -40,7 +40,7 @@
     "@playwright/test": "^1.62.1",
     "pagefind": "^1.5.2",
     "rehype-external-links": "^3.0.0",
-    "satori": "^0.33.0",
+    "satori": "^0.33.4",
     "serve": "^14.2.6",
     "sharp": "^0.35.4",
     "tsx": "^4.23.12",
