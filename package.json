@@ -22,14 +22,14 @@
     "vrt": "npx playwright test --config playwright.vrt.config.ts"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.2.4",
-    "@astrojs/react": "^6.0.4",
+    "@astrojs/markdown-remark": "^7.3.0",
+    "@astrojs/react": "^6.0.5",
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
-    "astro": "^7.2.9",
+    "astro": "^7.3.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.2.2"
