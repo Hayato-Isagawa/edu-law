@@ -41,7 +41,7 @@ npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
 
-### `test:workflows` — link-check の通知分岐と VRT の撮影対象・撮影設定
+### `test:workflows` — link-check の通知分岐と VRT の撮影対象・撮影設定・ベースライン配線
 
 `link-check.yml` に埋め込まれた「検出をどう届けるか」の判定を固定する。**壊れても静かに壊れる** —
 lychee は走り、レポートもアーティファクトに残り、job も緑のまま**通知だけ**が消える。姉妹リポ

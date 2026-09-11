@@ -26,8 +26,8 @@ on:
       # 以前は src/data/** を載せて changelog.ts だけ打ち消していたが、運ぶ側に
       # 移したので打ち消しも不要になった。
       #
-      # 代償として、scenes.ts / publishers.ts の中の**ロジック**の変更は VRT から
-      # 見えなくなる。データとロジックを別ファイルに割ればロジック側をここへ戻せる。
+      # 代償として、scenes.ts の中の**ロジック**(getAllScenes / getSceneIndex)の変更は
+      # VRT から見えなくなる。データとロジックを別ファイルに割ればロジック側をここへ戻せる。
       - "astro.config.*"
       # 依存の更新も描画を変える。Tailwind / Astro の週次 bump は package.json と
       # package-lock.json しか触らないので、ここに載せないと VRT が一度も走らない。
@@ -36,7 +36,7 @@ on:
       # **ただし gate にはならない。** VRT は required check ではなく
       # (required は "Build site" のみ)、dependabot-auto-merge.yml の
       # `gh pr merge --auto` は required しか待たない。Build site は 31〜47 秒、
-      # VRT は 3〜4 分かかるので、非 major の bump は VRT の結果が出る前に
+      # VRT は 6 分前後かかる(4 projects)ので、非 major の bump は VRT の結果が出る前に
       # マージされる。得られるのは事後に差分画像が残ることだけ。
       - "package-lock.json"
       - "vrt/**"
@@ -115,7 +115,7 @@ jobs:
           fi
 
           # 運ぶ素材の allowlist。**ここに無いものは運ばない**:
-          #   - src/lib / src/plugins / src/pages / src/components / src/layouts /
+          #   - src/pages / src/components / src/layouts / src/styles /
           #     astro.config.* — 検査対象そのもの
           #   - package.json / package-lock.json — 依存バンプの視覚影響は VRT が
           #     見るべきもの(edu-evidence ADR 0027 が Astro 7 移行を VRT で検証した)。上の

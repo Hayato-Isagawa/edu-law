@@ -13,7 +13,7 @@ ADR 0023 は法令本文・ガイド(`src/content/`)の編集が毎回テキス�
 
 edu-evidence は同じ問題を ADR 0034 で「ベースラインを main のコード × PR のコンテンツで撮る」形に変え、
 過去 PR の再現で 5 赤 → 1 赤(残った 1 赤はテンプレートを触った本物)を実測している。edu-watch も同じ形に
-揃えた(edu-watch ADR 0068)。
+揃える(同時期の PR で並行)。
 
 ## 決定
 
@@ -36,8 +36,8 @@ main 自身のコンテンツで撮り直す(degraded。summary と artifact 名
 運ぶ素材の allowlist は手書きなので、`scripts/__tests__/vrt-baseline.test.mjs` が `src/` の実ディレクトリを
 走査し、「運ぶ・`paths` で監視する・描画に入らないと明言する」の三択を強制する。運ぶディレクトリが `paths` に
 残っていれば赤。位置(運ぶのがビルドより前)・`--delete`・`id: baseline`・degraded の失敗許容がビルド 1 つに
-閉じていること・artifact 名も固定している。既存の `vrt-targets.test.mjs`(撮影対象・撮影設定・`VRT_DIST` の
-2 ステップ)とは検査対象が重ならない。
+閉じていること・artifact 名も固定している。既存の `vrt-targets.test.mjs`(撮影対象・撮影設定)とは
+`VRT_DIST` の 2 ステップと `continue-on-error` 不在の検査が重なる(冗長だが害は無い。移植元と同じ形を保つ)。
 
 `test:workflows` の口に 3 本目のファイルが増えたので、`package.json` の下限と
 `scripts/__tests__/content/check-source-titles.test.mjs` の `WORKFLOW_TESTS` / ファイル一覧を同時に直した
@@ -45,7 +45,7 @@ main 自身のコンテンツで撮り直す(degraded。summary と artifact 名
 
 ### 検証(2026-09-11)
 
-`workflow_dispatch` で本ブランチの VRT を 3 回まわした(run 34583199623 / 34583748688 / 34584309908)。3 回とも
+`workflow_dispatch` で本ブランチ(`e4e2553`。以後の差分は本 ADR の本文のみ)の VRT を 3 回まわした(run 34583199623 / 34583748688 / 34584309908)。3 回とも
 `MODE: neutral`、ベースラインの `origin/main` は `220fe2d` で不変、撮影 76 / 比較 76 が全通過、収束失敗 0。
 本 PR は描画を変えないので、main の素のコード × PR のコンテンツと PR 側の `dist` が一致することの確認になる。
 ガードの変異試験は 4 種(運ぶのをビルドの後ろへ・`--delete` を落とす・`id: baseline` を消す・`src/data/**` を
@@ -61,8 +61,8 @@ main 自身のコンテンツで撮り直す(degraded。summary と artifact 名
 ### コスト・受け入れた死角
 
 - degraded ではベースラインを 2 回ビルドする(4 projects 76 件の撮影は変わらない)
-- **`scenes.ts` / `publishers.ts` の中のロジックの変更が VRT から見えなくなる。** 純データではないが、
-  `src/data` ごと運ぶ。データとロジックを別ファイルに割ればロジック側を `paths` に戻せる
+- **`scenes.ts` の中のロジック(`getAllScenes` / `getSceneIndex`)の変更が VRT から見えなくなる。**
+  純データではないが、`src/data` ごと運ぶ(`publishers.ts` / `changelog.ts` は純データ)。データとロジックを別ファイルに割ればロジック側を `paths` に戻せる
 - `.astro` に直接書かれた散文は中立化されない
 - コンテンツ起因のレイアウト崩れ(長い見出しの折り返し等)は両側に同じ文字列が入るので見えない。
   `neutral: false` の手動実行が逃がし
