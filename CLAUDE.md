@@ -36,7 +36,7 @@ npm run check    # Astro 型チェック(CI の required check「Build site」�
 npm run check:sources # 公式解説の書名が正本と 5 つの写し先で一致しているか(同上)
 npm run test:hooks # .claude/hooks/ の回帰テスト(同上・下限つき)
 npm run test:content # check:sources の回帰テスト(同上・下限つき)
-npm run test:workflows # link-check の通知分岐と VRT の撮影対象・撮影設定の回帰テスト(同上・下限つき)
+npm run test:workflows # link-check の通知分岐と VRT の撮影対象・撮影設定・ベースライン配線の回帰テスト(同上・下限つき)
 npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
@@ -107,6 +107,11 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
   緑で通った**)
 
 **テストを足したら、npm script の下限と相手側の定数の両方を直す。**
+
+同じ口に `vrt-baseline.test.mjs` が同居している。VRT のベースラインを「main のコード × PR の
+コンテンツ」で撮る配線(ADR 0027)も、**壊れても CI は緑のまま**だから — 運ぶ素材を 1 つ落としても、
+テストは走り、多くのページは通る。一番腐りやすいのは運ぶ素材の allowlist なので、`src/` の
+実ディレクトリを走査して「運ぶ・`paths` で監視する・描画に入らないと明言する」の三択を強制している。
 
 **この相互固定で塞げるのは「片方だけを静かに薄める」までで、限界が 2 つある**(いずれも実測):
 
@@ -347,10 +352,12 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
 - **リトライは入れない**。安定化ループでも収まらなかった問題まで握り潰すことになる
 - ADR 0023 が挙げている「CI で揺れが残る場合は該当ページを viewport clip / mask にフォールバックする」は、`fullPage` を固定した今は required check を赤にする。取るなら `vrt/targets.mjs` の `shotOptions` と `scripts/__tests__/vrt-targets.test.mjs` を同時に直すこと
 - **対象**: `vrt/pages.spec.ts` がテンプレート代表 19 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本 / 404)をフルページ撮影 = 4 projects(desktop / mobile × ライト / ダーク)で 76 件。**ダークは `data-theme` を直接立てず `colorScheme` で与える** — `Layout.astro` の起動スクリプトが localStorage → `prefers-color-scheme` の順に見て `data-theme` を決めるので、エミュレーションを使えばその経路ごと撮れる。左上の画素で実測すると light は `#faf9f5`、dark は `#16181d`(= `--color-bg` のダーク値)。**代表 URL が静かに減る経路は `scripts/__tests__/vrt-targets.test.mjs` が見ている**(上の「配線の検査は、守る対象と違う口に置く」)。件数は下限ではなく **19 に固定**してあるので、テンプレートを追加して代表 URL を 1 行追記したら、**あちらの件数とこの行の両方を直すことになる**(実際に `/search` の追加と `/changelog` の除外で 2 世代ぶん古いまま残っていた)。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
-- **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。依存の更新でも起動する。**ただし gate にはならない** — VRT は required check ではなく、`dependabot-auto-merge.yml` の `gh pr merge --auto` は required しか待たないので、非 major の bump は VRT の結果が出る前にマージされる(Build site 31〜47 秒 対 **VRT 5 分 58 秒**。ダークを足して撮影が倍になった分がそのまま job に乗り、以前の 3〜4 分から伸びた)。得られるのは事後に差分画像が残ることだけ。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
-- **比較方式(案A)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため
+- **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。`src/data/**` はベースラインへ運ぶ素材なので `paths` には無い(ADR 0027)。依存の更新でも起動する。**ただし gate にはならない** — VRT は required check ではなく、`dependabot-auto-merge.yml` の `gh pr merge --auto` は required しか待たないので、非 major の bump は VRT の結果が出る前にマージされる(Build site 31〜47 秒 対 **VRT 5 分 58 秒**。ダークを足して撮影が倍になった分がそのまま job に乗り、以前の 3〜4 分から伸びた)。得られるのは事後に差分画像が残ることだけ。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
+- **比較方式(案A + コンテンツ中立)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため。
+  **main 側は「main のコード × PR のコンテンツ」でビルドする**(`src/content` / `src/data` / `src/content.config.ts` を運ぶ)。他ファイルの法令・ガイド修正が波及しただけの赤を消すため(ADR 0027)。運ぶ素材の allowlist と degraded 経路は `scripts/__tests__/vrt-baseline.test.mjs` が固定している
+- **逃がし**: コンテンツ側の値の描画幅をわざと変えるときは、Actions から VRT を `workflow_dispatch` で `neutral: false` にして手動実行し、素の main ベースラインと撮り比べる
 - **ローカル**: `npm run vrt` で現在の `dist` を撮影・比較できる。権威ある 2 ビルド差分は CI 側
-- **required check 非対象**: 視覚変更 PR でしか起動しないため required には含めない。マージ可否は編集者判断
+- **required check 非対象**: `paths` で限定起動するため required には含めない(required にすると起動しなかった PR が塞がる)。マージ可否は編集者判断
 
 ## ホスティング
 

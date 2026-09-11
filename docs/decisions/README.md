@@ -67,3 +67,4 @@
 - [0024. Cloudflare Web Analytics を手動スニペット方式で導入し CSP を最小限緩和する(edu-evidence ADR 0026 ミラー)](0024-web-analytics-beacon-and-csp.md)
 - [0025. Astro 7 へ移行し XSS advisory 3 件を解消する(Markdown は `processor: unified()` で維持・edu-evidence ADR 0027 ミラー)](0025-astro-7-migration.md)
 - [0026. Highlights を全 12 法令に拡張し、代表解説の起点を laws collection の並び順に一致させる](0026-highlights-cover-all-laws.md)
+- [0027. VRT のベースラインを「main のコード × PR のコンテンツ」で撮る(edu-evidence ADR 0034 ミラー)](0027-content-neutral-vrt-baseline.md)

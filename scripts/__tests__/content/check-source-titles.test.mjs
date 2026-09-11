@@ -1099,9 +1099,9 @@ test('npm script check:sources が、引数なしで検査スクリプトを呼�
 });
 
 /** `test:workflows` の口で走るべきテストの総数。**守る対象から導出しない**(下記) */
-const WORKFLOW_TESTS = 66;
+const WORKFLOW_TESTS = 79;
 
-test('test:workflows の口にあるテストファイルが 2 本である', () => {
+test('test:workflows の口にあるテストファイルが 3 本である', () => {
   // ファイルを足すと下限に静かな余裕が生まれる(実測: ダミーを 3 本足しても
   // `test:workflows` は緑のまま通った)。消したときは下の完全一致も ENOENT で
   // 落ちるが、**足したときに落ちるのはここだけ**。
@@ -1110,7 +1110,7 @@ test('test:workflows の口にあるテストファイルが 2 本である', ()
     .filter((e) => e.isFile() && e.name.endsWith('.test.mjs'))
     .map((e) => e.name)
     .sort();
-  assert.deepEqual(files, ['link-check-workflow.test.mjs', 'vrt-targets.test.mjs']);
+  assert.deepEqual(files, ['link-check-workflow.test.mjs', 'vrt-baseline.test.mjs', 'vrt-targets.test.mjs']);
 });
 
 test('npm script test:workflows が、実測ちょうどの下限で 2 段を通す', () => {
@@ -1122,7 +1122,7 @@ test('npm script test:workflows が、実測ちょうどの下限で 2 段を通
   // 置き換えて下限を 51 にすると、VRT のガードが丸ごと消えたまま両方の口が緑で通った)。
   // **塞いでいるのは、この定数がここに直接書いてあること**。テストを足したら
   // npm script とこの定数の両方を直す。
-  const measured = ['link-check-workflow.test.mjs', 'vrt-targets.test.mjs']
+  const measured = ['link-check-workflow.test.mjs', 'vrt-baseline.test.mjs', 'vrt-targets.test.mjs']
     .map((name) => readRoot(`scripts/__tests__/${name}`))
     .reduce((sum, text) => sum + (text.match(/^test\(/gm) ?? []).length, 0);
   assert.equal(measured, WORKFLOW_TESTS, '実測と定数がずれている');
