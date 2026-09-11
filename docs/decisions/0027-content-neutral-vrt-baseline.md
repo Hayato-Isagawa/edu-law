@@ -43,6 +43,14 @@ main 自身のコンテンツで撮り直す(degraded。summary と artifact 名
 `scripts/__tests__/content/check-source-titles.test.mjs` の `WORKFLOW_TESTS` / ファイル一覧を同時に直した
 (この相互固定は `CLAUDE.md`「配線の検査は、守る対象と違う口に置く」)。
 
+### 検証(2026-09-11)
+
+`workflow_dispatch` で本ブランチの VRT を 3 回まわした(run 34583199623 / 34583748688 / 34584309908)。3 回とも
+`MODE: neutral`、ベースラインの `origin/main` は `220fe2d` で不変、撮影 76 / 比較 76 が全通過、収束失敗 0。
+本 PR は描画を変えないので、main の素のコード × PR のコンテンツと PR 側の `dist` が一致することの確認になる。
+ガードの変異試験は 4 種(運ぶのをビルドの後ろへ・`--delete` を落とす・`id: baseline` を消す・`src/data/**` を
+`paths` に戻す)+ 逆向きガードの定数据え置き 1 種で、すべて赤。
+
 ## 帰結
 
 ### 利点
