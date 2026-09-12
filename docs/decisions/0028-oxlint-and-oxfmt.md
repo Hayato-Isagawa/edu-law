@@ -2,7 +2,7 @@
 
 - 状態: 採用
 - 日付: 2026-09-12
-- 関連 PR: chore/adopt-oxlint-oxfmt
+- 関連 PR: #(本 ADR と同一 PR で確定)
 - 関連 ADR: edu-evidence ADR 0037(原本)
 
 ## 背景
@@ -31,7 +31,7 @@
 
 - `.oxlintrc.json`: 既定カテゴリ（correctness）。`no-irregular-whitespace` は `skipComments: true`（コメント内の
   全角空白は日本語の例示で、`.claude/hooks/pre-edit-frontmatter-immutable.cjs` に実在する）。`ignorePatterns` は
-  oxfmt と同じ
+  空（`.md` / `.yml` / `.css` は oxlint の対象外なので、oxfmt 側の除外は要らない）
 - 導入時の warning は 4 件。`[...new Set(x)].length` → `Set#size`、`/^summary:/.test` → `startsWith` は挙動を変えずに直した。
   `check-source-titles.mjs` の `matchAll(new RegExp(MARK_SYNTAX[syntax]))` は `oxc/bad-match-all-arg` の偽陽性
   （元の正規表現が `g` 付きで、`new RegExp(regex)` はフラグを引き継ぐ）なので理由つきの inline ignore。残る 1 件は
@@ -52,7 +52,8 @@
   - `**/*.html` — 生成物
   - `wrangler.jsonc` — 配信設定を 1 バイトも触らない
 - `npm run format` = `oxfmt`、`npm run format:check` = `oxfmt --check`（CI）
-- 初回整形は同じ PR の別コミット（`style: format with oxfmt`）。整形前後で `npm run build` の `dist` は
+- 初回整形は同じ PR の別コミット（`style: format with oxfmt`）。lint 修正で触った 4 ファイルだけは第 1 コミットで
+  整形も同時に入っている。整形前後で `npm run build` の `dist` は
   `design-tokens.json`（`generatedAt`）を除き byte 一致
 
 ### CI

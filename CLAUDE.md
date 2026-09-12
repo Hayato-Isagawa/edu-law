@@ -32,10 +32,10 @@ npm ci
 npm run dev      # 開発サーバー(localhost:4324。ファミリー各リポで固定・4321 は未設定プロジェクト用に空けている)
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
-npm run lint     # oxlint(correctness ルール。warning でも止める。同上)
+npm run lint     # oxlint(correctness ルール。warning でも止める。CI の required check「Build site」に含まれる)
 npm run format   # oxfmt で整形(.ts/.js/.json 等。.astro / .md / .yml / .css / .html / wrangler.jsonc は対象外。ADR 0028)
-npm run format:check # 同上の差分検査(同上)
-npm run check    # Astro 型チェック(CI の required check「Build site」に含まれる)
+npm run format:check # oxfmt の差分検査(CI の「Build site」に含まれる)
+npm run check    # Astro 型チェック(同上)
 npm run check:sources # 公式解説の書名が正本と 5 つの写し先で一致しているか(同上)
 npm run test:hooks # .claude/hooks/ の回帰テスト(同上・下限つき)
 npm run test:content # check:sources の回帰テスト(同上・下限つき)
@@ -92,8 +92,9 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
 
 **配線の検査は、守る対象と違う口に置く。** ステップを丸ごと消されると、その口で走る検査は
 実行されないので赤にならない。`test:workflows` と `test:content` は互いのステップを見ており、
-`check:sources` のステップは `test:content` 側から見ている。**`test:hooks` / `check:tokens` /
-`Type check` / `Build` のステップは、まだどの口からも見ていない。**
+`check:sources` のステップは `test:content` 側から、`Lint (oxlint)` / `Format check (oxfmt)` のステップは
+`test:workflows` 側から見ている。**`test:hooks` / `check:tokens` / `Type check` / `Build` のステップは、
+まだどの口からも見ていない。**
 
 **`test:workflows` と `test:content` の npm script は、互いの口から完全一致で固定してある**
 (`test:hooks` と `check:tokens` は未固定)。`match` で書くと ` || true` を足すだけで恒久 no-op に

@@ -879,6 +879,14 @@ test("oxlint と oxfmt の口が build.yml に配線されている", () => {
       ),
       `build.yml に ${script} が無い、または前段が落ちると走らない形になっている`
     );
+    // continue-on-error が付くと赤が job に伝わらない(通知ステップと同じ穴)。
+    const step = b
+      .split(/^ {6}(?=- name: )/m)
+      .find((s) => s.includes(`run: npm run ${script}`));
+    assert.ok(
+      step && !step.includes('continue-on-error'),
+      `${script} のステップに continue-on-error が付いている`
+    );
   }
   const pkg = JSON.parse(
     fs.readFileSync(path.join(HERE, "..", "..", "package.json"), "utf8")
