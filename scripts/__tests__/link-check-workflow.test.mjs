@@ -884,7 +884,7 @@ test("oxlint と oxfmt の口が build.yml に配線されている", () => {
       .split(/^ {6}(?=- name: )/m)
       .find((s) => s.includes(`run: npm run ${script}`));
     assert.ok(
-      step && !step.includes('continue-on-error'),
+      step && !step.includes("continue-on-error"),
       `${script} のステップに continue-on-error が付いている`
     );
   }
