@@ -32,6 +32,9 @@ npm ci
 npm run dev      # 開発サーバー(localhost:4324。ファミリー各リポで固定・4321 は未設定プロジェクト用に空けている)
 npm run build    # 本番ビルド
 npm run preview  # ビルド結果のプレビュー
+npm run lint     # oxlint(correctness ルール。warning でも止める。同上)
+npm run format   # oxfmt で整形(.ts/.js/.json 等。.astro / .md / .yml / .css / .html / wrangler.jsonc は対象外。ADR 0028)
+npm run format:check # 同上の差分検査(同上)
 npm run check    # Astro 型チェック(CI の required check「Build site」に含まれる)
 npm run check:sources # 公式解説の書名が正本と 5 つの写し先で一致しているか(同上)
 npm run test:hooks # .claude/hooks/ の回帰テスト(同上・下限つき)

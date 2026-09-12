@@ -34,23 +34,29 @@
 //   node scripts/check-source-titles.mjs --root DIR # 全箇所を DIR 起点で(テスト用)
 //   node scripts/check-source-titles.mjs <glob>     # 法令 md だけ(テスト用)
 
-import { globSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import {
+  globSync,
+  readFileSync,
+  readdirSync,
+  realpathSync,
+  statSync,
+} from "node:fs";
+import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
-const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const DEFAULT_PATTERN = 'src/content/laws/*.md';
-const LAWS_DIR = path.join('src', 'content', 'laws');
-const SRC_DIR = 'src';
-const HIGHLIGHTS_FILE = path.join('src', 'pages', 'index.astro');
-const PUBLISHERS_FILE = path.join('src', 'data', 'publishers.ts');
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+const DEFAULT_PATTERN = "src/content/laws/*.md";
+const LAWS_DIR = path.join("src", "content", "laws");
+const SRC_DIR = "src";
+const HIGHLIGHTS_FILE = path.join("src", "pages", "index.astro");
+const PUBLISHERS_FILE = path.join("src", "data", "publishers.ts");
 
 /**
  * 走査しない拡張子。**列挙するのは「見ない側」で、知らない拡張子は既定で走査する。**
  * 逆(走査する拡張子を列挙する)にすると、`.tsx` を新設して書名を置いたときに誰も見ない。
  * 安全側の既定を選んでいるので、ここを増やすことだけが検査を狭める操作になる。
  */
-const NON_PROSE_EXTENSIONS = ['.css'];
+const NON_PROSE_EXTENSIONS = [".css"];
 
 /** frontmatter と本文を分ける。 */
 const FRONTMATTER = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/;
@@ -64,10 +70,10 @@ const ANY_HEADING = /^#{1,6}[ \t]/;
  * このリポの運用は「PDF 表紙の逐語を書き写す」で、macOS 経由の貼り付けは NFD を作りうる。
  * 正規化しないと、1 文字も違わない 2 つの書名を並べたエラーが出て原因に辿り着けない。
  */
-const norm = (s) => s.normalize('NFC');
+const norm = (s) => s.normalize("NFC");
 
 /** 空白の有無だけが違うのかを診断に出すための比較用。**判定には使わない。** */
-const collapse = (s) => s.replace(/[\s　]+/g, '');
+const collapse = (s) => s.replace(/[\s　]+/g, "");
 
 /**
  * YAML のプレーン / 引用符付きスカラーを読む。
@@ -80,11 +86,12 @@ function parseScalar(raw) {
   if (v.startsWith('"') || v.startsWith("'")) {
     const quote = v[0];
     const end = v.indexOf(quote, 1);
-    if (end === -1) throw new Error('officialExplanations[].title の引用符が閉じていない');
+    if (end === -1)
+      throw new Error("officialExplanations[].title の引用符が閉じていない");
     // エスケープを解釈しないので、閉じ引用符の後ろに値が続く形は読めない。
     const rest = v.slice(end + 1).trim();
-    if (rest !== '' && !rest.startsWith('#')) {
-      throw new Error('officialExplanations[].title の引用符を解釈できない');
+    if (rest !== "" && !rest.startsWith("#")) {
+      throw new Error("officialExplanations[].title の引用符を解釈できない");
     }
     return v.slice(1, end);
   }
@@ -106,11 +113,12 @@ function parseScalar(raw) {
 function parseOfficialTitles(frontmatter) {
   const lines = frontmatter.split(/\r?\n/);
   const start = lines.findIndex((l) => /^officialExplanations:[ \t]*$/.test(l));
-  if (start === -1) throw new Error('frontmatter に officialExplanations: が無い');
+  if (start === -1)
+    throw new Error("frontmatter に officialExplanations: が無い");
 
   const block = [];
   for (const line of lines.slice(start + 1)) {
-    if (line.trim() === '') continue;
+    if (line.trim() === "") continue;
     if (/^\S/.test(line)) break; // インデントが戻ったら別のキー
     block.push(line);
   }
@@ -123,16 +131,16 @@ function parseOfficialTitles(frontmatter) {
     const value = m[1].trim();
     // ブロックスカラー(`|` / `>`)や空値は、この行だけ読んでも書名にならない。
     // 黙って空文字を持ち回ると全件不一致になるので、ここで止める。
-    if (value === '' || value.startsWith('|') || value.startsWith('>')) {
-      throw new Error('officialExplanations[].title を 1 行で読み取れない');
+    if (value === "" || value.startsWith("|") || value.startsWith(">")) {
+      throw new Error("officialExplanations[].title を 1 行で読み取れない");
     }
     titles.push(norm(parseScalar(value)));
   }
 
-  if (entries === 0) throw new Error('officialExplanations にエントリが無い');
+  if (entries === 0) throw new Error("officialExplanations にエントリが無い");
   if (entries !== titles.length) {
     throw new Error(
-      `officialExplanations の解析に失敗(エントリ ${entries} 件 / title ${titles.length} 件)`,
+      `officialExplanations の解析に失敗(エントリ ${entries} 件 / title ${titles.length} 件)`
     );
   }
   return titles;
@@ -146,16 +154,16 @@ function parseOfficialTitles(frontmatter) {
  */
 function parseSummaryLine(frontmatter) {
   const lines = frontmatter.split(/\r?\n/);
-  const at = lines.findIndex((l) => /^summary:/.test(l));
-  if (at === -1) throw new Error('frontmatter に summary: が無い');
-  const value = lines[at].replace(/^summary:[ \t]*/, '').trim();
-  if (value === '' || value.startsWith('|') || value.startsWith('>')) {
-    throw new Error('summary を 1 行で読み取れない');
+  const at = lines.findIndex((l) => l.startsWith("summary:"));
+  if (at === -1) throw new Error("frontmatter に summary: が無い");
+  const value = lines[at].replace(/^summary:[ \t]*/, "").trim();
+  if (value === "" || value.startsWith("|") || value.startsWith(">")) {
+    throw new Error("summary を 1 行で読み取れない");
   }
   // ブロックスカラーだけでなく**インデント継続のプレーンスカラー**も止める。
   // 折り返した 2 行目以降を黙って見ないと、そこに書いた書名が検査の外へ出る。
-  if (/^[ \t]+\S/.test(lines[at + 1] ?? '')) {
-    throw new Error('summary が複数行にまたがっている(1 行で読み取れない)');
+  if (/^[ \t]+\S/.test(lines[at + 1] ?? "")) {
+    throw new Error("summary が複数行にまたがっている(1 行で読み取れない)");
   }
   return lines[at];
 }
@@ -167,7 +175,7 @@ function splitBody(body) {
   lines.forEach((line, i) => {
     if (SOURCES_HEADING.test(line)) found.push(i);
   });
-  if (found.length === 0) return { error: '## 出典 節が無い' };
+  if (found.length === 0) return { error: "## 出典 節が無い" };
   if (found.length > 1) return { error: `## 出典 節が ${found.length} 個ある` };
 
   const section = [];
@@ -180,13 +188,13 @@ function splitBody(body) {
     section.push(lines[i]);
   }
   return {
-    section: section.join('\n'),
-    outside: [...lines.slice(0, found[0]), ...lines.slice(end)].join('\n'),
+    section: section.join("\n"),
+    outside: [...lines.slice(0, found[0]), ...lines.slice(end)].join("\n"),
   };
 }
 
-const OPENERS = { '『': '』', '「': '」' };
-const CLOSERS = { '』': '『', '」': '「' };
+const OPENERS = { "『": "』", "「": "」" };
+const CLOSERS = { "』": "『", "」": "「" };
 
 /**
  * 引用された名前を、いちばん外側の括弧だけ拾う。
@@ -241,7 +249,11 @@ const MARK_SYNTAX = {
 
 /** マークの中身を集める。 */
 export function extractMarks(text, syntax) {
-  return [...text.matchAll(new RegExp(MARK_SYNTAX[syntax]))].map((m) => norm(m[1]));
+  // MARK_SYNTAX は全部 g 付きで、new RegExp(regex) はフラグを引き継ぐ(偽陽性)。
+  // oxlint-disable-next-line oxc/bad-match-all-arg
+  return [...text.matchAll(new RegExp(MARK_SYNTAX[syntax]))].map((m) =>
+    norm(m[1])
+  );
 }
 
 /**
@@ -250,7 +262,8 @@ export function extractMarks(text, syntax) {
  * 呼び戻し、消せない赤になる。**除くのはマークだけ**で、`//` コメント一般は触らない
  * (`https://` を含む文字列を巻き込むため)。
  */
-const stripMarks = (text, syntax) => text.replace(new RegExp(MARK_SYNTAX[syntax]), '');
+const stripMarks = (text, syntax) =>
+  text.replace(new RegExp(MARK_SYNTAX[syntax]), "");
 
 /**
  * md では**全 HTML コメント**を落としてから引用を拾う。マークだけを落とす形にすると、
@@ -259,7 +272,7 @@ const stripMarks = (text, syntax) => text.replace(new RegExp(MARK_SYNTAX[syntax]
  * マークは生テキストから先に集めるので、この除去では失われない。
  * `//` コメント一般を落とさないのとは対照的だが、md には `https://` のような衝突が無い。
  */
-const stripHtmlComments = (text) => text.replace(/<!--[\s\S]*?-->/g, '');
+const stripHtmlComments = (text) => text.replace(/<!--[\s\S]*?-->/g, "");
 
 /**
  * `src/data/publishers.ts` の `PUBLISHER_LABELS` から発行元名を読む。
@@ -268,24 +281,27 @@ const stripHtmlComments = (text) => text.replace(/<!--[\s\S]*?-->/g, '');
  * 発行元名プレフィックスに一致する引用が 1 件も無くなり、出典節以外の全箇所が緑になる。
  */
 export function parsePublisherLabels(source) {
-  const open = source.indexOf('PUBLISHER_LABELS');
-  if (open === -1) throw new Error('PUBLISHER_LABELS が無い');
-  const start = source.indexOf('{', open);
-  const end = source.indexOf('}', start);
-  if (start === -1 || end === -1) throw new Error('PUBLISHER_LABELS を読み取れない');
+  const open = source.indexOf("PUBLISHER_LABELS");
+  if (open === -1) throw new Error("PUBLISHER_LABELS が無い");
+  const start = source.indexOf("{", open);
+  const end = source.indexOf("}", start);
+  if (start === -1 || end === -1)
+    throw new Error("PUBLISHER_LABELS を読み取れない");
 
   const labels = [];
   for (const line of source.slice(start + 1, end).split(/\r?\n/)) {
-    if (line.trim() === '') continue;
+    if (line.trim() === "") continue;
     const m = line.match(/^\s*([A-Za-z0-9_-]+):\s*"([^"]*)"\s*,?\s*$/);
     // **読めない行は黙って飛ばさない。** 単引用符や式で書かれた 1 件を落とすと、
     // その発行元の引用だけが静かに検査の外へ出る。
-    if (!m) throw new Error(`PUBLISHER_LABELS の行を読み取れない: ${line.trim()}`);
-    if (m[1] === 'other') continue;
-    if (m[2] === '') throw new Error('PUBLISHER_LABELS に空のラベルがある');
+    if (!m)
+      throw new Error(`PUBLISHER_LABELS の行を読み取れない: ${line.trim()}`);
+    if (m[1] === "other") continue;
+    if (m[2] === "") throw new Error("PUBLISHER_LABELS に空のラベルがある");
     labels.push(norm(m[2]));
   }
-  if (labels.length === 0) throw new Error('PUBLISHER_LABELS から発行元名を読み取れない');
+  if (labels.length === 0)
+    throw new Error("PUBLISHER_LABELS から発行元名を読み取れない");
   return labels;
 }
 
@@ -295,7 +311,10 @@ export function parsePublisherLabels(source) {
  * 対応しないかぎ括弧が普通に出るので、無条件に報告すると書名と無関係な赤が量産される。
  */
 function citations(text, publishers) {
-  const prefixOf = (at) => publishers.find((p) => at >= p.length && text.slice(at - p.length, at) === p);
+  const prefixOf = (at) =>
+    publishers.find(
+      (p) => at >= p.length && text.slice(at - p.length, at) === p
+    );
   const { names, unclosed, unclosedStart } = extractQuotedNames(text);
   const cited = [];
   for (const q of names) {
@@ -308,7 +327,7 @@ function citations(text, publishers) {
 /** 不一致が空白だけのときに、そう言う。目で 1 個の空白を探させない。 */
 function mismatchHint(name, official) {
   const c = collapse(name);
-  return official.some((t) => collapse(t) === c) ? '(空白だけが違う)' : '';
+  return official.some((t) => collapse(t) === c) ? "(空白だけが違う)" : "";
 }
 
 /**
@@ -326,7 +345,7 @@ function matchAgainst(label, where, quoted, marks, official) {
     problems.push(
       `${label}: ${where}の${display}が officialExplanations[].title に無い` +
         `${mismatchHint(name, official)}` +
-        ` — 表記を揃えるか、正本に載せない名前なら body-only マーク(${name})を同じ範囲に置く`,
+        ` — 表記を揃えるか、正本に載せない名前なら body-only マーク(${name})を同じ範囲に置く`
     );
   }
 
@@ -334,13 +353,13 @@ function matchAgainst(label, where, quoted, marks, official) {
     if (officialSet.has(mark)) {
       problems.push(
         `${label}: body-only マーク「${mark}」が frontmatter に在る書名を指している` +
-          ' — officialExplanations に昇格済みならマークを外す',
+          " — officialExplanations に昇格済みならマークを外す"
       );
       continue;
     }
     if (!quotedNames.includes(mark)) {
       problems.push(
-        `${label}: body-only マーク「${mark}」に対応する引用が${where}に無い(消し忘れ)`,
+        `${label}: body-only マーク「${mark}」に対応する引用が${where}に無い(消し忘れ)`
       );
     }
   }
@@ -356,7 +375,8 @@ function matchAgainst(label, where, quoted, marks, official) {
  */
 export function inspect(label, source, publishers) {
   const fm = source.match(FRONTMATTER);
-  if (!fm) return { problems: [`${label}: frontmatter を読み取れない`], quoted: [] };
+  if (!fm)
+    return { problems: [`${label}: frontmatter を読み取れない`], quoted: [] };
 
   let official;
   let summaryLine;
@@ -370,39 +390,53 @@ export function inspect(label, source, publishers) {
   const body = splitBody(fm[2]);
   if (body.error) return { problems: [`${label}: ${body.error}`], quoted: [] };
 
-  const marks = extractMarks(body.section, 'html');
-  const { names: quoted, unclosed } = extractQuotedNames(stripHtmlComments(body.section));
+  const marks = extractMarks(body.section, "html");
+  const { names: quoted, unclosed } = extractQuotedNames(
+    stripHtmlComments(body.section)
+  );
   const quotedNames = quoted.map((q) => q.name);
   const problems = [];
 
   // 節の書式は `発行元『書名』` で固定。1 件も無いのは、書式が変わったか
   // 節ごと消えたかのどちらかで、いずれも検査が素通りする状態そのもの。
   if (quoted.length === 0) {
-    problems.push(`${label}: ## 出典 節に引用された名前が 1 件も無い(書式は 発行元『書名』)`);
+    problems.push(
+      `${label}: ## 出典 節に引用された名前が 1 件も無い(書式は 発行元『書名』)`
+    );
   }
 
   // 閉じ括弧の欠落は、その書名を丸ごと検査の外へ出す。黙って減らさない。
   if (unclosed) {
-    problems.push(`${label}: ## 出典 節に閉じていない括弧がある(その書名は照合できない)`);
+    problems.push(
+      `${label}: ## 出典 節に閉じていない括弧がある(その書名は照合できない)`
+    );
   }
 
-  problems.push(...matchAgainst(label, '出典節', quoted, marks, official));
+  problems.push(...matchAgainst(label, "出典節", quoted, marks, official));
 
   // --- frontmatter の summary: 発行元名付きの引用だけ ------------------------
-  const summaryMarks = extractMarks(summaryLine, 'yaml');
-  const summary = citations(stripMarks(summaryLine, 'yaml'), publishers);
+  const summaryMarks = extractMarks(summaryLine, "yaml");
+  const summary = citations(stripMarks(summaryLine, "yaml"), publishers);
   if (summary.unclosed) {
-    problems.push(`${label}: summary に閉じていない括弧がある(その書名は照合できない)`);
+    problems.push(
+      `${label}: summary に閉じていない括弧がある(その書名は照合できない)`
+    );
   }
-  problems.push(...matchAgainst(label, 'summary', summary.cited, summaryMarks, official));
+  problems.push(
+    ...matchAgainst(label, "summary", summary.cited, summaryMarks, official)
+  );
 
   // --- 本文(出典節の外): 発行元名付きの引用だけ -----------------------------
-  const outsideMarks = extractMarks(body.outside, 'html');
+  const outsideMarks = extractMarks(body.outside, "html");
   const outside = citations(stripHtmlComments(body.outside), publishers);
   if (outside.unclosed) {
-    problems.push(`${label}: 本文に閉じていない括弧がある(その書名は照合できない)`);
+    problems.push(
+      `${label}: 本文に閉じていない括弧がある(その書名は照合できない)`
+    );
   }
-  problems.push(...matchAgainst(label, '本文', outside.cited, outsideMarks, official));
+  problems.push(
+    ...matchAgainst(label, "本文", outside.cited, outsideMarks, official)
+  );
 
   return { problems, quoted: quotedNames };
 }
@@ -412,15 +446,15 @@ export function inspect(label, source, publishers) {
  * 発行元名付きの引用だけを、**全法令の正本**と突き合わせる。
  */
 export function inspectProse(label, source, official, publishers) {
-  const marks = extractMarks(source, 'line');
-  const { cited, unclosed } = citations(stripMarks(source, 'line'), publishers);
+  const marks = extractMarks(source, "line");
+  const { cited, unclosed } = citations(stripMarks(source, "line"), publishers);
   const problems = [];
   // 散文では対応しない括弧が普通に出る(かぎ括弧を記号として使う等)ので、
   // 書名の引用が 1 件でもあるファイルに限って報告する。
   if (unclosed) {
     problems.push(`${label}: 閉じていない括弧がある(その書名は照合できない)`);
   }
-  problems.push(...matchAgainst(label, '本文', cited, marks, official));
+  problems.push(...matchAgainst(label, "本文", cited, marks, official));
   return { problems, cited: cited.length };
 }
 
@@ -432,8 +466,8 @@ export function collectProseFiles(root) {
   const out = [];
   const lawsDir = path.join(root, LAWS_DIR);
   const walk = (dir) => {
-    for (const entry of readdirSync(dir, { withFileTypes: true }).sort((a, b) =>
-      a.name < b.name ? -1 : 1,
+    for (const entry of readdirSync(dir, { withFileTypes: true }).sort(
+      (a, b) => (a.name < b.name ? -1 : 1)
     )) {
       const p = path.join(dir, entry.name);
       // symlink は `isDirectory()` が偽になるので、実体を見て分岐する。
@@ -442,7 +476,7 @@ export function collectProseFiles(root) {
         if (p !== lawsDir && !entry.isSymbolicLink()) walk(p);
         continue;
       }
-      if (entry.name.startsWith('.')) continue; // .DS_Store 等で件数がぶれないように
+      if (entry.name.startsWith(".")) continue; // .DS_Store 等で件数がぶれないように
       if (NON_PROSE_EXTENSIONS.includes(path.extname(entry.name))) continue;
       out.push(p);
     }
@@ -458,11 +492,12 @@ export function collectProseFiles(root) {
  * 空配列・`title` の欠落は、どれも「検査対象が無い」と見分けが付かない。
  */
 export function parseHighlights(source) {
-  const head = source.indexOf('const highlights = [');
-  if (head === -1) throw new Error('const highlights = [ が見つからない');
-  const open = source.indexOf('[', head);
-  const close = source.indexOf('\n] as const;', open);
-  if (close === -1) throw new Error('highlights 配列の閉じ(] as const;)が見つからない');
+  const head = source.indexOf("const highlights = [");
+  if (head === -1) throw new Error("const highlights = [ が見つからない");
+  const open = source.indexOf("[", head);
+  const close = source.indexOf("\n] as const;", open);
+  if (close === -1)
+    throw new Error("highlights 配列の閉じ(] as const;)が見つからない");
 
   // 入れ子のオブジェクトでエントリが途中で切れないよう、深さを数えて取る。
   const block = source.slice(open + 1, close);
@@ -470,27 +505,27 @@ export function parseHighlights(source) {
   let depth = 0;
   let start = -1;
   for (let i = 0; i < block.length; i++) {
-    if (block[i] === '{') {
+    if (block[i] === "{") {
       if (depth === 0) start = i;
       depth++;
-    } else if (block[i] === '}') {
+    } else if (block[i] === "}") {
       depth--;
       if (depth === 0) entries.push(block.slice(start, i + 1));
-      if (depth < 0) throw new Error('highlights 配列の括弧が対応していない');
+      if (depth < 0) throw new Error("highlights 配列の括弧が対応していない");
     }
   }
-  if (depth !== 0) throw new Error('highlights 配列の括弧が対応していない');
-  if (entries.length === 0) throw new Error('highlights にエントリが無い');
+  if (depth !== 0) throw new Error("highlights 配列の括弧が対応していない");
+  if (entries.length === 0) throw new Error("highlights にエントリが無い");
 
   // **入れ子のオブジェクトを先に落とす。** 落とさないと `{ meta: { title: "…" }, title: "…" }`
   // で内側の値を先に拾い、壊れていない側を指すエラーが出る。
   const topLevel = (entry) => {
-    let out = '';
+    let out = "";
     let depth = 0;
     for (const ch of entry) {
-      if (ch === '{') depth++;
+      if (ch === "{") depth++;
       if (depth <= 1) out += ch;
-      if (ch === '}') depth--;
+      if (ch === "}") depth--;
     }
     return out;
   };
@@ -498,13 +533,16 @@ export function parseHighlights(source) {
   // prettier は長い値を次の行へ折るので、キーと値の間に改行が入る形も読む。
   const field = (entry, key) => {
     const m = topLevel(entry).match(
-      new RegExp(`\\b${key}:\\s*(?:\\n\\s*)?("(?:[^"\\\\]|\\\\.)*")`),
+      new RegExp(`\\b${key}:\\s*(?:\\n\\s*)?("(?:[^"\\\\]|\\\\.)*")`)
     );
     if (!m) throw new Error(`highlights のエントリから ${key} を読み取れない`);
     return norm(JSON.parse(m[1]));
   };
 
-  return entries.map((entry) => ({ title: field(entry, 'title'), href: field(entry, 'href') }));
+  return entries.map((entry) => ({
+    title: field(entry, "title"),
+    href: field(entry, "href"),
+  }));
 }
 
 /**
@@ -532,7 +570,8 @@ export function inspectHighlights(label, source, lawsBySlug) {
       continue;
     }
     const slug = m[1];
-    if (seen.has(slug)) problems.push(`${label}: 同じ法令を 2 回 highlight している(${slug})`);
+    if (seen.has(slug))
+      problems.push(`${label}: 同じ法令を 2 回 highlight している(${slug})`);
     seen.add(slug);
 
     const titles = lawsBySlug.get(slug);
@@ -546,13 +585,14 @@ export function inspectHighlights(label, source, lawsBySlug) {
         // 「空白だけが違う」と出て、正本として示す `[0]` の側を見誤らせる。
         `${label}: ${slug} の highlight が officialExplanations[0] と違う` +
           `${mismatchHint(title, [titles[0]])} — 「${title}」/ 正本「${titles[0]}」` +
-          ' — 代表解説を変えるなら officialExplanations の並び順を先に変える(ADR 0009 第三基準)',
+          " — 代表解説を変えるなら officialExplanations の並び順を先に変える(ADR 0009 第三基準)"
       );
     }
   }
 
   for (const slug of lawsBySlug.keys()) {
-    if (!seen.has(slug)) problems.push(`${label}: ${slug} が highlight に出ていない(ADR 0026)`);
+    if (!seen.has(slug))
+      problems.push(`${label}: ${slug} が highlight に出ていない(ADR 0026)`);
   }
 
   return problems;
@@ -567,7 +607,9 @@ export function main(pattern = DEFAULT_PATTERN) {
 
   if (files.length === 0) {
     console.error(`[check-source-titles] 対象ファイルが 0 件: ${pattern}`);
-    console.error('[check-source-titles] 法令ファイルが移動・改名されていないか確認してください。');
+    console.error(
+      "[check-source-titles] 法令ファイルが移動・改名されていないか確認してください。"
+    );
     return 1;
   }
 
@@ -578,12 +620,19 @@ export function main(pattern = DEFAULT_PATTERN) {
   let quotedTotal = 0;
   for (const file of files) {
     const label = path.relative(ROOT, file) || path.basename(file);
-    const result = inspect(label, readFileSync(file, 'utf8'), loaded.publishers);
+    const result = inspect(
+      label,
+      readFileSync(file, "utf8"),
+      loaded.publishers
+    );
     problems.push(...result.problems);
     quotedTotal += result.quoted.length;
   }
 
-  return report(problems, `${files.length} ファイル / 出典節の引用 ${quotedTotal} 件`);
+  return report(
+    problems,
+    `${files.length} ファイル / 出典節の引用 ${quotedTotal} 件`
+  );
 }
 
 function report(problems, summary) {
@@ -607,9 +656,10 @@ function isFile(p) {
 /** 発行元名の一覧を読む。読めなければ理由を返す(黙って空にしない)。 */
 function loadPublishers(root) {
   const file = path.join(root, PUBLISHERS_FILE);
-  if (!isFile(file)) return { error: `${PUBLISHERS_FILE} が無い(発行元名を読めない)` };
+  if (!isFile(file))
+    return { error: `${PUBLISHERS_FILE} が無い(発行元名を読めない)` };
   try {
-    return { publishers: parsePublisherLabels(readFileSync(file, 'utf8')) };
+    return { publishers: parsePublisherLabels(readFileSync(file, "utf8")) };
   } catch (e) {
     return { error: `${PUBLISHERS_FILE}: ${e.message}` };
   }
@@ -630,12 +680,12 @@ const fail = (message) => {
 export function mainAll(root = ROOT) {
   const rel = (p) => path.relative(root, p) || path.basename(p);
 
-  const lawFiles = globSync(path.join(LAWS_DIR, '*.md'), { cwd: root })
+  const lawFiles = globSync(path.join(LAWS_DIR, "*.md"), { cwd: root })
     .map((f) => path.resolve(root, f))
     .sort();
   if (lawFiles.length === 0) {
-    fail(`法令ファイルが 0 件: ${path.join(LAWS_DIR, '*.md')}`);
-    return fail('法令ファイルが移動・改名されていないか確認してください。');
+    fail(`法令ファイルが 0 件: ${path.join(LAWS_DIR, "*.md")}`);
+    return fail("法令ファイルが移動・改名されていないか確認してください。");
   }
 
   const loaded = loadPublishers(root);
@@ -646,7 +696,7 @@ export function mainAll(root = ROOT) {
   const officialAll = new Set();
   let quotedTotal = 0;
   for (const file of lawFiles) {
-    const source = readFileSync(file, 'utf8');
+    const source = readFileSync(file, "utf8");
     const result = inspect(rel(file), source, loaded.publishers);
     problems.push(...result.problems);
     quotedTotal += result.quoted.length;
@@ -655,7 +705,7 @@ export function mainAll(root = ROOT) {
     if (!fm) continue;
     try {
       const titles = parseOfficialTitles(fm[1]);
-      lawsBySlug.set(path.basename(file, '.md'), titles);
+      lawsBySlug.set(path.basename(file, ".md"), titles);
       titles.forEach((t) => officialAll.add(t));
     } catch {
       // 解析できないことは inspect() が既に赤にしている。二重に報告しない。
@@ -669,20 +719,32 @@ export function mainAll(root = ROOT) {
   const official = [...officialAll];
   let citedTotal = 0;
   for (const file of proseFiles) {
-    const result = inspectProse(rel(file), readFileSync(file, 'utf8'), official, loaded.publishers);
+    const result = inspectProse(
+      rel(file),
+      readFileSync(file, "utf8"),
+      official,
+      loaded.publishers
+    );
     problems.push(...result.problems);
     citedTotal += result.cited;
   }
 
   const highlights = path.join(root, HIGHLIGHTS_FILE);
-  if (!isFile(highlights)) return fail(`${HIGHLIGHTS_FILE} が無い(Highlights を検査できない)`);
-  problems.push(...inspectHighlights(HIGHLIGHTS_FILE, readFileSync(highlights, 'utf8'), lawsBySlug));
+  if (!isFile(highlights))
+    return fail(`${HIGHLIGHTS_FILE} が無い(Highlights を検査できない)`);
+  problems.push(
+    ...inspectHighlights(
+      HIGHLIGHTS_FILE,
+      readFileSync(highlights, "utf8"),
+      lawsBySlug
+    )
+  );
 
   return report(
     problems,
     `法令 ${lawFiles.length} ファイル(出典節の引用 ${quotedTotal} 件 + summary + 本文) / ` +
       `${SRC_DIR} ${proseFiles.length} ファイル(発行元名付きの引用 ${citedTotal} 件) / ` +
-      `${HIGHLIGHTS_FILE} の Highlights`,
+      `${HIGHLIGHTS_FILE} の Highlights`
   );
 }
 
@@ -698,8 +760,10 @@ export function mainAll(root = ROOT) {
 const entry = process.argv[1];
 if (entry && import.meta.url === pathToFileURL(realpathSync(entry)).href) {
   const argv = process.argv.slice(2);
-  if (argv[0] === '--root') {
-    process.exitCode = argv[1] ? mainAll(argv[1]) : fail('--root にディレクトリを指定してください。');
+  if (argv[0] === "--root") {
+    process.exitCode = argv[1]
+      ? mainAll(argv[1])
+      : fail("--root にディレクトリを指定してください。");
   } else if (argv.length > 0) {
     process.exitCode = main(argv[0]);
   } else {
