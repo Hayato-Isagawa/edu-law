@@ -39,7 +39,11 @@ test.describe("外部リンクの開き方", () => {
   // 対象は target="_blank" のものだけ。同じタブで開くファミリー内リンク
   // (edu-evidence.org / news.edu-evidence.org)には opener が渡らないので
   // noopener を要求しない。
-  for (const route of ["/", "/laws/school-education-act/", "/guides/parent-response/"]) {
+  for (const route of [
+    "/",
+    "/laws/school-education-act/",
+    "/guides/parent-response/",
+  ]) {
     test(`${route} の別タブで開く外部リンクは rel に noopener を持つ`, async ({
       page,
     }) => {
@@ -48,7 +52,9 @@ test.describe("外部リンクの開き方", () => {
       const links = await page.evaluate(() => {
         const here = location.host;
         const external = Array.from(
-          document.querySelectorAll<HTMLAnchorElement>('a[href][target="_blank"]')
+          document.querySelectorAll<HTMLAnchorElement>(
+            'a[href][target="_blank"]'
+          )
         ).filter((a) => {
           if (!/^https?:/.test(a.getAttribute("href") ?? "")) return false;
           return new URL(a.href).host !== here;

@@ -42,16 +42,28 @@ export const targets = [
   { name: "laws-index", path: "/laws" },
   { name: "law-detail", path: "/laws/school-education-act" },
   { name: "guides-index", path: "/guides" },
-  { name: "guide-childcare-work-balance", path: "/guides/childcare-work-balance" },
+  {
+    name: "guide-childcare-work-balance",
+    path: "/guides/childcare-work-balance",
+  },
   { name: "guide-customer-harassment", path: "/guides/customer-harassment" },
-  { name: "guide-disciplinary-disposition", path: "/guides/disciplinary-disposition" },
+  {
+    name: "guide-disciplinary-disposition",
+    path: "/guides/disciplinary-disposition",
+  },
   { name: "guide-legal-hierarchy", path: "/guides/legal-hierarchy" },
   { name: "guide-non-regular-teachers", path: "/guides/non-regular-teachers" },
   { name: "guide-occupational-injury", path: "/guides/occupational-injury" },
-  { name: "guide-occupational-safety-health", path: "/guides/occupational-safety-health" },
+  {
+    name: "guide-occupational-safety-health",
+    path: "/guides/occupational-safety-health",
+  },
   { name: "guide-parent-response", path: "/guides/parent-response" },
   { name: "guide-school-accident", path: "/guides/school-accident" },
-  { name: "guide-teacher-mental-health", path: "/guides/teacher-mental-health" },
+  {
+    name: "guide-teacher-mental-health",
+    path: "/guides/teacher-mental-health",
+  },
   { name: "guide-work-style-reform", path: "/guides/work-style-reform" },
   { name: "not-found", path: "/404" },
 ];

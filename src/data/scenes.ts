@@ -23,7 +23,7 @@ export function getAllScenes(categories: readonly SceneCategory[]): Scene[] {
 }
 
 export function getSceneIndex(
-  categories: readonly SceneCategory[],
+  categories: readonly SceneCategory[]
 ): Map<string, { scene: Scene; categoryTitle: string }> {
   const index = new Map<string, { scene: Scene; categoryTitle: string }>();
   for (const cat of categories) {
@@ -84,7 +84,10 @@ export const sceneCategories: SceneCategory[] = [
         title: "不登校への対応",
         description:
           "不登校児童生徒への対応について、教育機会確保法に基づく国・学校の責務と、文部科学省の基本指針・支援通知の所在を示します。",
-        lawSlugs: ["education-opportunity-assurance-act", "school-education-act"],
+        lawSlugs: [
+          "education-opportunity-assurance-act",
+          "school-education-act",
+        ],
       },
     ],
   },
@@ -133,7 +136,10 @@ export const sceneCategories: SceneCategory[] = [
           "教員の心の不調による休職・復職について、文部科学省・厚生労働省等の公的な支援と相談先の所在を整理します。公務災害の認定と補償は専用ガイドに案内します。",
         lawSlugs: [],
         guides: [
-          { slug: "teacher-mental-health", title: "メンタルヘルスと休職・復職" },
+          {
+            slug: "teacher-mental-health",
+            title: "メンタルヘルスと休職・復職",
+          },
         ],
       },
       {
@@ -188,9 +194,7 @@ export const sceneCategories: SceneCategory[] = [
         description:
           "教員の懲戒処分・分限処分と、不利益処分を受けたときの審査請求について、文部科学省・総務省・人事委員会等の公的な情報の所在を整理します。",
         lawSlugs: [],
-        guides: [
-          { slug: "disciplinary-disposition", title: "懲戒・分限処分" },
-        ],
+        guides: [{ slug: "disciplinary-disposition", title: "懲戒・分限処分" }],
       },
       {
         slug: "non-regular-teachers",
@@ -212,7 +216,8 @@ export const sceneCategories: SceneCategory[] = [
   {
     id: "school-health-safety",
     title: "学校の保健・安全",
-    description: "感染症対応・健康診断や学校安全計画など、児童生徒の保健と学校の安全を確かめたいとき",
+    description:
+      "感染症対応・健康診断や学校安全計画など、児童生徒の保健と学校の安全を確かめたいとき",
     scenes: [
       {
         slug: "school-health",

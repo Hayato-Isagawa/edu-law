@@ -31,16 +31,16 @@
  * (Claude 4.6 Opus 26.9% rate) most often targets numeric/URL frontmatter.
  */
 
-'use strict';
+"use strict";
 
 const PROTECTED_KEYS = [
-  'title',
-  'order',
-  'eGovUrl',
-  'url',
-  'lastVerified',
-  'publishedAt',
-  'retrievedAt',
+  "title",
+  "order",
+  "eGovUrl",
+  "url",
+  "lastVerified",
+  "publishedAt",
+  "retrievedAt",
 ];
 
 const FRONTMATTER_RE = /^---\s*\n([\s\S]*?)\n---\s*(?:\n|$)/;
@@ -59,14 +59,15 @@ const URL_RE = /\bhttps?:\/\/[^\s)>"']+/gi;
 const EGOV_ID_RE = /\b\d{3}[A-Z][A-Z0-9]{6,}\b/g;
 // 自サイトへのリンクと JSON-LD の語彙 URL は「公式解説への入口」ではないので外す。
 // ガイドページには両者が 24 本あり、含めると本題と無関係な差分で鳴る。
-const BOILERPLATE_URL_RE = /^https?:\/\/(?:[a-z0-9-]+\.)*(?:edu-evidence\.org|schema\.org)(?:[/:?#]|$)/i;
+const BOILERPLATE_URL_RE =
+  /^https?:\/\/(?:[a-z0-9-]+\.)*(?:edu-evidence\.org|schema\.org)(?:[/:?#]|$)/i;
 
 // .astro は `---` の中身が JS で、`title:` がデータとして何度も出てくる。
 // 保護キーの抽出は法令エントリ(YAML frontmatter)だけに適用し、
 // ページ側は URL の集合だけを見る。
 function targetKind(filePath) {
-  if (LAW_PATH_RE.test(filePath)) return 'law';
-  if (PAGE_PATH_RE.test(filePath)) return 'page';
+  if (LAW_PATH_RE.test(filePath)) return "law";
+  if (PAGE_PATH_RE.test(filePath)) return "page";
   return null;
 }
 
@@ -104,17 +105,22 @@ function captureProtectedFields(fm, chunk = fm, { keys = true } = {}) {
     //
     // 詰めておく理由: settings.json の `timeout: 5` を超えるとプロセスが kill され、
     // stdout が出ない = ガードが黙って素通りする。ここが唯一の fail-open 経路。
-    const re = new RegExp(`^[ \\t]*(?:-[ \\t]*)?${key}:[ \\t]*(.+?)[ \\t]*$`, 'gm');
-    const values = [...(fm || '').matchAll(re)].map(m => m[1].replace(/^["']|["']$/g, ''));
+    const re = new RegExp(
+      `^[ \\t]*(?:-[ \\t]*)?${key}:[ \\t]*(.+?)[ \\t]*$`,
+      "gm"
+    );
+    const values = [...(fm || "").matchAll(re)].map((m) =>
+      m[1].replace(/^["']|["']$/g, "")
+    );
     if (values.length) map.set(key, values);
   }
-  const urls = ((chunk || '').match(URL_RE) || [])
-    .map(x => x.trim())
-    .filter(u => !BOILERPLATE_URL_RE.test(u));
-  if (urls.length) map.set('__urls__', urls.sort());
+  const urls = ((chunk || "").match(URL_RE) || [])
+    .map((x) => x.trim())
+    .filter((u) => !BOILERPLATE_URL_RE.test(u));
+  if (urls.length) map.set("__urls__", urls.sort());
 
-  const ids = (chunk || '').match(EGOV_ID_RE) || [];
-  if (ids.length) map.set('__egovIds__', [...ids].sort());
+  const ids = (chunk || "").match(EGOV_ID_RE) || [];
+  if (ids.length) map.set("__egovIds__", [...ids].sort());
   return map;
 }
 
@@ -135,14 +141,14 @@ function evaluatePair(oldStr, newStr, opts = {}) {
   // Edit chunks usually don't include the `---` delimiters; fall back to the
   // whole chunk so single-line frontmatter edits ("lastVerified: ...") still
   // get inspected. The path filter keeps body-text false positives unlikely.
-  const before = oldStr ?? '';
-  const after = newStr ?? '';
+  const before = oldStr ?? "";
+  const after = newStr ?? "";
   if (!before && !after) return [];
   const beforeFm = extractFrontmatter(before) ?? before;
   const afterFm = extractFrontmatter(after) ?? after;
   return diffMaps(
     captureProtectedFields(beforeFm, before, opts),
-    captureProtectedFields(afterFm, after, opts),
+    captureProtectedFields(afterFm, after, opts)
   );
 }
 
@@ -153,26 +159,42 @@ function evaluatePair(oldStr, newStr, opts = {}) {
 function evaluateWrite(filePath, content, opts) {
   let current;
   try {
-    current = require('node:fs').readFileSync(filePath, 'utf8');
+    current = require("node:fs").readFileSync(filePath, "utf8");
   } catch (err) {
-    if (err && err.code === 'ENOENT') return [];
-    return [{ key: '__unreadable__', before: [String(err && err.code) || 'read error'], after: [] }];
+    if (err && err.code === "ENOENT") return [];
+    return [
+      {
+        key: "__unreadable__",
+        before: [String(err && err.code) || "read error"],
+        after: [],
+      },
+    ];
   }
-  return evaluatePair(current, content ?? '', opts);
+  return evaluatePair(current, content ?? "", opts);
 }
 
 function evaluatePayload(toolName, toolInput, opts = {}) {
-  if (toolName === 'Edit') {
-    return evaluatePair(toolInput?.old_string ?? '', toolInput?.new_string ?? '', opts);
+  if (toolName === "Edit") {
+    return evaluatePair(
+      toolInput?.old_string ?? "",
+      toolInput?.new_string ?? "",
+      opts
+    );
   }
-  if (toolName === 'Write') {
-    return evaluateWrite(String(toolInput?.file_path || ''), toolInput?.content ?? '', opts);
+  if (toolName === "Write") {
+    return evaluateWrite(
+      String(toolInput?.file_path || ""),
+      toolInput?.content ?? "",
+      opts
+    );
   }
-  if (toolName === 'MultiEdit') {
+  if (toolName === "MultiEdit") {
     const edits = Array.isArray(toolInput?.edits) ? toolInput.edits : [];
     const merged = [];
     for (const e of edits) {
-      merged.push(...evaluatePair(e?.old_string ?? '', e?.new_string ?? '', opts));
+      merged.push(
+        ...evaluatePair(e?.old_string ?? "", e?.new_string ?? "", opts)
+      );
     }
     return merged;
   }
@@ -193,59 +215,73 @@ const HEAD = 60;
 const TAIL = 30;
 
 function fmtVal(arr) {
-  if (!arr.length) return '∅';
+  if (!arr.length) return "∅";
   return arr
-    .map(v => (v.length > MAX_SHOWN ? `${v.slice(0, HEAD)}…${v.slice(-TAIL)}` : v))
-    .join(' | ');
+    .map((v) =>
+      v.length > MAX_SHOWN ? `${v.slice(0, HEAD)}…${v.slice(-TAIL)}` : v
+    )
+    .join(" | ");
 }
 
 const LABELS = {
-  __urls__: 'urls (inspected chunk)',
-  __egovIds__: 'e-Gov law IDs',
-  __unreadable__: 'current file could not be read (error code)',
+  __urls__: "urls (inspected chunk)",
+  __egovIds__: "e-Gov law IDs",
+  __unreadable__: "current file could not be read (error code)",
 };
 
 function buildReason(diffs, filePath) {
-  const lines = [`[frontmatter-immutable] Protected fields changed in ${filePath}:`];
+  const lines = [
+    `[frontmatter-immutable] Protected fields changed in ${filePath}:`,
+  ];
   for (const d of diffs) {
     lines.push(`  ${LABELS[d.key] ?? d.key}:`);
     lines.push(`    before: ${fmtVal(d.before)}`);
     lines.push(`    after:  ${fmtVal(d.after)}`);
   }
-  lines.push('');
-  lines.push('法令エントリの frontmatter とページ内の公式リンクは、読者に見せる事実');
-  lines.push('そのもの(e-Gov の法令 ID・公式解説 URL・確認日)。e-Gov の ID は 1 文字');
-  lines.push('違っても別の実在法令を指し、link-check は 200 を返すため気づけない。');
-  lines.push('原典で引き直してから適用すること。');
-  return lines.join('\n');
+  lines.push("");
+  lines.push(
+    "法令エントリの frontmatter とページ内の公式リンクは、読者に見せる事実"
+  );
+  lines.push(
+    "そのもの(e-Gov の法令 ID・公式解説 URL・確認日)。e-Gov の ID は 1 文字"
+  );
+  lines.push(
+    "違っても別の実在法令を指し、link-check は 200 を返すため気づけない。"
+  );
+  lines.push("原典で引き直してから適用すること。");
+  return lines.join("\n");
 }
 
 function run(inputOrRaw, _options = {}) {
   let input;
   try {
-    input = typeof inputOrRaw === 'string'
-      ? (inputOrRaw.trim() ? JSON.parse(inputOrRaw) : {})
-      : (inputOrRaw || {});
+    input =
+      typeof inputOrRaw === "string"
+        ? inputOrRaw.trim()
+          ? JSON.parse(inputOrRaw)
+          : {}
+        : inputOrRaw || {};
   } catch {
     return { exitCode: 0 };
   }
 
-  const toolName = String(input?.tool_name || '');
-  if (!['Edit', 'Write', 'MultiEdit'].includes(toolName)) return { exitCode: 0 };
+  const toolName = String(input?.tool_name || "");
+  if (!["Edit", "Write", "MultiEdit"].includes(toolName))
+    return { exitCode: 0 };
 
   const toolInput = input?.tool_input || {};
-  const filePath = String(toolInput?.file_path || '');
+  const filePath = String(toolInput?.file_path || "");
   const kind = targetKind(filePath);
   if (!kind) return { exitCode: 0 };
 
-  const diffs = evaluatePayload(toolName, toolInput, { keys: kind === 'law' });
+  const diffs = evaluatePayload(toolName, toolInput, { keys: kind === "law" });
   if (!diffs.length) return { exitCode: 0 };
 
   const reason = buildReason(diffs, filePath);
   const stdout = JSON.stringify({
     hookSpecificOutput: {
-      hookEventName: 'PreToolUse',
-      permissionDecision: 'ask',
+      hookEventName: "PreToolUse",
+      permissionDecision: "ask",
       permissionDecisionReason: reason,
     },
   });
@@ -265,13 +301,18 @@ module.exports = {
 };
 
 if (require.main === module) {
-  let data = '';
-  process.stdin.setEncoding('utf8');
-  process.stdin.on('data', c => { data += c; });
-  process.stdin.on('end', () => {
+  let data = "";
+  process.stdin.setEncoding("utf8");
+  process.stdin.on("data", (c) => {
+    data += c;
+  });
+  process.stdin.on("end", () => {
     const out = run(data);
     if (out.stdout) process.stdout.write(out.stdout);
-    if (out.stderr) process.stderr.write(out.stderr.endsWith('\n') ? out.stderr : out.stderr + '\n');
+    if (out.stderr)
+      process.stderr.write(
+        out.stderr.endsWith("\n") ? out.stderr : out.stderr + "\n"
+      );
     // **`process.exit()` にしないこと。** stdout がパイプのとき write は非同期なので、
     // 直後に exit すると書き残しが捨てられ、判定 JSON がちょうど 65536B
     // (パイプバッファ)で切れる。切れた JSON は誰もエラーにせず、

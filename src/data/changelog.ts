@@ -38,7 +38,12 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: "update",
         text: "児童虐待防止法ページで案内するこども家庭庁の手引きを、令和7年12月に全部改正された最新版に差し替えました。あわせて文部科学省の手引き案内と大臣メッセージを現行のものに揃え、令和7年4月に成立した改正児童福祉法の案内も加えました",
-        links: [{ label: "児童虐待防止法", href: "/laws/child-abuse-prevention-act/" }],
+        links: [
+          {
+            label: "児童虐待防止法",
+            href: "/laws/child-abuse-prevention-act/",
+          },
+        ],
       },
     ],
   },
@@ -103,7 +108,10 @@ export const changelogEntries: ChangelogEntry[] = [
         type: "fix",
         text: "カスタマーハラスメントのガイドから、厚生労働省の対策企業マニュアルに辿り着けなくなっていた問題を修正しました",
         links: [
-          { label: "カスタマーハラスメント", href: "/guides/customer-harassment/" },
+          {
+            label: "カスタマーハラスメント",
+            href: "/guides/customer-harassment/",
+          },
         ],
       },
     ],
@@ -165,7 +173,9 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: "add",
         text: "「学校の保健・安全」の場面カテゴリを新設し、感染症対策・健康診断と学校安全計画・危機管理から、学校保健安全法と文部科学省の公式解説を引けるようにしました",
-        links: [{ label: "場面から探す", href: "/scenes/#school-health-safety" }],
+        links: [
+          { label: "場面から探す", href: "/scenes/#school-health-safety" },
+        ],
       },
     ],
   },
@@ -177,7 +187,10 @@ export const changelogEntries: ChangelogEntry[] = [
         text: "「不登校への対応」の場面を新設し、教育機会確保法のページを法令一覧に追加しました。不登校児童生徒への対応について、教育機会確保法に基づく国・学校の責務と、文部科学省の基本指針・支援通知の所在を 1 ページで確認できます",
         links: [
           { label: "不登校への対応", href: "/scenes/#students" },
-          { label: "教育機会確保法", href: "/laws/education-opportunity-assurance-act/" },
+          {
+            label: "教育機会確保法",
+            href: "/laws/education-opportunity-assurance-act/",
+          },
         ],
       },
     ],
@@ -221,12 +234,22 @@ export const changelogEntries: ChangelogEntry[] = [
         type: "update",
         // body-only: いじめの重大事態の調査に関するガイドライン
         text: "いじめ防止対策推進法ページで案内する文部科学省『いじめの重大事態の調査に関するガイドライン』を、最新の令和6年8月改訂版に更新しました",
-        links: [{ label: "いじめ防止対策推進法", href: "/laws/bullying-prevention-act/" }],
+        links: [
+          {
+            label: "いじめ防止対策推進法",
+            href: "/laws/bullying-prevention-act/",
+          },
+        ],
       },
       {
         type: "update",
         text: "児童虐待防止法ページで案内する文部科学省『学校・教育委員会等向け虐待対応の手引き』を、最新の令和8年5月改訂版に更新しました",
-        links: [{ label: "児童虐待防止法", href: "/laws/child-abuse-prevention-act/" }],
+        links: [
+          {
+            label: "児童虐待防止法",
+            href: "/laws/child-abuse-prevention-act/",
+          },
+        ],
       },
     ],
   },
@@ -256,17 +279,29 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: "add",
         text: "学校保健安全法のページを法令一覧に追加しました。健康診断・感染症による出席停止・学校環境衛生(学校保健)や、学校安全計画・危機管理マニュアル(学校安全)について、文部科学省の公式解説や e-Gov 法令本文への入口を 1 ページで確認できます",
-        links: [{ label: "学校保健安全法", href: "/laws/school-health-and-safety-act/" }],
+        links: [
+          {
+            label: "学校保健安全法",
+            href: "/laws/school-health-and-safety-act/",
+          },
+        ],
       },
       {
         type: "add",
         text: "地方公務員法のページを法令一覧に追加しました。公立学校の教員を含む地方公務員の任用・給与・分限・懲戒・服務などの根本基準について、総務省「地方公務員制度等」の公式解説や e-Gov 法令本文への入口を 1 ページで確認できます",
-        links: [{ label: "地方公務員法", href: "/laws/local-public-service-act/" }],
+        links: [
+          { label: "地方公務員法", href: "/laws/local-public-service-act/" },
+        ],
       },
       {
         type: "add",
         text: "教育公務員特例法のページを法令一覧に追加しました。研修・資質向上(令和4年改正の研修記録、免許更新制の発展的解消)をめぐる文部科学省の指針・ガイドラインや e-Gov 法令本文への入口を 1 ページで確認できます",
-        links: [{ label: "教育公務員特例法", href: "/laws/educational-public-service-special-act/" }],
+        links: [
+          {
+            label: "教育公務員特例法",
+            href: "/laws/educational-public-service-special-act/",
+          },
+        ],
       },
       {
         type: "update",
@@ -281,25 +316,42 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: "add",
         text: "「教職員へのカスタマーハラスメント対策と雇用主の措置義務をめぐる公的な情報」ガイドページを公開しました。ハラスメント防止が事業主(公立学校では設置者)の雇用管理上の措置義務であること、2026年10月に施行が予定されるカスタマーハラスメント対策の義務化について、厚生労働省・総務省・e-Gov 等の公的な情報の所在を 1 ページで確認できます",
-        links: [{ label: "カスタマーハラスメント対策", href: "/guides/customer-harassment/" }],
+        links: [
+          {
+            label: "カスタマーハラスメント対策",
+            href: "/guides/customer-harassment/",
+          },
+        ],
       },
       {
         type: "add",
         // body-only: 学校における労働安全衛生管理体制の整備のために(第3版)
         text: "「学校の労働安全衛生管理体制(衛生管理者・産業医ほか)をめぐる公的な情報」ガイドページを公開しました。衛生管理者・産業医・衛生委員会・衛生推進者の選任や面接指導・ストレスチェックの体制について、文部科学省『学校における労働安全衛生管理体制の整備のために(第3版)』・e-Gov 等の公的な情報の所在を 1 ページで確認できます",
-        links: [{ label: "労働安全衛生管理体制", href: "/guides/occupational-safety-health/" }],
+        links: [
+          {
+            label: "労働安全衛生管理体制",
+            href: "/guides/occupational-safety-health/",
+          },
+        ],
       },
       {
         type: "add",
         // body-only: 会計年度任用職員制度の運用に係る事務処理マニュアル
         text: "「非正規の教員(臨時的任用・会計年度任用)の任用と勤務条件をめぐる公的な情報」ガイドページを公開しました。臨時的任用職員・会計年度任用職員の任用・勤務条件・給付について、総務省『会計年度任用職員制度の運用に係る事務処理マニュアル』・文部科学省・e-Gov 等の公的な情報の所在を 1 ページで確認できます",
-        links: [{ label: "非正規の教員", href: "/guides/non-regular-teachers/" }],
+        links: [
+          { label: "非正規の教員", href: "/guides/non-regular-teachers/" },
+        ],
       },
       {
         type: "add",
         // body-only: 地方公務員 両立支援パスポート
         text: "「教員の妊娠・出産・育児と仕事の両立をめぐる公的な情報」ガイドページを公開しました。産前産後休暇・育児休業・部分休業などの制度について、総務省『地方公務員 両立支援パスポート』・e-Gov 等の公的な情報の所在を 1 ページで確認できます",
-        links: [{ label: "妊娠・出産・育児との両立", href: "/guides/childcare-work-balance/" }],
+        links: [
+          {
+            label: "妊娠・出産・育児との両立",
+            href: "/guides/childcare-work-balance/",
+          },
+        ],
       },
       {
         type: "add",
@@ -314,7 +366,9 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: "add",
         text: "「学校管理下の事故の補償と責任をめぐる公的な情報」ガイドページを公開しました。学校管理下で児童生徒が事故にあったときの災害共済給付、文部科学省の学校事故対応指針、関わる法令の所在を 1 ページで確認できます",
-        links: [{ label: "学校事故の補償と責任", href: "/guides/school-accident/" }],
+        links: [
+          { label: "学校事故の補償と責任", href: "/guides/school-accident/" },
+        ],
       },
       {
         type: "add",
@@ -329,7 +383,12 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: "add",
         text: "「教員の懲戒・分限処分と不服申立てをめぐる公的な情報」ガイドページを公開しました。懲戒・分限処分の状況や各自治体の処分基準、不利益処分を受けたときの人事委員会への審査請求について、文部科学省・総務省・人事委員会等の公的な情報の所在を 1 ページで確認できます",
-        links: [{ label: "懲戒・分限処分", href: "/guides/disciplinary-disposition/" }],
+        links: [
+          {
+            label: "懲戒・分限処分",
+            href: "/guides/disciplinary-disposition/",
+          },
+        ],
       },
       {
         type: "update",
@@ -344,7 +403,12 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: "add",
         text: "「教員のメンタルヘルスと休職・復職をめぐる公的な支援と相談先」ガイドページを公開しました。心の不調による休職・復職、ストレスチェック、公務災害の認定について、文部科学省・厚生労働省・地方公務員災害補償基金等の公的な支援と相談先の所在を 1 ページで確認できます",
-        links: [{ label: "メンタルヘルスと休職・復職", href: "/guides/teacher-mental-health/" }],
+        links: [
+          {
+            label: "メンタルヘルスと休職・復職",
+            href: "/guides/teacher-mental-health/",
+          },
+        ],
       },
       {
         type: "add",

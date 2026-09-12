@@ -14,7 +14,8 @@ export async function GET(context: APIContext) {
     items: changelogEntries.map((entry) => {
       const first = entry.items[0];
       const chars = Array.from(first.text);
-      const head = chars.length > 60 ? `${chars.slice(0, 60).join("")}…` : first.text;
+      const head =
+        chars.length > 60 ? `${chars.slice(0, 60).join("")}…` : first.text;
       const rest = entry.items.length - 1;
       return {
         title: `${typeLabel[first.type].label}: ${head}${rest > 0 ? `(ほか ${rest} 件)` : ""}`,
