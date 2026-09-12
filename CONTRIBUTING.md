@@ -96,6 +96,8 @@ mise install
 npm ci
 npm run dev      # 開発サーバー
 npm run build    # ビルド
+npm run lint     # oxlint
+npm run format:check # oxfmt の差分検査(整形は npm run format)
 npm run check    # Astro 型チェック
 npm run check:sources # 公式解説の書名が正本と 5 つの写し先で一致しているか
 ```

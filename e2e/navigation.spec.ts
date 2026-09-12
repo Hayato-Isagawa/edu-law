@@ -14,7 +14,10 @@ test.describe("主要導線", () => {
     await page.getByRole("link", { name: "一覧へ" }).first().click();
     await expect(page).toHaveURL(/\/laws\/$/);
 
-    await page.getByRole("link", { name: /学校教育法/ }).first().click();
+    await page
+      .getByRole("link", { name: /学校教育法/ })
+      .first()
+      .click();
     await expect(page).toHaveURL(/\/laws\/school-education-act\/$/);
     await expect(page.locator("h1")).toContainText("学校教育法");
   });
@@ -39,11 +42,13 @@ test.describe("主要導線", () => {
 // 重複を潰した slug の数で数える。
 async function distinctLawSlugs(page: import("@playwright/test").Page) {
   return page.evaluate(() => {
-    const slugs = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[href^="/laws/"]'))
+    const slugs = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>('a[href^="/laws/"]')
+    )
       .map((a) => a.getAttribute("href") ?? "")
       .map((h) => /^\/laws\/([^/#?]+)\/?$/.exec(h)?.[1])
       .filter((s): s is string => Boolean(s));
-    return [...new Set(slugs)].length;
+    return new Set(slugs).size;
   });
 }
 

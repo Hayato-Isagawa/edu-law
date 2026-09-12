@@ -39,6 +39,18 @@ jobs:
       - name: Type check
         run: npm run check
 
+      # oxlint / oxfmt(ADR 0028)。warning でも exit 0 なので --deny-warnings で止める。
+      # oxfmt は .astro を扱えない。.md / .yml / .css / .html / wrangler.jsonc は
+      # .oxfmtrc.json の ignorePatterns で外してある。Type check と同じく Build より
+      # 前に置く — 型と同様、lint / 整形の赤は成果物を作る前に止めたい。
+      - name: Lint (oxlint)
+        if: ${{ !cancelled() }}
+        run: npm run lint
+
+      - name: Format check (oxfmt)
+        if: ${{ !cancelled() }}
+        run: npm run format:check
+
       - name: Build
         run: npm run build
 

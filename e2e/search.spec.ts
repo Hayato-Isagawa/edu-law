@@ -24,7 +24,9 @@ test.describe("検索", () => {
     await page.goto("/search/");
     await page.locator(".pagefind-ui__search-input").fill("いじめ");
 
-    await expect(page.locator(".pagefind-ui__result-link").first()).toBeVisible();
+    await expect(
+      page.locator(".pagefind-ui__result-link").first()
+    ).toBeVisible();
 
     // いじめ防止対策推進法のページが引けること。件数だけを見ると、
     // インデックスが別サイトの内容でも通ってしまう。

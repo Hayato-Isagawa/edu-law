@@ -70,10 +70,22 @@ export default defineConfig({
   // `e2e/a11y.spec.ts` が両テーマで見ているが、そちらはレイアウトの崩れを見ない
   // (#160 の逆で、a11y が拾えて VRT が拾えない側)。
   projects: [
-    { name: "desktop", use: { viewport: { width: 1280, height: 800 }, colorScheme: "light" } },
-    { name: "desktop-dark", use: { viewport: { width: 1280, height: 800 }, colorScheme: "dark" } },
-    { name: "mobile", use: { viewport: { width: 390, height: 844 }, colorScheme: "light" } },
-    { name: "mobile-dark", use: { viewport: { width: 390, height: 844 }, colorScheme: "dark" } },
+    {
+      name: "desktop",
+      use: { viewport: { width: 1280, height: 800 }, colorScheme: "light" },
+    },
+    {
+      name: "desktop-dark",
+      use: { viewport: { width: 1280, height: 800 }, colorScheme: "dark" },
+    },
+    {
+      name: "mobile",
+      use: { viewport: { width: 390, height: 844 }, colorScheme: "light" },
+    },
+    {
+      name: "mobile-dark",
+      use: { viewport: { width: 390, height: 844 }, colorScheme: "dark" },
+    },
   ],
   webServer: {
     command: `npx serve ${dist} -l 4175`,

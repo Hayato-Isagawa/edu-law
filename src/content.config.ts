@@ -23,7 +23,7 @@ const laws = defineCollection({
           publishedAt: z.string().optional(),
           retrievedAt: z.string().optional(),
           format: z.enum(["pdf", "html"]).optional(),
-        }),
+        })
       )
       .min(1),
     lastVerified: z.string(),
