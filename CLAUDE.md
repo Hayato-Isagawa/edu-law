@@ -147,21 +147,35 @@ projects を削除ではなくコメントアウトする / `test.skip(` でな�
 - **`fullPage` を落とす** — ビューポート内(1280x800 / 390x844)しか撮らなくなるが件数は変わらない。
   config の `expect.toHaveScreenshot` には置けない値なので `vrt/targets.mjs` の `shotOptions` に
   データとして持ち、spec はそれを渡す
-- **断面を潰す** — mobile の viewport を desktop と同じにする / `colorScheme` を両方 light にすると、
-  76 件を撮ったまま同じ画像を 2 度撮るだけになる。projects の viewport・`colorScheme`・`retries` を
-  固定する(viewport も `colorScheme` も `--list` の JSON に入らない)
+- **断面を潰す** — mobile の viewport を desktop と同じにする / `colorScheme` を 4 つとも light にすると、
+  76 件を撮ったまま同じ画像を 2 度撮るだけになる。`use` に `storageState` / `javaScriptEnabled: false` /
+  `launchOptions` を置いても同じ(localStorage が先に勝つ / `data-theme` を立てる JS が止まる)。
+  キーを追いかけず、`use`・project・`webServer`・config のキー集合を丸ごと固定する(viewport も
+  `colorScheme` も `--list` の JSON に入らない)
 - **比較設定を緩める** — `threshold` / `maxDiffPixels` / `maxDiffPixelRatio`。**config を import して
   評価済みの値を見る**(`--list --reporter=json` に `expect` は入らない)。正規表現ではキーを消したのか
   コメントアウトしたのかを区別できないため
 - **実行環境で分岐させる** — `VRT_DIST` は config が元から読んでいる変数なので、「CI では少し
   緩める」形の三項演算子が自然な修正として紛れ込みうる。ガードが走る「Build site」では
   `VRT_DIST` が無く厳格な値が見え、実際に撮る VRT ジョブでは緩い値が使われる。
-  **config を 3 つの環境(未設定 / `dist-main` / `dist-pr`)で読み直して値が同じことを見る**
+  **config を 3 つの環境(未設定 / `dist-main` / `dist-pr`)で読み直し、`webServer.command` の dist 名を
+  除いた config 全体が同じことを見る**(`shard` / `grepInvert` / `webServer.cwd` の三項演算子も同じ口)
 - **比較そのものを消す** — `ignoreSnapshots` / `updateSnapshots` を 1 行足すだけで `toHaveScreenshot`
   が no-op になる。project 単位の `expect` も上位を上書きするので、どちらも `expect` 配下だけを
   見ていると素通りした(実測)
-- **ワークフローの比較ステップを撮り直しにする** — ステップ名を残したまま `--update-snapshots` を
-  足す / `VRT_DIST` を `dist-main` に向けると恒久的に緑になる。`run:` と `env:` の中身まで見る
+- **ワークフローの撮影ステップを細工する** — 比較側に `--update-snapshots` / `-u` / `--project` /
+  `--ignore-snapshots` を足す、`VRT_DIST` を `dist-main` に向ける、`if:` / `shell:` / `env:` を足す、
+  3 つ目の撮影ステップを挟む。撮影 2 ステップのキー集合・`env` 本文・`run` のトークン列を完全一致で
+  固定し、`VRT_DIST` / `playwright test` を持つステップがその 2 つだけであることを見る
+- **撮影ステップの外側から同じビルドを撮らせる** — job / workflow レベルの `env:` / `defaults:`、
+  前段で dist を差し替えるステップ、`Checkout PR` の `ref:`、Build baseline の worktree を `HEAD` に、
+  `rsync src/` / `git checkout -- src` の 1 行追加、name の無いステップ。workflow / job / 全ステップの
+  キー集合・ステップ名の並び・1 行 `run` の完全一致・`uses:` の action 名・dist に触るステップの集合を
+  固定し、Build baseline の `rsync|cp|mv|ln|rm|tar|git` 行の列挙と Report baseline mode の heredoc 外の
+  行の形は `vrt-baseline.test.mjs` が見る
+- **起動条件を狭める** — `paths` 末尾の `- "!**"`(綴り違いを含む)/ `branches` の変更 /
+  `paths-ignore` / `types`。`on` と `on.pull_request` のキー集合・`branches: [main]`・否定 path が
+  `!src/pages/changelog.astro` だけであることを固定する(肯定の path は正典が `vrt.yml` なので写さない)
 
 **残る穴は `vrt/pages.spec.ts` の書き方そのもの。** 固定できるのは値であって、呼び出し側の
 書き方ではない。実測できた形が 4 つある — ①`toHaveScreenshot` の第 2 引数は config を上書き

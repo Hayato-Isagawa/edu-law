@@ -26,6 +26,8 @@ import { targets as pages, shotOptions } from "./targets.mjs";
 // この関数の中に 1 行足すと、config の 4 projects はそのままなのに `-dark` の
 // 断面が light に化ける(実測: ガードは 15/15 緑のまま、ダークの 38 枚が全部
 // 赤くなる ＝ 撮っているものが変わっている)。**ここでメディアを上書きしないこと。**
+// config 側の `use`(`storageState` / `javaScriptEnabled` 等)による同型の上書きは config を
+// 読むガードが丸ごと固定しているが、spec の中までは見ない。
 
 for (const p of pages) {
   test(p.name, async ({ page }) => {
