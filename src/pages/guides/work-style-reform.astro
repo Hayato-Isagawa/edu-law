@@ -1,6 +1,7 @@
 ---
 import Kicker from "../../components/Kicker.astro";
 import Layout from "../../layouts/Layout.astro";
+import { guideArticleJsonLd } from "../../lib/article-json-ld";
 
 const pageTitle =
   "教員の長時間労働と働き方改革をめぐる国の方針と公式資料 — EduLaw JP";
@@ -121,6 +122,11 @@ const breadcrumbLinkClass =
   title={pageTitle}
   description={pageDescription}
   breadcrumbJsonLd={breadcrumbJsonLd}
+  pageJsonLd={guideArticleJsonLd({
+    title: pageTitle,
+    description: pageDescription,
+    path: Astro.url.pathname,
+  })}
   longForm
 >
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">

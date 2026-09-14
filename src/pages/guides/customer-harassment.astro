@@ -1,6 +1,7 @@
 ---
 import Kicker from "../../components/Kicker.astro";
 import Layout from "../../layouts/Layout.astro";
+import { guideArticleJsonLd } from "../../lib/article-json-ld";
 
 const pageTitle =
   "教職員へのカスタマーハラスメント対策と雇用主の措置義務をめぐる公的な情報 — EduLaw JP";
@@ -117,6 +118,11 @@ const breadcrumbLinkClass =
   title={pageTitle}
   description={pageDescription}
   breadcrumbJsonLd={breadcrumbJsonLd}
+  pageJsonLd={guideArticleJsonLd({
+    title: pageTitle,
+    description: pageDescription,
+    path: Astro.url.pathname,
+  })}
   longForm
 >
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">

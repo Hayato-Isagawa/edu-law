@@ -8,6 +8,8 @@ interface Props {
   description?: string;
   ogImagePath?: string;
   breadcrumbJsonLd?: object;
+  /** ページ種別ごとの JSON-LD(ガイドの Article 等)。head に 1 本追加する */
+  pageJsonLd?: object;
   longForm?: boolean;
 }
 const {
@@ -15,6 +17,7 @@ const {
   description = "日本の小学校教員向けに、教育関連法と公式解説を法令別に整理するポータル。",
   ogImagePath,
   breadcrumbJsonLd,
+  pageJsonLd,
   longForm = false,
 } = Astro.props;
 const siteUrl = "https://law.edu-evidence.org";
@@ -105,6 +108,9 @@ const organizationJsonLd = {
     <script type="application/ld+json" set:html={escapeLd(organizationJsonLd)} />
     {breadcrumbJsonLd && (
       <script type="application/ld+json" set:html={escapeLd(breadcrumbJsonLd)} />
+    )}
+    {pageJsonLd && (
+      <script type="application/ld+json" set:html={escapeLd(pageJsonLd)} />
     )}
 
     <!-- Cloudflare Web Analytics -->

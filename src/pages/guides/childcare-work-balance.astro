@@ -1,6 +1,7 @@
 ---
 import Kicker from "../../components/Kicker.astro";
 import Layout from "../../layouts/Layout.astro";
+import { guideArticleJsonLd } from "../../lib/article-json-ld";
 
 const pageTitle = "妊娠・出産・育児と仕事の両立をめぐる公的な情報 — EduLaw JP";
 // body-only: 地方公務員 両立支援パスポート
@@ -118,6 +119,11 @@ const breadcrumbLinkClass =
   title={pageTitle}
   description={pageDescription}
   breadcrumbJsonLd={breadcrumbJsonLd}
+  pageJsonLd={guideArticleJsonLd({
+    title: pageTitle,
+    description: pageDescription,
+    path: Astro.url.pathname,
+  })}
   longForm
 >
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">
