@@ -1,6 +1,7 @@
 ---
 import Kicker from "../../components/Kicker.astro";
 import Layout from "../../layouts/Layout.astro";
+import { guideArticleJsonLd } from "../../lib/article-json-ld";
 
 const pageTitle =
   "非正規の教員(臨時的任用・会計年度任用)の任用と勤務条件をめぐる公的な情報 — EduLaw JP";
@@ -138,6 +139,11 @@ const breadcrumbLinkClass =
   title={pageTitle}
   description={pageDescription}
   breadcrumbJsonLd={breadcrumbJsonLd}
+  pageJsonLd={guideArticleJsonLd({
+    title: pageTitle,
+    description: pageDescription,
+    path: Astro.url.pathname,
+  })}
   longForm
 >
   <nav aria-label="パンくず" class="pt-6 sm:pt-10">
