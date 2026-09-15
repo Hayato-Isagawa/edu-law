@@ -448,3 +448,101 @@ body[data-menu="open"] {
     transition: none;
   }
 }
+
+/* 印刷(研修資料としての持ち出し)。テンプレは触らず、ここ 1 ブロックで全ページに効かせる。
+   ここは unlayered なので Tailwind の全ユーティリティに勝つ — 素の要素セレクタ(a 等)は
+   書かない(トップの CTA〈text-white〉まで塗り替わる)。
+   トークンは :root にだけ書く。[data-theme="dark"] のブロックを増やすと
+   src/pages/design-tokens.json.ts がそれも dark 値として集約し、公開 JSON が壊れる。
+   同じ詳細度で後置なので :root だけで dark の上書きに勝つ(ADR 0029)。 */
+@media print {
+  :root {
+    color-scheme: light;
+    --color-bg: #ffffff;
+    --color-ink: #000000;
+    --color-sub: #333333;
+    --color-line: #999999;
+    --color-card: #ffffff;
+    --color-accent: #6b4423;
+    --color-accent-hover: #6b4423;
+    --color-badge-mext: #7e6444;
+    --color-badge-cfa: #876132;
+    --color-badge-bunkacho: #6f6a3e;
+    --color-badge-egov: #5e5a52;
+    --color-badge-soumu: #4f6b70;
+  }
+  @page {
+    margin: 12mm;
+  }
+  html {
+    font-size: 11pt;
+  }
+  body {
+    line-height: 1.6;
+  }
+
+  .site-header {
+    position: static;
+    background: var(--color-bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .site-header nav,
+  #menu-toggle,
+  .mobile-menu,
+  .skip-link,
+  #reading-progress,
+  #back-to-top {
+    display: none;
+  }
+
+  /* サイトフッターはリンク集と姉妹サイト一覧だけ落とし、ライセンス表示・連絡先・© は
+     配布物に残す。ガイドの内側 footer は「本ページの根拠」だけで代わりにならない。 */
+  main {
+    padding-bottom: 0;
+  }
+  body > footer {
+    margin-top: 1.5rem;
+  }
+  body > footer > div {
+    display: block;
+    padding-block: 0.5rem;
+  }
+  body > footer section[aria-labelledby="footer-site"],
+  body > footer > div > div:first-child > p,
+  body > footer #footer-sister-legal,
+  body > footer section[aria-labelledby="footer-sister-legal"] > ul:first-of-type {
+    display: none;
+  }
+
+  .link-underline,
+  .law-body a {
+    color: inherit;
+    text-decoration: underline;
+  }
+  /* 外部リンクは紙から辿れるよう URL を併記する。inline-flex のままだと URL が
+     flex item になって 320px 幅で横溢れし、題名が細い列で折れる。 */
+  main a[target="_blank"] {
+    display: inline;
+  }
+  main a[target="_blank"]::after {
+    content: " (" attr(href) ")";
+    overflow-wrap: anywhere;
+  }
+  main a[target="_blank"] > span[aria-hidden="true"] {
+    display: none;
+  }
+  .law-body a[href^="http"] {
+    overflow-wrap: anywhere;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+  li,
+  blockquote,
+  .law-row {
+    break-inside: avoid;
+  }
+}

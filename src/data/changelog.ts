@@ -29,6 +29,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-09-15",
+    items: [
+      {
+        type: "add",
+        text: "印刷用のスタイルを追加しました。法令ページやガイドを印刷すると、ナビゲーションを省き、外部リンクの URL を併記した配布用の体裁になります",
+      },
+    ],
+  },
+  {
     date: "2026-08-29",
     items: [
       {
