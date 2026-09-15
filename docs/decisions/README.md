@@ -69,3 +69,4 @@
 - [0026. Highlights を全 12 法令に拡張し、代表解説の起点を laws collection の並び順に一致させる](0026-highlights-cover-all-laws.md)
 - [0027. VRT のベースラインを「main のコード × PR のコンテンツ」で撮る(edu-evidence ADR 0034 ミラー)](0027-content-neutral-vrt-baseline.md)
 - [0028. lint と整形に oxlint / oxfmt を採用する(edu-evidence ADR 0037 ミラー)](0028-oxlint-and-oxfmt.md)
+- [0029. 印刷スタイルを global.css の 1 ブロックで提供する(研修資料としての持ち出し)](0029-print-stylesheet.md)
