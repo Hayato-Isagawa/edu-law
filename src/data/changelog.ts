@@ -29,6 +29,21 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-09-17",
+    items: [
+      {
+        type: "update",
+        text: "教育機会確保法ページに、不登校児童生徒への支援に関する文部科学省の通知 2 本(令和5年11月・令和6年8月)への入口を加えました",
+        links: [
+          {
+            label: "教育機会確保法",
+            href: "/laws/education-opportunity-assurance-act/",
+          },
+        ],
+      },
+    ],
+  },
+  {
     date: "2026-09-16",
     items: [
       {

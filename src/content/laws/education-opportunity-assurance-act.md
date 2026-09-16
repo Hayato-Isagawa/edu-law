@@ -7,12 +7,22 @@ officialExplanations:
   - publisher: mext
     title: 義務教育の段階における普通教育に相当する教育の機会の確保等に関する基本指針の策定について(通知)
     url: https://www.mext.go.jp/a_menu/shotou/seitoshidou/1384370.htm
-    publishedAt: "2017-03-31"
+    publishedAt: "2017-04-04"
     format: html
   - publisher: mext
     title: 不登校児童生徒への支援の在り方について(通知)
     url: https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422155.htm
     publishedAt: "2019-10-25"
+    format: html
+  - publisher: mext
+    title: 不登校の児童生徒等への支援の充実について(通知)
+    url: https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422155_00001.htm
+    publishedAt: "2023-11-17"
+    format: html
+  - publisher: mext
+    title: 不登校児童生徒が欠席中に行った学習の成果に係る成績評価について(通知)
+    url: https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422155_00002.htm
+    publishedAt: "2024-08-29"
     format: html
   - publisher: mext
     title: 「教育機会確保法」って何?
@@ -34,8 +44,10 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 
 ## 公式解説
 
-- [義務教育の段階における普通教育に相当する教育の機会の確保等に関する基本指針の策定について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1384370.htm)(文部科学省、平成29年3月31日)
+- [義務教育の段階における普通教育に相当する教育の機会の確保等に関する基本指針の策定について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1384370.htm)(文部科学省、平成29年4月4日)
 - [不登校児童生徒への支援の在り方について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422155.htm)(文部科学省、令和元年10月25日)
+- [不登校の児童生徒等への支援の充実について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422155_00001.htm)(文部科学省、令和5年11月17日)
+- [不登校児童生徒が欠席中に行った学習の成果に係る成績評価について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422155_00002.htm)(文部科学省、令和6年8月29日)
 - [「教育機会確保法」って何?(リーフレット)PDF](https://www.mext.go.jp/content/20231018-mxt_syoto02-000021384_001010.pdf)(文部科学省)
 
 ## 関連法令
@@ -46,3 +58,4 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 
 - 法令本文: [e-Gov 法令検索](https://laws.e-gov.go.jp/law/428AC1000000105/)(取得日: 2026-06-17)
 - 公式解説(文部科学省): 文部科学省『義務教育の段階における普通教育に相当する教育の機会の確保等に関する基本指針の策定について(通知)』、『不登校児童生徒への支援の在り方について(通知)』、『「教育機会確保法」って何?』(取得日: 2026-06-17)
+- 公式解説(文部科学省): 文部科学省『不登校の児童生徒等への支援の充実について(通知)』令和5年11月17日、『不登校児童生徒が欠席中に行った学習の成果に係る成績評価について(通知)』令和6年8月29日(取得日: 2026-09-17)
