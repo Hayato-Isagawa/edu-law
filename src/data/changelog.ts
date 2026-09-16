@@ -29,6 +29,16 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-09-16",
+    items: [
+      {
+        type: "update",
+        text: "学校教育法ページに、幼稚園と特別支援学校幼稚部の職員による虐待の通告義務(令和7年10月施行)についての公式ガイドラインへの入口を加えました",
+        links: [{ label: "学校教育法", href: "/laws/school-education-act/" }],
+      },
+    ],
+  },
+  {
     date: "2026-09-15",
     items: [
       {
