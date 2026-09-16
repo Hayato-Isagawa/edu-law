@@ -126,6 +126,7 @@ test.describe("印刷スタイル", () => {
   }) => {
     // 発行元バッジ(LawRow)はトップで見る。print の :root が dark 側の再宣言に勝つことを見る
     await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     await page.emulateMedia({ media: "print" });
     await page.addStyleTag({
       content: "*{transition:none!important;animation:none!important}",
