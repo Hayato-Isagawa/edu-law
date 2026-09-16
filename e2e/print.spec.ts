@@ -25,11 +25,15 @@ test.describe("印刷スタイル", () => {
       });
 
       // 画面用の chrome は消える。#menu-toggle / .mobile-menu は 1280px では lg:hidden で
-      // 元から消えていて判別力が無いので 320px の断面で見る。#reading-progress は画面でも
-      // scaleX(0) で bounding box が空なので toBeHidden に判別力が無く、固定していない
+      // 元から消えていて判別力が無いので 320px の断面で見る。#reading-progress は未スクロール時
+      // scaleX(0) で bounding box が空なので toBeHidden では判別できず、display で見る
       await expect(page.locator("#back-to-top")).toBeHidden();
       await expect(page.getByLabel("メインナビゲーション")).toBeHidden();
       await expect(page.locator(".skip-link")).toBeHidden();
+      await expect(page.locator("#reading-progress")).toHaveCSS(
+        "display",
+        "none"
+      );
       // フッターはサイト内リンク・説明文・姉妹サイトの見出しと一覧を落とし、ライセンス・
       // 連絡先・© は残す
       const footer = page.locator("body > footer");
