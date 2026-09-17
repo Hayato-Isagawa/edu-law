@@ -18,8 +18,25 @@ test("ガイドページを列挙できている", () => {
   expect(guideSlugs.length).toBeGreaterThanOrEqual(11);
 });
 
+// @type が Organization のオブジェクトを、JSON-LD の入れ子(Article.publisher など)まで含めて集める
+function collectOrganizations(
+  value: unknown,
+  found: Record<string, unknown>[] = []
+) {
+  if (Array.isArray(value)) {
+    for (const v of value) collectOrganizations(v, found);
+  } else if (value && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    if (obj["@type"] === "Organization") found.push(obj);
+    for (const v of Object.values(obj)) collectOrganizations(v, found);
+  }
+  return found;
+}
+
 // Organization は Layout が全ページに載せる。姉妹サイトとの関係は書かない(ADR 0030)。
-// 名前で禁止すると別の関係語が抜けるので、キー集合そのものを固定する
+// 名前で禁止すると別の関係語が抜けるので、キー集合そのものを固定する。トップレベルの
+// 1 本目だけ見ると、2 本目のブロックや Article.publisher に書いた関係が素通りするので(#252)、
+// ブロックを全部・入れ子も含めて集める。ガイドは publisher を持つので、代表はガイドで見る
 test("Organization の JSON-LD に姉妹サイトとの関係を書いていない", async ({
   page,
 }) => {
@@ -29,15 +46,19 @@ test("Organization の JSON-LD に姉妹サイトとの関係を書いていな�
     .evaluateAll((els) =>
       els.map((el) => JSON.parse(el.textContent ?? "null"))
     );
-  const organization = scripts.find((s) => s?.["@type"] === "Organization");
-  expect(organization, "Organization の JSON-LD が無い").toBeTruthy();
-  expect(Object.keys(organization).sort()).toEqual([
-    "@context",
-    "@type",
-    "logo",
-    "name",
-    "url",
-  ]);
+  const organizations = collectOrganizations(scripts);
+  expect(organizations.length).toBeGreaterThan(0);
+  const allowedKeys = ["@context", "@type", "logo", "name", "url"];
+  for (const organization of organizations) {
+    for (const key of Object.keys(organization)) {
+      expect(allowedKeys, `Organization に許していないキー: ${key}`).toContain(
+        key
+      );
+    }
+  }
+  const topLevel = scripts.filter((s) => s?.["@type"] === "Organization");
+  expect(topLevel).toHaveLength(1);
+  expect(Object.keys(topLevel[0]).sort()).toEqual(allowedKeys);
 });
 
 test.describe("ガイドページの構造化データ", () => {
