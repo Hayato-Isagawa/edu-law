@@ -12,7 +12,7 @@ officialExplanations:
     title: 学校安全
     url: https://www.mext.go.jp/a_menu/kenko/anzen/1289303.htm
     format: html
-lastVerified: "2026-06-09"
+lastVerified: "2026-09-16"
 tags: []
 ---
 
@@ -44,4 +44,4 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 ## 出典
 
 - 法令本文: [e-Gov 法令検索](https://laws.e-gov.go.jp/law/333AC0000000056/)
-- 公式解説: 文部科学省『学校保健、学校給食、食育』『学校安全』(取得日: 2026-06-09)
+- 公式解説: 文部科学省『学校保健、学校給食、食育』『学校安全』(取得日: 2026-09-16)
