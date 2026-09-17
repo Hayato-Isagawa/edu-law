@@ -70,3 +70,4 @@
 - [0027. VRT のベースラインを「main のコード × PR のコンテンツ」で撮る(edu-evidence ADR 0034 ミラー)](0027-content-neutral-vrt-baseline.md)
 - [0028. lint と整形に oxlint / oxfmt を採用する(edu-evidence ADR 0037 ミラー)](0028-oxlint-and-oxfmt.md)
 - [0029. 印刷スタイルを global.css の 1 ブロックで提供する(研修資料としての持ち出し)](0029-print-stylesheet.md)
+- [0030. Organization JSON-LD に姉妹サイトの関係を書かない(edu-watch ADR 0071 ミラー)](0030-organization-jsonld-no-sister-relation.md)

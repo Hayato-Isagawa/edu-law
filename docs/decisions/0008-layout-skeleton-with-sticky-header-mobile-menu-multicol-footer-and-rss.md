@@ -1,7 +1,7 @@
 # 0008. Layout skeleton: sticky Header + mobile menu + multi-col Footer + RSS
 
 - 日付: 2026-05-19
-- ステータス: 採択
+- ステータス: 採択(決定 5 の `Organization` の `sameAs` 姉妹サイト URL は [0030](0030-organization-jsonld-no-sister-relation.md) で上書き)
 - 関連 PR: feat/header-footer-meta-stage3
 
 ## 背景

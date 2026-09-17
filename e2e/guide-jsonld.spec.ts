@@ -18,6 +18,28 @@ test("ガイドページを列挙できている", () => {
   expect(guideSlugs.length).toBeGreaterThanOrEqual(11);
 });
 
+// Organization は Layout が全ページに載せる。姉妹サイトとの関係は書かない(ADR 0030)。
+// 名前で禁止すると別の関係語が抜けるので、キー集合そのものを固定する
+test("Organization の JSON-LD に姉妹サイトとの関係を書いていない", async ({
+  page,
+}) => {
+  await page.goto(`/guides/${guideSlugs[0]}/`);
+  const scripts = await page
+    .locator('script[type="application/ld+json"]')
+    .evaluateAll((els) =>
+      els.map((el) => JSON.parse(el.textContent ?? "null"))
+    );
+  const organization = scripts.find((s) => s?.["@type"] === "Organization");
+  expect(organization, "Organization の JSON-LD が無い").toBeTruthy();
+  expect(Object.keys(organization).sort()).toEqual([
+    "@context",
+    "@type",
+    "logo",
+    "name",
+    "url",
+  ]);
+});
+
 test.describe("ガイドページの構造化データ", () => {
   for (const slug of guideSlugs) {
     test(`/guides/${slug}/ に Article の JSON-LD がある`, async ({ page }) => {
