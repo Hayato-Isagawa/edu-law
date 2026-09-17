@@ -67,6 +67,65 @@ const knownTypes = [
   "WebSite",
 ];
 
+// 型ごとに許すキーの集合(dist の全 HTML を走査して決めた)。値がオブジェクトのノードは全部
+// @type を持ち、この表のどれかに当たる。集合の外のキー(isPartOf / affiliation /
+// sourceOrganization 等の関係語)は何であれ赤にし、@type の無いノード・@id だけの参照も
+// 赤にする(edu-watch #700 と同型)
+const nodeShapes: Record<string, string[]> = {
+  Article: [
+    "@context",
+    "@type",
+    "author",
+    "description",
+    "headline",
+    "inLanguage",
+    "mainEntityOfPage",
+    "publisher",
+    "url",
+  ],
+  BreadcrumbList: ["@context", "@type", "itemListElement"],
+  ListItem: ["@type", "item", "name", "position"],
+  Organization: ["@context", "@type", "logo", "name", "url"],
+  Person: ["@type", "name", "sameAs", "url"],
+  WebSite: ["@context", "@type", "description", "inLanguage", "name", "url"],
+};
+
+// JSON-LD の全ノードを形で検査する。URL 値(sameAs と @context 以外)は自サイトを指すこと —
+// 姉妹サイトを WebSite ノードや文字列値で書く形を止める
+function checkNodeShapes(value: unknown, where = "$") {
+  if (Array.isArray(value)) {
+    value.forEach((v, i) => checkNodeShapes(v, `${where}[${i}]`));
+    return;
+  }
+  if (!value || typeof value !== "object") return;
+  const obj = value as Record<string, unknown>;
+  const type = obj["@type"];
+  expect(typeof type, `${where}: @type の無いノード`).toBe("string");
+  const shape = nodeShapes[type as string];
+  expect(
+    shape,
+    `${where}: 形を決めていない @type ${JSON.stringify(type)}`
+  ).toBeTruthy();
+  for (const [key, v] of Object.entries(obj)) {
+    expect(shape, `${where}.${key}: ${type} に許していないキー`).toContain(key);
+    if (key === "@context" || key === "sameAs") continue;
+    if (typeof v === "string" && /^https?:\/\//.test(v)) {
+      expect(
+        new URL(v).host,
+        `${where}.${key} が自サイトを指していない: ${v}`
+      ).toBe(siteHost);
+    }
+    checkNodeShapes(v, `${where}.${key}`);
+  }
+}
+
+const distLaws = path.resolve(process.cwd(), "dist/laws");
+const firstLawSlug = fs
+  .readdirSync(distLaws, { withFileTypes: true })
+  .filter((e) => e.isDirectory())
+  .map((e) => e.name)
+  .sort()[0];
+
 // Organization は Layout が全ページに載せる。姉妹サイトとの関係は書かない(ADR 0030)。
 // 名前で禁止すると別の関係語が抜けるので、キー集合そのものを固定する。トップレベルの
 // 1 本目だけ見ると、2 本目のブロックや Article.publisher に書いた関係が素通りするので(#252)、
@@ -86,9 +145,12 @@ test("Organization の JSON-LD に姉妹サイトとの関係を書いていな�
       `JSON-LD に見ていない @type: ${JSON.stringify(type)}`
     ).toContain(type);
   }
+  checkNodeShapes(scripts);
+  // トップレベルの WebSite は Layout の 1 本だけ(姉妹サイトを WebSite で足す形を止める)
+  expect(scripts.filter((s) => s?.["@type"] === "WebSite")).toHaveLength(1);
   const organizations = collectOrganizations(scripts);
   expect(organizations.length).toBeGreaterThan(0);
-  const allowedKeys = ["@context", "@type", "logo", "name", "url"];
+  const allowedKeys = nodeShapes.Organization;
   for (const organization of organizations) {
     for (const key of Object.keys(organization)) {
       expect(allowedKeys, `Organization に許していないキー: ${key}`).toContain(
@@ -105,6 +167,21 @@ test("Organization の JSON-LD に姉妹サイトとの関係を書いていな�
   const topLevel = scripts.filter((s) => isOrganizationType(s?.["@type"]));
   expect(topLevel).toHaveLength(1);
   expect(Object.keys(topLevel[0]).sort()).toEqual(allowedKeys);
+});
+
+// 法令詳細はガイドと別テンプレート(Article / Person を持たず、ListItem.item が法令 URL を指す)なので、
+// 形の検査はそちらでも 1 ページ見る(BreadcrumbList はガイドにもある)
+test("法令詳細の JSON-LD も形と URL のホストが固定どおり", async ({ page }) => {
+  expect(firstLawSlug, "dist/laws にページが無い").toBeTruthy();
+  await page.goto(`/laws/${firstLawSlug}/`);
+  const scripts = await page
+    .locator('script[type="application/ld+json"]')
+    .evaluateAll((els) =>
+      els.map((el) => JSON.parse(el.textContent ?? "null"))
+    );
+  expect(scripts.map((s) => s?.["@type"])).toContain("BreadcrumbList");
+  checkNodeShapes(scripts);
+  expect(scripts.filter((s) => s?.["@type"] === "WebSite")).toHaveLength(1);
 });
 
 test.describe("ガイドページの構造化データ", () => {
