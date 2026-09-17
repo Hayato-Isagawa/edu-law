@@ -18,8 +18,8 @@ test("ガイドページを列挙できている", () => {
   expect(guideSlugs.length).toBeGreaterThanOrEqual(11);
 });
 
-// @type が Organization か、そのサブタイプ(NewsMediaOrganization 等)か。配列 ["Organization"]
-// でも書けるので両方見る — 文字列一致だけだとサブタイプに書き換えた組織が素通りする(#255)
+// @type が Organization か、Organization で終わるサブタイプか。配列 ["Organization"] も見る。
+// 見ていない @type は下の knownTypes が先に赤にするので、ここは防御の二重化(#255)
 function isOrganizationType(type: unknown) {
   const types = Array.isArray(type) ? type : [type];
   return types.some((t) => typeof t === "string" && t.endsWith("Organization"));
