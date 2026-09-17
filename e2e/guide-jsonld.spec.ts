@@ -108,12 +108,39 @@ function checkNodeShapes(value: unknown, where = "$") {
   ).toBeTruthy();
   for (const [key, v] of Object.entries(obj)) {
     expect(shape, `${where}.${key}: ${type} に許していないキー`).toContain(key);
-    if (key === "@context" || key === "sameAs") continue;
-    if (typeof v === "string" && /^https?:\/\//.test(v)) {
-      expect(
-        new URL(v).host,
-        `${where}.${key} が自サイトを指していない: ${v}`
-      ).toBe(siteHost);
+    if (key === "@context") {
+      // @context をオブジェクトにすると型名やキーを別名化できる(#259)。文字列 1 形に固定し、
+      // トップレベルのブロックにしか置かない
+      expect(v, `${where}.@context`).toBe("https://schema.org");
+      expect(where, "@context は入れ子のノードに置かない").toMatch(
+        /^\$\[\d+\]$/
+      );
+      continue;
+    }
+    if (key === "sameAs") {
+      // sameAs は URL 文字列の配列。Person(著者)のファミリードメインは許す — 同一人物の
+      // ページなので定義どおり(edu-watch ADR 0071)
+      expect(Array.isArray(v), `${where}.sameAs は配列`).toBe(true);
+      for (const u of v as unknown[]) {
+        expect(typeof u, `${where}.sameAs の要素は文字列`).toBe("string");
+        expect(
+          URL.canParse(u as string),
+          `${where}.sameAs が URL でない: ${u}`
+        ).toBe(true);
+      }
+      continue;
+    }
+    if (typeof v === "string") {
+      // 前方一致 /^https?:\/\// だと `//host` や大文字スキーム・先頭空白が抜ける(#259)
+      const trimmed = v.trim();
+      if (/^(?:https?:)?\/\//i.test(trimmed)) {
+        const url = new URL(
+          trimmed.startsWith("//") ? `https:${trimmed}` : trimmed
+        );
+        expect(url.host, `${where}.${key} が自サイトを指していない: ${v}`).toBe(
+          siteHost
+        );
+      }
     }
     checkNodeShapes(v, `${where}.${key}`);
   }
