@@ -18,6 +18,15 @@ test("ガイドページを列挙できている", () => {
   expect(guideSlugs.length).toBeGreaterThanOrEqual(11);
 });
 
+// @type が Organization か、そのサブタイプ(NewsMediaOrganization 等)か。配列 ["Organization"]
+// でも書けるので両方見る — 文字列一致だけだとサブタイプに書き換えた組織が素通りする(#255)
+function isOrganizationType(type: unknown) {
+  const types = Array.isArray(type) ? type : [type];
+  return types.some(
+    (t) => typeof t === "string" && t.endsWith("Organization")
+  );
+}
+
 // @type が Organization のオブジェクトを、JSON-LD の入れ子(Article.publisher など)まで含めて集める
 function collectOrganizations(
   value: unknown,
@@ -27,11 +36,13 @@ function collectOrganizations(
     for (const v of value) collectOrganizations(v, found);
   } else if (value && typeof value === "object") {
     const obj = value as Record<string, unknown>;
-    if (obj["@type"] === "Organization") found.push(obj);
+    if (isOrganizationType(obj["@type"])) found.push(obj);
     for (const v of Object.values(obj)) collectOrganizations(v, found);
   }
   return found;
 }
+
+const siteHost = "law.edu-evidence.org";
 
 // Organization は Layout が全ページに載せる。姉妹サイトとの関係は書かない(ADR 0030)。
 // 名前で禁止すると別の関係語が抜けるので、キー集合そのものを固定する。トップレベルの
@@ -55,8 +66,14 @@ test("Organization の JSON-LD に姉妹サイトとの関係を書いていな�
         key
       );
     }
+    // 許すキーだけで書いた姉妹組織のノードを publisher 以外のスロットに置く形は、キー検査を
+    // 通る。値で見る — 集めた Organization はすべて自サイトを指す(#255)
+    expect(
+      new URL(String(organization.url)).host,
+      `Organization の url が自サイトでない: ${organization.url}`
+    ).toBe(siteHost);
   }
-  const topLevel = scripts.filter((s) => s?.["@type"] === "Organization");
+  const topLevel = scripts.filter((s) => isOrganizationType(s?.["@type"]));
   expect(topLevel).toHaveLength(1);
   expect(Object.keys(topLevel[0]).sort()).toEqual(allowedKeys);
 });

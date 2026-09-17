@@ -52,3 +52,4 @@ schema.org の `sameAs` は「item の identity を一義に示す参照 Web ペ
 ## 更新
 
 - 2026-09-17(#252): 決定 2 の e2e は、トップレベルの `Organization` ブロック 1 本目だけでなく、全ブロックと入れ子(`Article.publisher`)の `Organization` を走査する。入れ子には許すキーの部分集合を、トップレベルには集合の一致を要求する(edu-watch #686 と同型)
+- 2026-09-17(#255): `@type` はサブタイプ(`NewsMediaOrganization` 等)と配列 `["Organization"]` も `Organization` として拾い、集めた全 `Organization` の `url` のホストが自サイトであることを見る(許すキーだけで書いた姉妹組織のノードを別スロットに置く形を止める。edu-watch #691 と同型)
