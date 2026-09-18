@@ -9,7 +9,7 @@ officialExplanations:
     url: https://www.mext.go.jp/content/20260423-mxt_syoto01-000028144_01.pdf
     publishedAt: "2026-04-23"
     format: pdf
-lastVerified: "2026-08-25"
+lastVerified: "2026-09-18"
 tags: []
 ---
 

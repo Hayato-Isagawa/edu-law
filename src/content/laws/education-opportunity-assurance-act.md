@@ -26,9 +26,9 @@ officialExplanations:
     format: html
   - publisher: mext
     title: 「教育機会確保法」って何?
-    url: https://www.mext.go.jp/content/20231018-mxt_syoto02-000021384_001010.pdf
+    url: https://www.mext.go.jp/content/20250217-mxt_jidou01-100002764_4.pdf
     format: pdf
-lastVerified: "2026-06-17"
+lastVerified: "2026-09-18"
 tags: []
 ---
 
@@ -48,7 +48,7 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 - [不登校児童生徒への支援の在り方について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422155.htm)(文部科学省、令和元年10月25日)
 - [不登校の児童生徒等への支援の充実について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422155_00001.htm)(文部科学省、令和5年11月17日)
 - [不登校児童生徒が欠席中に行った学習の成果に係る成績評価について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422155_00002.htm)(文部科学省、令和6年8月29日)
-- [「教育機会確保法」って何?(リーフレット)PDF](https://www.mext.go.jp/content/20231018-mxt_syoto02-000021384_001010.pdf)(文部科学省)
+- [「教育機会確保法」って何?(リーフレット)PDF](https://www.mext.go.jp/content/20250217-mxt_jidou01-100002764_4.pdf)(文部科学省)
 
 ## 関連法令
 

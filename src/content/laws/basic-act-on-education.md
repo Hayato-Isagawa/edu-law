@@ -12,7 +12,7 @@ officialExplanations:
     title: 教育基本法について(規定の概要)
     url: https://www.mext.go.jp/b_menu/kihon/about/1354049.htm
     format: html
-lastVerified: "2026-08-25"
+lastVerified: "2026-09-18"
 tags: []
 ---
 

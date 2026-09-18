@@ -24,11 +24,11 @@ officialExplanations:
     publishedAt: "2020-12-18"
     format: html
   - publisher: bunkacho
-    title: 授業目的公衆送信補償金制度活用のための基礎知識(令和6年度教職員・ICT支援員著作権講習会 第1部講義資料)
-    url: https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/seminar/2024/pdf/94089902_01.pdf
-    publishedAt: "2024"
+    title: 授業目的公衆送信補償金制度の活用と留意点(令和8年度教職員・ICT支援員著作権講習会 第1部講義資料)
+    url: https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/seminar/2026/pdf/94415101_01.pdf
+    publishedAt: "2026-08-06"
     format: pdf
-lastVerified: "2026-08-25"
+lastVerified: "2026-09-18"
 tags: []
 ---
 
@@ -57,7 +57,7 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 - [授業目的公衆送信補償金に係る指定管理団体の指定について(文化庁)](https://www.bunka.go.jp/seisaku/chosakuken/1413647.html)
 - [授業目的公衆送信補償金の額の認可について(文化庁)](https://www.bunka.go.jp/seisaku/chosakuken/92728101.html)
 - [授業目的公衆送信補償金制度の概要(令和2年12月、文化庁)PDF](https://www.bunka.go.jp/seisaku/chosakuken/pdf/92728101_03.pdf)
-- [授業目的公衆送信補償金制度活用のための基礎知識(令和6年度教職員・ICT支援員著作権講習会 第1部講義資料、文化庁)PDF](https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/seminar/2024/pdf/94089902_01.pdf)
+- [授業目的公衆送信補償金制度の活用と留意点(令和8年度教職員・ICT支援員著作権講習会 第1部講義資料、文化庁)PDF](https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/seminar/2026/pdf/94415101_01.pdf)
 
 ## 関連法令
 

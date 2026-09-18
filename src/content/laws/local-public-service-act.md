@@ -12,7 +12,7 @@ officialExplanations:
     title: 給与・定員の制度概要
     url: https://www.soumu.go.jp/main_sosiki/jichi_gyousei/c-gyousei/teiin-kyuuyo01.html
     format: html
-lastVerified: "2026-08-25"
+lastVerified: "2026-09-18"
 tags: []
 ---
 
@@ -30,7 +30,7 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 
 - [地方公務員制度等(総務省)](https://www.soumu.go.jp/main_sosiki/jichi_gyousei/koumuin_seido/index.html)
   - 任用・採用試験、勤務条件、兼業などの制度概要
-  - 会計年度任用職員制度、女性職員の活躍・両立支援、再就職規制
+  - 会計年度任用職員制度、女性活躍・働き方改革関係
   - 福利厚生・公務災害補償・安全衛生に関する資料
 - [給与・定員の制度概要(総務省)](https://www.soumu.go.jp/main_sosiki/jichi_gyousei/c-gyousei/teiin-kyuuyo01.html)
   - 給与決定の原則(職務と責任に応じた適正な給与水準)と給料・諸手当の構成

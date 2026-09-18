@@ -8,7 +8,7 @@ officialExplanations:
     title: 教員免許状に関するQ&A
     url: https://www.mext.go.jp/a_menu/shotou/kyoin/main13_a2.htm
     format: html
-lastVerified: "2026-08-25"
+lastVerified: "2026-09-18"
 tags: []
 ---
 
