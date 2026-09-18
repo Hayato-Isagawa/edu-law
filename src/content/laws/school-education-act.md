@@ -13,7 +13,7 @@ officialExplanations:
     title: 保育所や幼稚園等における虐待の防止及び発生時の対応等に関するガイドライン
     url: https://www.mext.go.jp/a_menu/shotou/youchien/1405077_00029.htm
     format: html
-lastVerified: "2026-08-25"
+lastVerified: "2026-09-18"
 tags: []
 ---
 

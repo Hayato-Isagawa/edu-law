@@ -24,7 +24,7 @@ officialExplanations:
     title: 法令
     url: https://www.cfa.go.jp/laws
     format: html
-lastVerified: "2026-08-25"
+lastVerified: "2026-09-18"
 tags: []
 ---
 

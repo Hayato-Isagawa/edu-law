@@ -29,6 +29,27 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-09-18",
+    items: [
+      {
+        type: "update",
+        text: "著作権法ページの著作権講習会の講義資料を、令和8年度版(2026年8月・授業目的公衆送信補償金制度の活用と留意点)に差し替えました",
+        links: [{ label: "著作権法", href: "/laws/copyright-act/" }],
+      },
+      {
+        type: "fix",
+        text: "教育機会確保法ページのリーフレット「『教育機会確保法』って何?」のリンク先を、文部科学省の通知一覧が現在案内している URL に揃えました(内容は同じ発出のものです)。地方公務員法ページの総務省「地方公務員制度等」の案内文も、掲載されている項目名に合わせて直しました",
+        links: [
+          {
+            label: "教育機会確保法",
+            href: "/laws/education-opportunity-assurance-act/",
+          },
+          { label: "地方公務員法", href: "/laws/local-public-service-act/" },
+        ],
+      },
+    ],
+  },
+  {
     date: "2026-09-17",
     items: [
       {
