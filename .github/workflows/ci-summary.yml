@@ -18,8 +18,10 @@ name: CI summary
 on:
   workflow_run:
     # PR で走りうる workflow の name:。PR 起動の workflow を足したらここにも足す。
-    # Dependabot auto-merge は入れない(Dependabot の PR は下の if で除外している)。
-    workflows: [Build, E2E Tests, VRT, Security Audit]
+    # Dependabot auto-merge も入れる。人間の PR では job が skipped で完了するが、
+    # それが最後に完了した workflow だと再判定の機会が無くなる(Dependabot の PR 自体は
+    # 下の if で除外している)。
+    workflows: [Build, E2E Tests, VRT, Security Audit, Dependabot auto-merge]
     types: [completed]
 
 permissions:
@@ -34,9 +36,11 @@ concurrency:
 
 jobs:
   notify:
+    # 起動元の conclusion では絞らない(skipped / failure でも走る)。成否は下の
+    # check-run 走査が全件で見る。conclusion == 'success' で絞ると、最後に完了した
+    # workflow が skipped のときに再判定が走らず通知が消える。
     if: >-
       github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.triggering_actor.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 5
