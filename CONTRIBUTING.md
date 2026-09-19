@@ -17,6 +17,8 @@ EduLaw JP への貢献に関心を持っていただきありがとうござい�
 3. コミット
 4. Push して Pull Request
 
+PR の GitHub Actions がすべて成功すると、`CI summary` workflow が PR に 1 件コメントします(`.github/workflows/ci-summary.yml`)。メンテナへの通知用で、失敗時には何も付きません。
+
 ### changelog を同じ PR で更新する
 
 読み手の行動や体験が変わる変更では、`src/data/changelog.ts`(RSS `src/pages/rss.xml.ts` の配信元でもある)を
