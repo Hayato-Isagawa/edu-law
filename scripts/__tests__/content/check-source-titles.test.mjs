@@ -1322,9 +1322,9 @@ test("npm script check:sources が、引数なしで検査スクリプトを呼�
 });
 
 /** `test:workflows` の口で走るべきテストの総数。**守る対象から導出しない**(下記) */
-const WORKFLOW_TESTS = 80;
+const WORKFLOW_TESTS = 100;
 
-test("test:workflows の口にあるテストファイルが 3 本である", () => {
+test("test:workflows の口にあるテストファイルが 4 本である", () => {
   // ファイルを足すと下限に静かな余裕が生まれる(実測: ダミーを 3 本足しても
   // `test:workflows` は緑のまま通った)。消したときは下の完全一致も ENOENT で
   // 落ちるが、**足したときに落ちるのはここだけ**。
@@ -1334,6 +1334,7 @@ test("test:workflows の口にあるテストファイルが 3 本である", ()
     .map((e) => e.name)
     .sort();
   assert.deepEqual(files, [
+    "ci-summary-workflow.test.mjs",
     "link-check-workflow.test.mjs",
     "vrt-baseline.test.mjs",
     "vrt-targets.test.mjs",
@@ -1350,6 +1351,7 @@ test("npm script test:workflows が、実測ちょうどの下限で 2 段を通
   // **塞いでいるのは、この定数がここに直接書いてあること**。テストを足したら
   // npm script とこの定数の両方を直す。
   const measured = [
+    "ci-summary-workflow.test.mjs",
     "link-check-workflow.test.mjs",
     "vrt-baseline.test.mjs",
     "vrt-targets.test.mjs",
