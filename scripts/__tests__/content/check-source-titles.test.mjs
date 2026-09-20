@@ -1322,7 +1322,7 @@ test("npm script check:sources が、引数なしで検査スクリプトを呼�
 });
 
 /** `test:workflows` の口で走るべきテストの総数。**守る対象から導出しない**(下記) */
-const WORKFLOW_TESTS = 100;
+const WORKFLOW_TESTS = 102;
 
 test("test:workflows の口にあるテストファイルが 4 本である", () => {
   // ファイルを足すと下限に静かな余裕が生まれる(実測: ダミーを 3 本足しても
