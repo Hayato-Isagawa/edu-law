@@ -81,8 +81,9 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
 
 **下限の決め方は口ごとに違う。** `test:workflows` と `test:content` は実測ちょうど(余裕ゼロ)に
 してある。余裕を取らないのは、離した分だけ静かに減らせるため — **テストを足したら下限も上げること**。
-`test:hooks` も実測ちょうど(84)に揃えてある(以前は 50 で実測 74 と離れていた。ファイルが 1 本の間は
-「全部消える」を下限 1 でも捕まえられたが、`branch-guard.test.cjs` が入って 2 本になり、その根拠が消えた)。
+`test:hooks` も実測ちょうど(107)に揃えてある(以前は 50 で実測 74 と離れていた。ファイルが 1 本の間は
+「全部消える」を下限 1 でも捕まえられたが、`branch-guard.test.cjs` が入って 2 本になり、その根拠が消えた。
+いまは `bash-frontmatter-guard.test.cjs` を加えた 3 本)。
 
 **口は glob で分けている。** `scripts/__tests__/*.test.mjs` の `*` は `/` を跨がないので、
 `scripts/__tests__/content/` は `test:workflows` に拾われない。混ぜると 1 つの下限が両者の合計と
@@ -273,6 +274,23 @@ Write は差分を持たないのでディスク上の現物と突き合わせ�
 e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文字違えば別の実在法令を指し、
 週次 link-check(lychee)は 200 を返す。`astro check` は型が正しく、e2e / vrt は正常に描画される。
 `lastVerified` が黙って進めば stale-check は「未確認を確認済み」と報告する。
+
+**Bash での書き換えは Edit のフックを通らない。** 法令の `lastVerified` / `publishedAt` / 公式解説の
+`url` を python3 で書き換えたセッションが実際にあり、確認は一度も出なかった(姉妹リポ edu-evidence の
+同名ガードを移植して塞いだ)。`.claude/hooks/bash-frontmatter-guard.cjs` が Bash の前後で同じ保護値を見る:
+
+- **事前 ask(補助)**: コマンドが書き換えの形(`sed -i` / `perl -i` / インタプリタの書き込み / `tee` /
+  リダイレクト / `mv`・`cp` の宛先 / `git checkout|restore|apply`)で、対象のパスを含むときに確認を出す。
+  拡張子は見ない(`git checkout -- src/pages` のようなディレクトリ単位も拾う)。**`src/pages` は
+  このリポに向いたときだけ**(コマンドがリポ名を含む・cwd がこのリポの中) — `src/pages` を持つ
+  リポはほかにもあり、ユーザー環境のグローバルなディスパッチャ経由では全セッションの Bash を見るため。
+  cwd が前の Bash の `cd` を反映するかは確かめていない(取りこぼしうる)
+- **事後照合(本命)**: Pre で全 worktree の法令とページの保護値を控え、Post / PostToolUseFailure で
+  比べて、変化を Claude とユーザーの両方へ出す。窓の取り方は上の Write 判定と同じ。事後なので取り消しは
+  しない。`run_in_background` の Bash は Post が起動時に走るので照合が空振りする(事前 ask だけが効く)
+- 抽出の定数と関数は Edit 用の複製(require するとディスパッチャの sha256 照合の外で走るため)。
+  一致はテストが実データ全件と合成入力で固定している。何が起きても exit 0(ディスパッチャ経由では
+  exit 2 が全 Bash の停止になる)
 
 回帰テストは `.claude/hooks/__tests__/` に置き、`npm run test:hooks` で走る。
 `node --test` は **0 件マッチ・中身が空・全件 skip のいずれでも exit 0** で終わるので、
