@@ -646,7 +646,10 @@ test("同時に走る 2 本の Post も、どちらも照合して控えと印�
       child.stdin.end(input);
     });
   const problems = [];
-  for (let i = 0; i < 20; i++) {
+  // 60 回: 順序の変異(控えを読む前に印を取る・控えの unlink の ENOENT を許さない)は確率的にしか
+  // 表に出ず、反復 1 回あたりの率は変異と実行環境で大きく変わる。20 回では取りこぼす実行があり、
+  // 60 回では手元で測ったすべての実行で赤になった(2026-09-28。単独実行で約 13 秒)
+  for (let i = 0; i < 60; i++) {
     call(ctx, "PreToolUse", "true");
     call(ctx, "PreToolUse", "true");
     const at = Date.now() + 150;
