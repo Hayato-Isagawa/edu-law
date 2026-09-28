@@ -38,7 +38,7 @@ on:
       #
       # **ただし gate にはならない。** VRT は required check ではなく
       # (required は "Build site" のみ)、dependabot-auto-merge.yml の
-      # `gh pr merge --auto` は required しか待たない。Build site は 31〜47 秒、
+      # `gh pr merge --auto` は required しか待たない。Build site は 1 分に満たない(2026-09-28 時点で 49 秒)、
       # VRT は 6 分前後かかる(4 projects)ので、非 major の bump は VRT の結果が出る前に
       # マージされる。得られるのは事後に差分画像が残ることだけ。
       - "package-lock.json"
