@@ -27,6 +27,9 @@
  *     だけに出す。cwd が前の Bash の `cd` を反映するかは確かめていないので、取りこぼしうる
  *     (事後照合は拾う)
  *   - 事後なので取り消しはしない
+ *   - 同じ Bash でこのガードが二重に走る(このリポの配線とユーザー環境のディスパッチャ)と、
+ *     変化は Post ごとに 2 回出る。Pre だけが二重に走ると控えと印が残り、1 日より古くなると
+ *     次の Pre が消す
  *   - 何が起きても exit 0。ディスパッチャ経由では exit 2 が全 Bash の停止になるため、
  *     失敗は systemMessage の警告で知らせる
  */
@@ -498,22 +501,86 @@ function saveSnapshot(dir, input, root, now) {
     fs.unlinkSync(p);
     fs.writeFileSync(p, body, { flag: "wx", mode: 0o600 });
   }
+  addTicket(p);
   return { warning, roots };
 }
 
-/** 控えを読んで消す。無ければ null */
+// --- 控えの印 ------------------------------------------------------------
+//
+// 同じ Bash でこのガードが二重に走る経路がある(このリポの配線とユーザー環境のディスパッチャ)。
+// Pre は走るたびに印 `<控え>.t<k>` を 1 つ作り、Post は控えを読んでから印を 1 つ取る。
+// 印が残っていれば控えは消さない(まだ読む Post がいる)。これが無いと 1 本目の Post が控えを
+// 消し、2 本目が「not verified」と誤って警告する。
+//
+// 印は rename で取る。同じパスへの同時の unlink は APFS で両方とも成功を返す(実測)ので、
+// unlink では取り合いの勝者が決まらない。rename は片方だけが成功する。
+
+const TICKET_LIMIT = 16;
+
+const ticketBase = (p) => p.slice(0, -".json".length);
+
+function addTicket(p) {
+  for (let k = 0; k < TICKET_LIMIT; k++) {
+    try {
+      fs.writeFileSync(`${ticketBase(p)}.t${k}`, "", {
+        flag: "wx",
+        mode: 0o600,
+      });
+      return;
+    } catch (e) {
+      if (e?.code !== "EEXIST") throw e;
+    }
+  }
+}
+
+/** まだ取られていない印のパス */
+function openTickets(p) {
+  const prefix = `${path.basename(ticketBase(p))}.t`;
+  return fs
+    .readdirSync(path.dirname(p))
+    .filter((n) => n.startsWith(prefix) && /^\d+$/.test(n.slice(prefix.length)))
+    .map((n) => path.join(path.dirname(p), n));
+}
+
+/** 印を 1 つ取る。取れる印が無ければ何もしない */
+function takeTicket(p) {
+  for (const t of openTickets(p)) {
+    const taken = `${t}.c${process.pid}`;
+    try {
+      fs.renameSync(t, taken);
+    } catch (e) {
+      if (e?.code === "ENOENT") continue; // 別の Post が先に取った
+      throw e;
+    }
+    fs.unlinkSync(taken);
+    return;
+  }
+}
+
+/**
+ * 控えを読み、印を 1 つ取る。印が残っていなければ控えを消す。無ければ null。
+ * 読んでから取るので、控えを消すのは最後に取った Post で、そのとき他の Post は読み終えている。
+ * 最後の 2 本がどちらも「残り 0」を見ることはあるので、控えの unlink の ENOENT は許す。
+ */
 function loadSnapshot(dir, input) {
   const p = snapshotPath(dir, input);
   if (!p) return null;
-  let st;
+  let body;
   try {
-    st = fs.lstatSync(p);
-  } catch {
-    return null;
+    if (!fs.lstatSync(p).isFile()) return null;
+    body = fs.readFileSync(p, "utf8");
+  } catch (e) {
+    if (e?.code === "ENOENT") return null;
+    throw e;
   }
-  if (!st.isFile()) return null;
-  const body = fs.readFileSync(p, "utf8");
-  fs.unlinkSync(p);
+  takeTicket(p);
+  if (openTickets(p).length === 0) {
+    try {
+      fs.unlinkSync(p);
+    } catch (e) {
+      if (e?.code !== "ENOENT") throw e;
+    }
+  }
   return JSON.parse(body);
 }
 

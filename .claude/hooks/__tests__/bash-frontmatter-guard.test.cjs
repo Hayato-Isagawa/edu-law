@@ -5,7 +5,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { spawnSync } = require("node:child_process");
+const { spawn, spawnSync } = require("node:child_process");
 const guard = require("../bash-frontmatter-guard.cjs");
 const editGuard = require("../pre-edit-frontmatter-immutable.cjs");
 
@@ -574,6 +574,93 @@ test("Post: Pre の控えが無ければ、照合できなかったことを両�
   }
 });
 
+test("二重に走った Pre / Post では、どちらの Post も照合して警告しない", () => {
+  // このリポの配線とユーザー環境のディスパッチャの両方が同じ Bash でこのガードを走らせる
+  // 経路がある。1 本目の Post が控えを消すと、2 本目が「not verified」と誤って警告していた
+  const ctx = makeRepo();
+  for (const [i, event] of ["PostToolUse", "PostToolUseFailure"].entries()) {
+    call(ctx, "PreToolUse", "true");
+    call(ctx, "PreToolUse", "true");
+    rewrite(ctx, X, /lastVerified: [\d-]+/, `lastVerified: 2026-09-1${i}`);
+    for (const n of [1, 2]) {
+      const out = parsed(call(ctx, event, "true"));
+      assert.doesNotMatch(
+        out.systemMessage ?? "",
+        /not verified|could not verify/,
+        `${event} #${n}`
+      );
+      assert.match(
+        out.hookSpecificOutput?.additionalContext ?? "",
+        /lastVerified/,
+        `${event} #${n}`
+      );
+    }
+    assert.deepEqual(fs.readdirSync(ctx.stateDir), [], event);
+  }
+});
+
+test("Pre が 1 本で Post が 2 本なら、2 本目は照合できなかったことを出す", () => {
+  const ctx = makeRepo();
+  call(ctx, "PreToolUse", "true");
+  assert.doesNotMatch(
+    parsed(call(ctx, "PostToolUse", "true")).systemMessage ?? "",
+    /not verified/
+  );
+  assert.match(
+    parsed(call(ctx, "PostToolUse", "true")).systemMessage ?? "",
+    /not verified/
+  );
+});
+
+test("同時に走る 2 本の Post も、どちらも照合して控えと印を残さない", async () => {
+  // 印を unlink で取ると、同時の 2 本がどちらも成功して同じ印を取り、控えが残る(APFS で実測)
+  const ctx = makeRepo();
+  const script = [
+    "const [guardPath, root, stateDir, at] = process.argv.slice(1);",
+    "let d = '';",
+    "process.stdin.on('data', (c) => (d += c)).on('end', () => {",
+    "  while (Date.now() < Number(at));",
+    "  const out = require(guardPath).run(d, { root, stateDir });",
+    "  process.stdout.write(out.stdout || '');",
+    "});",
+  ].join("\n");
+  const input = JSON.stringify({
+    hook_event_name: "PostToolUse",
+    session_id: "sess-1",
+    tool_use_id: "toolu_01",
+    tool_name: "Bash",
+    tool_input: { command: "true" },
+    cwd: ctx.root,
+  });
+  const guardPath = path.join(__dirname, "..", "bash-frontmatter-guard.cjs");
+  const post = (at) =>
+    new Promise((resolve) => {
+      const child = spawn(
+        process.execPath,
+        ["-e", script, guardPath, ctx.root, ctx.stateDir, String(at)],
+        { stdio: ["pipe", "pipe", "inherit"] }
+      );
+      let out = "";
+      child.stdout.on("data", (c) => (out += c));
+      child.on("close", () => resolve(out));
+      child.stdin.end(input);
+    });
+  const problems = [];
+  for (let i = 0; i < 20; i++) {
+    call(ctx, "PreToolUse", "true");
+    call(ctx, "PreToolUse", "true");
+    const at = Date.now() + 150;
+    const outs = await Promise.all([post(at), post(at)]);
+    for (const out of outs)
+      if (/not verified|could not verify/.test(out))
+        problems.push(`${i}: ${out}`);
+    const left = fs.readdirSync(ctx.stateDir);
+    if (left.length) problems.push(`${i}: ${left.join(", ")}`);
+    for (const name of left) fs.rmSync(path.join(ctx.stateDir, name));
+  }
+  assert.deepEqual(problems, []);
+});
+
 test("Pre: tool_use_id が不正な形なら控えを取らずに警告する", () => {
   const ctx = makeRepo();
   const out = parsed(call(ctx, "PreToolUse", "true", "../../etc/x"));
@@ -603,18 +690,21 @@ test("Pre: 状態置き場が他人に開いている・symlink なら控えを�
 
 test("Pre: 1 日より古い控えの残骸を消す(権限拒否では Post が発火しない)", () => {
   const ctx = makeRepo();
+  const age = (id, ms) => {
+    const at = new Date(Date.now() - ms);
+    for (const name of [`sess-1-${id}.json`, `sess-1-${id}.t0`])
+      fs.utimesSync(path.join(ctx.stateDir, name), at, at);
+  };
   call(ctx, "PreToolUse", "true", "toolu_old");
-  const old = path.join(ctx.stateDir, "sess-1-toolu_old.json");
-  const past = new Date(Date.now() - 25 * 60 * 60 * 1000);
-  fs.utimesSync(old, past, past);
+  age("toolu_old", 25 * 60 * 60 * 1000);
   call(ctx, "PreToolUse", "true", "toolu_recent");
-  const recent = path.join(ctx.stateDir, "sess-1-toolu_recent.json");
-  const hoursAgo = new Date(Date.now() - 23 * 60 * 60 * 1000);
-  fs.utimesSync(recent, hoursAgo, hoursAgo);
+  age("toolu_recent", 23 * 60 * 60 * 1000);
   call(ctx, "PreToolUse", "true", "toolu_new");
   assert.deepEqual(fs.readdirSync(ctx.stateDir).sort(), [
     "sess-1-toolu_new.json",
+    "sess-1-toolu_new.t0",
     "sess-1-toolu_recent.json",
+    "sess-1-toolu_recent.t0",
   ]);
 });
 
