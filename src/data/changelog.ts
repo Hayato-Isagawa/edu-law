@@ -29,6 +29,21 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-10-04",
+    items: [
+      {
+        type: "update",
+        text: "カスタマーハラスメント対策のガイドで、義務化の施行を「予定」としていた記述を、2026年10月1日の施行に合わせて更新しました",
+        links: [
+          {
+            label: "カスタマーハラスメント",
+            href: "/guides/customer-harassment/",
+          },
+        ],
+      },
+    ],
+  },
+  {
     date: "2026-09-18",
     items: [
       {
