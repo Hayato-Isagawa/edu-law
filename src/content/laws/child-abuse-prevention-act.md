@@ -47,7 +47,7 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 
 - [学校・教育委員会等向け虐待対応の手引き 案内ページ(文部科学省)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1416474.htm) — 手引き本体と関連ファイルの案内ページ
   - [本体(令和8年5月改訂版)PDF](https://www.mext.go.jp/content/20260601-mxt_jidou01-100002838-002.pdf)(令和8年5月改訂、1.5MB)
-  - [概要 PDF](https://www.mext.go.jp/a_menu/shotou/seitoshidou/__icsFiles/afieldfile/2019/05/09/1416474_001_1_1.pdf)(0.6MB)
+  - [概要 PDF](https://www.mext.go.jp/a_menu/shotou/seitoshidou/__icsFiles/afieldfile/2019/05/09/1416474_001_1_1.pdf)(2019年5月掲載、0.6MB。令和8年5月改訂版の本体とは版が異なる)
 - [児童虐待防止対策に係る学校等及びその設置者と市町村・児童相談所との連携の強化について(文部科学省)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1414499.htm)(平成31年2月28日、内閣府・文部科学省・厚生労働省 連名通知)
 - [文部科学大臣メッセージ「保護者、学校関係者、地域の皆さまへ 『児童虐待の根絶に向けて ～地域全体で子供たちを見守り育てるために～』」(文部科学省)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1422396_00001.html)(令和4年11月1日)
 
