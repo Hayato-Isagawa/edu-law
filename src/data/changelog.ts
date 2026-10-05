@@ -29,6 +29,16 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-10-05",
+    items: [
+      {
+        type: "update",
+        text: "著作権法ページの講習会資料(10月末で掲載終了)を、文化庁が常設で公開している教員向け資料『学校における教育活動と著作権』に差し替えました",
+        links: [{ label: "著作権法", href: "/laws/copyright-act/" }],
+      },
+    ],
+  },
+  {
     date: "2026-10-04",
     items: [
       {
