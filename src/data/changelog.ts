@@ -41,7 +41,10 @@ export const changelogEntries: ChangelogEntry[] = [
         text: "著作権法ページに運用指針の正誤情報の掲載先を、児童虐待防止法ページに手引き概要の版を書き添えました",
         links: [
           { label: "著作権法", href: "/laws/copyright-act/" },
-          { label: "児童虐待防止法", href: "/laws/child-abuse-prevention-act/" },
+          {
+            label: "児童虐待防止法",
+            href: "/laws/child-abuse-prevention-act/",
+          },
         ],
       },
     ],
