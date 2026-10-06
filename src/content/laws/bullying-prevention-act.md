@@ -28,6 +28,7 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 - [いじめの防止等のための基本的な方針(平成29年最終改定)PDF](https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2019/06/26/1400030_007.pdf)(文部科学大臣決定、平成25年10月11日策定 / 平成29年3月14日最終改定)
 - [いじめの重大事態の調査に関するガイドライン(令和6年8月改訂)PDF](https://www.mext.go.jp/content/20240830-mext_jidou01-1336275_3.pdf)(原策定 平成29年3月 / 令和6年8月改訂)
 - [「いじめの重大事態の調査に関するガイドライン」の改訂について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1400142_00006.htm)
+- [「いじめの重大事態の調査に関するガイドライン」のチェックリストを活用した平時からの備えに関する点検の調査結果及びこれを踏まえた対応について(通知)](https://www.mext.go.jp/a_menu/shotou/seitoshidou/1414737_00030.htm)(令和8年3月19日)
 
 ## 関連法令
 

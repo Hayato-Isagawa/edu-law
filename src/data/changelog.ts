@@ -29,6 +29,25 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-10-06",
+    items: [
+      {
+        type: "update",
+        text: "いじめ防止対策推進法ページに令和8年3月の通知を、教育公務員特例法ページに令和7年の給特法等改正の公布通知を加えました",
+        links: [
+          {
+            label: "いじめ防止対策推進法",
+            href: "/laws/bullying-prevention-act/",
+          },
+          {
+            label: "教育公務員特例法",
+            href: "/laws/educational-public-service-special-act/",
+          },
+        ],
+      },
+    ],
+  },
+  {
     date: "2026-10-05",
     items: [
       {
