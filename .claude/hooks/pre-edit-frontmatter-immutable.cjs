@@ -45,7 +45,7 @@ const PROTECTED_KEYS = [
 
 const FRONTMATTER_RE = /^---\s*\n([\s\S]*?)\n---\s*(?:\n|$)/;
 const LAW_PATH_RE = /(?:^|\/)src\/content\/laws\/[^/]+\.(md|mdx)$/i;
-// ガイドページにも e-Gov リンクが 18 箇所(12 種の ID)直書きされている。
+// ガイドページにも e-Gov リンクが 20 箇所(14 種の ID)直書きされている。
 // コンテンツコレクションの外なので、パスを分けて拾う。
 const PAGE_PATH_RE = /(?:^|\/)src\/pages\/.+\.astro$/i;
 const URL_RE = /\bhttps?:\/\/[^\s)>"']+/gi;
@@ -54,11 +54,11 @@ const URL_RE = /\bhttps?:\/\/[^\s)>"']+/gi;
 // 含まないので URL 集合にも `eGovUrl:` の行にも現れず、素通りしていた(実測)。
 // **最も小さく最も危険な編集**なので、ID そのものを見る。
 // 形は「元号年 3 桁 + 種別英字 + 番号」(322AC0000000026 / 321CONSTITUTION)。
-// このパターンを src/ 全体に当てると 75 件マッチし、すべて実在の法令 ID だった
+// このパターンを src/ 全体に当てると 77 件マッチし、すべて実在の法令 ID だった
 // (誤検出ゼロ)。
 const EGOV_ID_RE = /\b\d{3}[A-Z][A-Z0-9]{6,}\b/g;
 // 自サイトへのリンクと JSON-LD の語彙 URL は「公式解説への入口」ではないので外す。
-// ガイドページには両者が 24 本あり、含めると本題と無関係な差分で鳴る。
+// ガイドページには両者が 26 本あり、含めると本題と無関係な差分で鳴る。
 const BOILERPLATE_URL_RE =
   /^https?:\/\/(?:[a-z0-9-]+\.)*(?:edu-evidence\.org|schema\.org)(?:[/:?#]|$)/i;
 
