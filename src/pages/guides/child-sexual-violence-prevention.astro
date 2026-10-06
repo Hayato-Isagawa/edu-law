@@ -1,0 +1,287 @@
+---
+import Kicker from "../../components/Kicker.astro";
+import Layout from "../../layouts/Layout.astro";
+import { guideArticleJsonLd } from "../../lib/article-json-ld";
+
+const pageTitle =
+  "こども性暴力防止法をめぐる公的な情報 — EduLaw JP";
+const pageDescription =
+  "学校設置者等及び民間教育保育等事業者による児童対象性暴力等の防止等のための措置に関する法律(こども性暴力防止法)は、2026年12月25日に施行されます。こども家庭庁・文部科学省・e-Gov などの公的な情報の所在を整理するガイド。本サイトは個別の事案や対応の当否を判断せず、公式情報への入口のみを示します。";
+
+const siteUrl = "https://law.edu-evidence.org";
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "ガイド", item: `${siteUrl}/guides/` },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "こども性暴力防止法をめぐる公的な情報",
+      item: `${siteUrl}/guides/child-sexual-violence-prevention/`,
+    },
+  ],
+};
+
+type GuideLink = { label: string; publisher: string; url: string; format?: "pdf" };
+type GuideSection = {
+  id: string;
+  number: string;
+  title: string;
+  lead: string;
+  links: GuideLink[];
+};
+
+const cfaResources =
+  "https://www.cfa.go.jp/assets/contents/node/basic_page/field_ref_resources/80127231-8582-476e-a6e7-9347e725ed96";
+
+const sections: GuideSection[] = [
+  {
+    id: "csv-law-heading",
+    number: "1",
+    title: "法律の名称と施行日",
+    lead: "学校設置者等及び民間教育保育等事業者による児童対象性暴力等の防止等のための措置に関する法律(令和6年法律第69号)は、令和6年6月に公布され、施行期日を定める政令により2026年(令和8年)12月25日に施行されます。こども家庭庁は「こども性暴力防止法」と呼び、法令・通知・ガイドライン・Q&A を1つのページにまとめています。",
+    links: [
+      {
+        label: "こども性暴力防止法(学校設置者等及び民間教育保育等事業者による児童対象性暴力等の防止等のための措置に関する法律)",
+        publisher: "こども家庭庁",
+        url: "https://www.cfa.go.jp/policies/child-safety/efforts/koseibouhou",
+      },
+      {
+        label: "学校設置者等及び民間教育保育等事業者による児童対象性暴力等の防止等のための措置に関する法律の施行期日を定める政令(令和7年政令第439号)",
+        publisher: "こども家庭庁",
+        url: `${cfaResources}/a0721197/20251225_policies_child-safety_efforts_koseibouhou_16.pdf`,
+        format: "pdf",
+      },
+    ],
+  },
+  {
+    id: "csv-overview-heading",
+    number: "2",
+    title: "制度の全体像と公式の解説",
+    lead: "制度の対象となる事業者や職員の範囲、犯罪事実確認の手続、事業者が講ずる措置の内容は、こども家庭庁の概要資料・施行ガイドライン・Q&A に示されています。ガイドラインと Q&A は改訂されることがあるため、最新の版を公式ページでご確認ください。",
+    links: [
+      {
+        label: "こども性暴力防止法について(概要)",
+        publisher: "こども家庭庁",
+        url: `${cfaResources}/f34d11b1/20260317_policies_child-safety_efforts_koseibouhou_46.pdf`,
+        format: "pdf",
+      },
+      {
+        label: "こども性暴力防止法施行ガイドライン(令和8年9月改訂)",
+        publisher: "こども家庭庁",
+        url: `${cfaResources}/abc50df0/20260901_policies_child-safety_efforts_koseibouhou_72.pdf`,
+        format: "pdf",
+      },
+      {
+        label: "こども性暴力防止法に関する Q&A(令和8年9月29日改訂)",
+        publisher: "こども家庭庁",
+        url: `${cfaResources}/379c2e9b/20260929_policies_child-safety_efforts_koseibouhou_100.pdf`,
+        format: "pdf",
+      },
+    ],
+  },
+  {
+    id: "csv-notices-heading",
+    number: "3",
+    title: "施行に向けた通知と指針",
+    lead: "施行に向けて、こども家庭庁と文部科学省の連名、またはこども家庭庁から、通知と監督等指針が出されています。勤務する学校での具体的な手続や時期は、所属する学校・教育委員会等にご確認ください。",
+    links: [
+      {
+        label: "「学校設置者等及び民間教育保育等事業者による児童対象性暴力等の防止等のための措置に関する法律の施行期日を定める政令」等の公布について(通知)(令和7年12月25日)",
+        publisher: "こども家庭庁・文部科学省",
+        url: `${cfaResources}/beb95ae3/20260731_policies_child-safety_efforts_koseibouhou_70.pdf`,
+        format: "pdf",
+      },
+      {
+        label: "こども性暴力防止法における施行時現職者の犯罪事実確認書の交付申請の分散方法について(令和8年7月8日)",
+        publisher: "こども家庭庁",
+        url: `${cfaResources}/e8991b29/20260708_policies_child-safety_efforts_koseibouhou_54.pdf`,
+        format: "pdf",
+      },
+      {
+        label: "こども性暴力防止法に係る監督等指針の策定について(通知)(令和8年10月1日)",
+        publisher: "こども家庭庁",
+        url: `${cfaResources}/269ebd59/20261001_policies_child-safety_efforts_koseibouhou_101.pdf`,
+        format: "pdf",
+      },
+    ],
+  },
+  {
+    id: "csv-staff-heading",
+    number: "4",
+    title: "教職員(従事者)向けの資料",
+    lead: "こども家庭庁は、制度の対象となる業務に従事する人に向けたリーフレットと研修教材を公開しています。",
+    links: [
+      {
+        label: "こども性暴力防止法による対応が始まります(従事者の皆さまへ)",
+        publisher: "こども家庭庁",
+        url: `${cfaResources}/3154d961/20251225_policies_child-safety_efforts_koseibouhou_15.pdf`,
+        format: "pdf",
+      },
+      {
+        label: "こども性暴力防止法に基づく従事者向け研修教材",
+        publisher: "こども家庭庁",
+        url: "https://www.cfa.go.jp/policies/child-safety/efforts/koseibouhou/jujisya",
+      },
+    ],
+  },
+  {
+    id: "csv-laws-heading",
+    number: "5",
+    title: "参考 — 関係法令と関連する指針",
+    lead: "本法の本文と、教育職員等による児童生徒性暴力等の防止等に関する法律(令和3年法律第57号)の本文、同法に基づき文部科学大臣が定める基本的な指針です。本法の本則は施行日まで e-Gov の現行の表示に出ないため、e-Gov の「法令改正履歴」で「令和8年12月25日 施行」の版を開いてご確認ください。本サイトは解釈を加えず、公式情報への入口のみを示します。",
+    links: [
+      {
+        label:
+          "学校設置者等及び民間教育保育等事業者による児童対象性暴力等の防止等のための措置に関する法律",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/506AC0000000069/",
+      },
+      {
+        label: "教育職員等による児童生徒性暴力等の防止等に関する法律",
+        publisher: "e-Gov 法令検索",
+        url: "https://laws.e-gov.go.jp/law/503AC1000000057/",
+      },
+      {
+        label:
+          "教育職員等による児童生徒性暴力等の防止等に関する基本的な指針(令和8年4月24日改訂)",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/content/20260424-mxt_kyoikujinzai02-000011979_03.pdf",
+        format: "pdf",
+      },
+      {
+        label: "教育職員等による児童生徒性暴力等の防止等について",
+        publisher: "文部科学省",
+        url: "https://www.mext.go.jp/a_menu/shotou/kyoin/mext_00001.html",
+      },
+    ],
+  },
+];
+
+const linkClass =
+  "link-underline inline-flex items-baseline gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
+const breadcrumbLinkClass =
+  "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbJsonLd={breadcrumbJsonLd}
+  pageJsonLd={guideArticleJsonLd({
+    title: pageTitle,
+    description: pageDescription,
+    path: Astro.url.pathname,
+  })}
+  longForm
+>
+  <nav aria-label="パンくず" class="pt-6 sm:pt-10">
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-sub"
+    >
+      <li><a href="/" class={breadcrumbLinkClass}>ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="/guides/" class={breadcrumbLinkClass}>ガイド</a></li>
+      <li aria-hidden="true">/</li>
+      <li>
+        <span aria-current="page" class="text-ink"
+          >こども性暴力防止法をめぐる公的な情報</span
+        >
+      </li>
+    </ol>
+  </nav>
+
+  <section class="pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <Kicker>
+      Guide
+    </Kicker>
+    <h1
+      class="mt-5 font-black text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight"
+    >
+      こども性暴力防止法を<br />めぐる<span class="text-accent">公的な情報</span>
+    </h1>
+    <div
+      class="mt-6 max-w-2xl text-sub leading-loose text-sm sm:text-base space-y-3"
+    >
+      <p>
+        こども性暴力防止法(学校設置者等及び民間教育保育等事業者による児童対象性暴力等の防止等のための措置に関する法律)が、<strong
+          class="text-ink">2026年12月25日</strong
+        >に施行されます。このページは、制度の公式資料がどこにあるかを整理します。
+      </p>
+      <p>
+        本サイトは個別の事案や対応の当否を判断しません(<a
+          href="/about/"
+          class={breadcrumbLinkClass}>サイトの立場</a
+        >)。示すのは公式情報の所在のみです。具体的な手続や対応は、所属する学校・教育委員会等にご確認ください。
+      </p>
+    </div>
+  </section>
+
+  <div class="space-y-12 pb-12">
+    {
+      sections.map((section) => (
+        <section
+          aria-labelledby={section.id}
+          class="space-y-4 text-sm sm:text-base text-sub leading-loose"
+        >
+          <h2
+            id={section.id}
+            class="text-xl sm:text-2xl font-black text-ink"
+          >
+            <span class="text-accent font-mono text-base sm:text-lg">
+              {section.number}
+            </span>{" "}
+            {section.title}
+          </h2>
+          <p>{section.lead}</p>
+          <ul class="space-y-3">
+            {section.links.map((link) => {
+              const isInternal = link.url.startsWith("/");
+              return (
+                <li class="space-y-0.5">
+                  <a
+                    href={link.url}
+                    target={isInternal ? undefined : "_blank"}
+                    rel={isInternal ? undefined : "noopener noreferrer"}
+                    class={linkClass}
+                  >
+                    {link.label}
+                    {link.format === "pdf" ? "(PDF)" : ""}
+                    {!isInternal && (
+                      <span aria-hidden="true" class="text-sub text-xs">
+                        ↗
+                      </span>
+                    )}
+                  </a>
+                  <span class="block text-xs text-sub">
+                    {link.publisher}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <footer
+    class="mt-4 mb-16 border-t border-line pt-6 text-xs text-sub leading-relaxed space-y-2"
+    aria-labelledby="guide-footer-heading"
+  >
+    <h2 id="guide-footer-heading" class="sr-only">本ページの根拠</h2>
+    <p>
+      本ページが案内する公式情報は、取得日 2026-10-06
+      時点で各公式サイトに公開されているものです。リンク先の最新の内容は、各公式サイトでご確認ください。
+    </p>
+    <p>
+      引用ルールは <a
+        href="/about/#citation-basis-heading"
+        class={breadcrumbLinkClass}
+        >引用の根拠 — 公共データ利用規約 第 1.0 版</a
+      > を参照してください。
+    </p>
+  </footer>
+</Layout>

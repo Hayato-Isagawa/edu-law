@@ -15,7 +15,7 @@ const guideSlugs = fs
   .sort();
 
 test("ガイドページを列挙できている", () => {
-  expect(guideSlugs.length).toBeGreaterThanOrEqual(11);
+  expect(guideSlugs.length).toBeGreaterThanOrEqual(12);
 });
 
 // @type が Organization か、Organization で終わるサブタイプか。配列 ["Organization"] も見る。
