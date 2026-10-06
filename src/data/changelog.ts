@@ -45,6 +45,16 @@ export const changelogEntries: ChangelogEntry[] = [
           },
         ],
       },
+      {
+        type: "add",
+        text: "2026年12月25日に施行されるこども性暴力防止法について、こども家庭庁・文部科学省などの公的な情報の所在をまとめたガイドを公開しました。場面から探すにも「児童生徒への性暴力の防止」を加えました",
+        links: [
+          {
+            label: "こども性暴力防止法",
+            href: "/guides/child-sexual-violence-prevention/",
+          },
+        ],
+      },
     ],
   },
   {

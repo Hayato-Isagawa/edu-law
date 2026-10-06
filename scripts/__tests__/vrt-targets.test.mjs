@@ -7,7 +7,7 @@
 // `test:workflows` ステップで常に走る(`CLAUDE.md`「配線の検査は、守る対象と違う口に
 // 置く」)。
 //
-// 撮影が減っても**表向きは何も起きない**。落ちるテストが 76 件から 38 件になるだけで、
+// 撮影が減っても**表向きは何も起きない**。落ちるテストが 80 件から 40 件になるだけで、
 // 残った分は緑のまま通り、`npm run vrt` の終了コードも 0 のまま。CI からは「VRT は
 // 通った」としか見えない。
 //
@@ -117,10 +117,10 @@ function listPageTemplates(dir) {
 
 const templates = listPageTemplates(path.join(ROOT, "src/pages"));
 
-test("撮影対象が 19 件ある", () => {
+test("撮影対象が 20 件ある", () => {
   // 下限(>=)ではなく固定。増やしたときにも赤にすることで、`CLAUDE.md` に書いた
   // 代表 URL 数と撮影件数を一緒に直す機会を作る(実際に 2 世代ぶん古いまま残っていた)。
-  assert.equal(targets.length, 19);
+  assert.equal(targets.length, 20);
 });
 
 test("撮影対象の path が重複していない", () => {
@@ -596,7 +596,7 @@ test("比較設定が VRT ジョブの環境でも同じ値になる", async () 
 
 test("撮影の断面とリトライが固定されている", () => {
   // **断面が減っても件数は減らない。** mobile の viewport を desktop と同じにする /
-  // `colorScheme` を 4 つとも light にすると、76 件は撮り続けたまま同じ画像を 2 度撮る
+  // `colorScheme` を 4 つとも light にすると、80 件は撮り続けたまま同じ画像を 2 度撮る
   // ことになり、モバイルやダークの崩れは一切写らなくなる(`targets` の path 重複を
   // 禁じているのと同じ形)。viewport も `colorScheme` も `--list --reporter=json` の
   // `config.projects[]` に入らないので、config を import して見る。
@@ -670,7 +670,7 @@ test("撮影の断面とリトライが固定されている", () => {
 
 test("全ページをフルページで撮っている", () => {
   // `fullPage` を落とすとビューポート内(1280x800 / 390x844)しか撮らなくなるが、
-  // 76 件は走り続けて全部緑のまま通る。config の `expect.toHaveScreenshot` には
+  // 80 件は走り続けて全部緑のまま通る。config の `expect.toHaveScreenshot` には
   // 置けない値なので、`vrt/targets.mjs` にデータとして持たせてここで固定する。
   assert.deepEqual(shotOptions, { fullPage: true });
 });

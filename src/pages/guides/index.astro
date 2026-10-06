@@ -4,7 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 
 const pageTitle = "ガイド — EduLaw JP";
 const pageDescription =
-  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、公務災害の認定と補償、長時間労働と働き方改革、懲戒・分限処分と不服申立て、学校管理下の事故の補償と責任、妊娠・出産・育児と仕事の両立、非正規の教員の任用と勤務条件、学校の労働安全衛生管理体制、教職員へのカスタマーハラスメント対策と雇用主の措置義務をめぐる公的な情報の所在。";
+  "教師が教育法を読む前提を整理するガイド。法令階層の基礎、保護者対応、教員のメンタルヘルスと休職・復職、公務災害の認定と補償、長時間労働と働き方改革、懲戒・分限処分と不服申立て、学校管理下の事故の補償と責任、妊娠・出産・育児と仕事の両立、非正規の教員の任用と勤務条件、学校の労働安全衛生管理体制、教職員へのカスタマーハラスメント対策と雇用主の措置義務、こども性暴力防止法をめぐる公的な情報の所在。";
 
 const siteUrl = "https://law.edu-evidence.org";
 const breadcrumbJsonLd = {
@@ -112,6 +112,16 @@ const teacherSubgroups: { label: string; items: Guide[] }[] = [
   },
 ];
 
+// 「子どもを守る制度」(正本は ADR 0031)
+const childProtectionGuides: Guide[] = [
+  {
+    title: "こども性暴力防止法をめぐる公的な情報",
+    description:
+      "2026年12月25日に施行される、学校設置者等及び民間教育保育等事業者による児童対象性暴力等の防止等のための措置に関する法律について、こども家庭庁・文部科学省・e-Gov 等の公的な情報の所在を整理します。",
+    href: "/guides/child-sexual-violence-prevention/",
+  },
+];
+
 const linkClass =
   "link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2";
 ---
@@ -207,5 +217,30 @@ const linkClass =
         </div>
       ))
     }
+  </section>
+
+  <section class="mt-12">
+    <Kicker as="h2">
+      子どもを守る制度
+    </Kicker>
+    <div class="mt-4 border-t border-line">
+      {
+        childProtectionGuides.map((guide) => (
+          <article class="py-6 border-b border-line">
+            <h3 class="text-xl sm:text-2xl font-black text-ink">
+              <a href={guide.href} class={linkClass}>
+                {guide.title}
+              </a>
+            </h3>
+            <p class="mt-2 max-w-2xl text-sm sm:text-base text-sub leading-relaxed">
+              {guide.description}
+            </p>
+            <a href={guide.href} class={`${linkClass} mt-3 inline-block text-sm`}>
+              開く <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))
+      }
+    </div>
   </section>
 </Layout>

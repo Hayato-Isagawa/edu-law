@@ -217,7 +217,7 @@ export const sceneCategories: SceneCategory[] = [
     id: "school-health-safety",
     title: "学校の保健・安全",
     description:
-      "感染症対応・健康診断や学校安全計画など、児童生徒の保健と学校の安全を確かめたいとき",
+      "感染症対応・健康診断や学校安全計画、児童生徒への性暴力の防止など、児童生徒の保健と学校の安全を確かめたいとき",
     scenes: [
       {
         slug: "school-health",
@@ -232,6 +232,19 @@ export const sceneCategories: SceneCategory[] = [
         description:
           "学校安全計画の策定や危険等発生時対処要領（危機管理マニュアル）の作成について、学校保健安全法に基づく学校の責務と、文部科学省『学校安全』の公式解説の所在を示します。",
         lawSlugs: ["school-health-and-safety-act"],
+      },
+      {
+        slug: "child-sexual-violence-prevention",
+        title: "児童生徒への性暴力の防止",
+        description:
+          "2026年12月25日に施行されるこども性暴力防止法(学校設置者等及び民間教育保育等事業者による児童対象性暴力等の防止等のための措置に関する法律)について、こども家庭庁・文部科学省・e-Gov 等の公的な情報の所在を整理します。",
+        lawSlugs: [],
+        guides: [
+          {
+            slug: "child-sexual-violence-prevention",
+            title: "こども性暴力防止法",
+          },
+        ],
       },
     ],
   },

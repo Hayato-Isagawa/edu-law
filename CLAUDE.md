@@ -143,7 +143,7 @@ YAML 側は `workflows:` の列挙が「`on:` に `pull_request` を持つ workf
 
 VRT 自身は required check ではなく、`vrt.yml` の `paths` に載る PR でしか起動しないので、
 **その中にガードを置くと VRT が走ったときしか働かない**。撮影が減っても表向きは何も起きない —
-落ちるテストが 76 件から 38 件になるだけで、`npm run vrt` の終了コードは 0 のまま。
+落ちるテストが 80 件から 40 件になるだけで、`npm run vrt` の終了コードは 0 のまま。
 **ソースを正規表現で読む形は 1 度書いて捨てた**: コメント行にダミーの `path:` を書いて件数を保つ /
 projects を削除ではなくコメントアウトする / `test.skip(` でなく `test["skip"](` と書く、の
 いずれでも素通りした(実測)。
@@ -158,7 +158,7 @@ projects を削除ではなくコメントアウトする / `test.skip(` でな�
   config の `expect.toHaveScreenshot` には置けない値なので `vrt/targets.mjs` の `shotOptions` に
   データとして持ち、spec はそれを渡す
 - **断面を潰す** — mobile の viewport を desktop と同じにする / `colorScheme` を 4 つとも light にすると、
-  76 件を撮ったまま同じ画像を 2 度撮るだけになる。`use` に `storageState` / `javaScriptEnabled: false` /
+  80 件を撮ったまま同じ画像を 2 度撮るだけになる。`use` に `storageState` / `javaScriptEnabled: false` /
   `launchOptions` を置いても同じ(localStorage が先に勝つ / `data-theme` を立てる JS が止まる)。
   キーを追いかけず、`use`・project・`webServer`・config のキー集合を丸ごと固定する(viewport も
   `colorScheme` も `--list` の JSON に入らない)
@@ -229,7 +229,7 @@ spec 冒頭に「ここに値を書き足さない」と置いてある。
   別タブで開く外部リンクが `rel="noopener"` を持つこと。
   **このサイトの機能要件は外部リンクが正しいことそのもの**なので、付随的な品質ではない。
   リンク先の生死は週次の link-check(lychee)が見る
-- **`guide-jsonld.spec.ts`** — ガイド 11 本すべてに Article の JSON-LD(著者・発行者・URL)が
+- **`guide-jsonld.spec.ts`** — ガイド 12 本すべてに Article の JSON-LD(著者・発行者・URL)が
   あり、headline が `<title>` と一致すること。`dist/guides/` を列挙して全件見る(ガイドは 1 本ずつ
   手書きの `.astro` なので 1 ページでは代表できない)。日付は載せていない — ガイドに公開日・更新日の
   フィールドが無く、本文の「取得日」は公式資料を取得した日で記事の日付ではなく、changelog の `add` も
@@ -261,7 +261,7 @@ pagefind は**日本語を分割して部分一致させる**ので、和文の�
 | 対象 | 見るもの |
 | --- | --- |
 | `src/content/laws/*.md` | 保護フィールド(`title` / `order` / `eGovUrl` / `officialExplanations[].url` / `lastVerified` / `publishedAt` / `retrievedAt`)+ URL 集合 + e-Gov 法令 ID |
-| `src/pages/**/*.astro` | URL 集合 + e-Gov 法令 ID(ガイドに ID が 18 箇所直書きされているため) |
+| `src/pages/**/*.astro` | URL 集合 + e-Gov 法令 ID(ガイドに ID が 20 箇所直書きされているため) |
 
 `.astro` は `---` の中身が JS で `title:` がデータとして頻出するので、保護フィールドは
 法令エントリにだけ当てる。自サイト URL と `schema.org` は除外する。
@@ -414,7 +414,7 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
   内訳の実測値は `playwright.vrt.config.ts` のコメント
 - **リトライは入れない**。安定化ループでも収まらなかった問題まで握り潰すことになる
 - ADR 0023 が挙げている「CI で揺れが残る場合は該当ページを viewport clip / mask にフォールバックする」は、`fullPage` を固定した今は required check を赤にする。取るなら `vrt/targets.mjs` の `shotOptions` と `scripts/__tests__/vrt-targets.test.mjs` を同時に直すこと
-- **対象**: `vrt/pages.spec.ts` がテンプレート代表 19 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 11 本 / 404)をフルページ撮影 = 4 projects(desktop / mobile × ライト / ダーク)で 76 件。**ダークは `data-theme` を直接立てず `colorScheme` で与える** — `Layout.astro` の起動スクリプトが localStorage → `prefers-color-scheme` の順に見て `data-theme` を決めるので、エミュレーションを使えばその経路ごと撮れる。左上の画素で実測すると light は `#faf9f5`、dark は `#16181d`(= `--color-bg` のダーク値)。**代表 URL が静かに減る経路は `scripts/__tests__/vrt-targets.test.mjs` が見ている**(上の「配線の検査は、守る対象と違う口に置く」)。件数は下限ではなく **19 に固定**してあるので、テンプレートを追加して代表 URL を 1 行追記したら、**あちらの件数とこの行の両方を直すことになる**(実際に `/search` の追加と `/changelog` の除外で 2 世代ぶん古いまま残っていた)。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
+- **対象**: `vrt/pages.spec.ts` がテンプレート代表 20 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 12 本 / 404)をフルページ撮影 = 4 projects(desktop / mobile × ライト / ダーク)で 80 件。**ダークは `data-theme` を直接立てず `colorScheme` で与える** — `Layout.astro` の起動スクリプトが localStorage → `prefers-color-scheme` の順に見て `data-theme` を決めるので、エミュレーションを使えばその経路ごと撮れる。左上の画素で実測すると light は `#faf9f5`、dark は `#16181d`(= `--color-bg` のダーク値)。**代表 URL が静かに減る経路は `scripts/__tests__/vrt-targets.test.mjs` が見ている**(上の「配線の検査は、守る対象と違う口に置く」)。件数は下限ではなく **20 に固定**してあるので、テンプレートを追加して代表 URL を 1 行追記したら、**あちらの件数とこの行の両方を直すことになる**(実際に `/search` の追加と `/changelog` の除外で 2 世代ぶん古いまま残っていた)。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
 - **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。`src/data/**` はベースラインへ運ぶ素材なので `paths` には無い(ADR 0027)。依存の更新でも起動する。**ただし gate にはならない** — VRT は required check ではなく、`dependabot-auto-merge.yml` の `gh pr merge --auto` は required しか待たないので、非 major の bump は VRT の結果が出る前にマージされる(Build site 1 分未満〈2026-09-28 時点で 49 秒〉対 **VRT 5 分 58 秒**。ダークを足して撮影が倍になった分がそのまま job に乗り、以前の 3〜4 分から伸びた)。得られるのは事後に差分画像が残ることだけ。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
 - **比較方式(案A + コンテンツ中立)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため。
   **main 側は「main のコード × PR のコンテンツ」でビルドする**(`src/content` / `src/data` / `src/content.config.ts` を運ぶ)。他ファイルの法令・ガイド修正が波及しただけの赤を消すため(ADR 0027)。運ぶ素材の allowlist と degraded 経路は `scripts/__tests__/vrt-baseline.test.mjs` が固定している
