@@ -33,6 +33,16 @@ export const changelogEntries: ChangelogEntry[] = [
     items: [
       {
         type: "update",
+        text: "教育公務員特例法ページに、令和7年の給特法等改正の施行に向けた文部科学省の通知(2025年9月26日)を加えました",
+        links: [
+          {
+            label: "教育公務員特例法",
+            href: "/laws/educational-public-service-special-act/",
+          },
+        ],
+      },
+      {
+        type: "update",
         text: "児童福祉法ページの令和7年改正の案内に、施行日(面会通信制限は2025年10月20日、一時保護委託者の登録制度は2026年10月1日)を加えました",
         links: [{ label: "児童福祉法", href: "/laws/child-welfare-act/" }],
       },
