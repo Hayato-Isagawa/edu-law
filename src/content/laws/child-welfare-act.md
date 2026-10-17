@@ -24,7 +24,7 @@ officialExplanations:
     title: 法令
     url: https://www.cfa.go.jp/laws
     format: html
-lastVerified: "2026-09-18"
+lastVerified: "2026-10-17"
 tags: []
 ---
 
@@ -43,7 +43,7 @@ EduLaw JP は **公式解説への入口** を整理するサイトです。サ�
 ### こども家庭庁
 
 - [令和4年6月に成立した改正児童福祉法について(こども家庭庁)](https://www.cfa.go.jp/policies/jidougyakutai/Revised-Child-Welfare-Act) — 令和 4 年改正(こども家庭センター・児童発達支援・里親支援センター等)の概要と関連資料への案内
-- [令和7年4月に成立した改正児童福祉法について(児童虐待防止対策関係)(こども家庭庁)](https://www.cfa.go.jp/policies/jidougyakutai/Revised-Child-Welfare-Actr7) — 令和 7 年改正(令和7年法律第29号)の概要と関連通知への案内。一時保護を適正に行うことができる者の登録制度の創設、一時保護中の児童に対する面会通信制限等に関する規定の整備を含む
+- [令和7年4月に成立した改正児童福祉法について(児童虐待防止対策関係)(こども家庭庁)](https://www.cfa.go.jp/policies/jidougyakutai/Revised-Child-Welfare-Actr7) — 令和 7 年改正(令和7年法律第29号)の概要と関連通知への案内。一時保護を適正に行うことができる者の登録制度の創設、一時保護中の児童に対する面会通信制限等に関する規定の整備を含む。面会通信制限は令和7年10月20日、登録制度は令和8年10月1日に施行
 - [児童虐待に係る法令・指針等一覧(こども家庭庁)](https://www.cfa.go.jp/policies/jidougyakutai/hourei-tsuuchi) — 児童福祉法・児童虐待防止法を横断する法令・通知・指針の包括的なカタログ
 - [児童虐待防止対策(こども家庭庁 政策トップ)](https://www.cfa.go.jp/policies/jidougyakutai) — 児童相談所虐待対応ダイヤル「189(いちはやく)」案内を含む
 - [こども家庭庁 法令ページ](https://www.cfa.go.jp/laws) — こども基本法 / 児童福祉法 / 児童虐待防止法等、こども家庭庁所管法令の一覧

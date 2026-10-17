@@ -29,6 +29,16 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-10-17",
+    items: [
+      {
+        type: "update",
+        text: "児童福祉法ページの令和7年改正の案内に、施行日(面会通信制限は2025年10月20日、一時保護委託者の登録制度は2026年10月1日)を加えました",
+        links: [{ label: "児童福祉法", href: "/laws/child-welfare-act/" }],
+      },
+    ],
+  },
+  {
     date: "2026-10-06",
     items: [
       {
