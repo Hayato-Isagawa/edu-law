@@ -29,6 +29,21 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-10-18",
+    items: [
+      {
+        type: "update",
+        text: "いじめ防止対策推進法ページに、文部科学省のいじめ対策の案内ページへのリンクを加えました。通知・事例集・研修資料の一覧をここからたどれます",
+        links: [
+          {
+            label: "いじめ防止対策推進法",
+            href: "/laws/bullying-prevention-act/",
+          },
+        ],
+      },
+    ],
+  },
+  {
     date: "2026-10-17",
     items: [
       {
