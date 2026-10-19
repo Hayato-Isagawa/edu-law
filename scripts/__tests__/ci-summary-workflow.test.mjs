@@ -55,8 +55,8 @@ function violations(src) {
     (job?.steps ?? []).forEach((step, i) => {
       if (Object.hasOwn(step ?? {}, "permissions"))
         found.push(`step ${name}[${i}] permissions`);
-      if (String(step?.if ?? "").includes("conclusion"))
-        found.push(`step ${name}[${i}] if`);
+      // step の if は値によらず通知を止めうる(`if: false` でも黙って skip される)ので置かない(#340)
+      if (Object.hasOwn(step ?? {}, "if")) found.push(`step ${name}[${i}] if`);
     });
   }
   return found;
@@ -426,19 +426,14 @@ test("permissions: は workflow 直下の 1 か所だけ(job / step には置か
   );
 });
 
-test("job と step の if: のどこにも起動元の conclusion を置かない(末尾形も含む)", () => {
+test("job の if: に起動元の conclusion を置かず、step には if: を置かない", () => {
   // `conclusion == 'success' &&` の先頭形だけでなく、末尾に
   // `&& github.event.workflow_run.conclusion == 'success'` と付ける形でも、最後に完了した
-  // workflow が skipped のとき再判定が走らず通知が消える。
+  // workflow が skipped のとき再判定が走らず通知が消える。notify の if の式そのものは
+  // 「PR 由来の run だけを…」が完全一致で見ている。
   assert.deepEqual(
     violations(yaml()).filter((v) => v.endsWith(" if")),
     []
-  );
-  const cond = String(YAML.parse(yaml()).jobs?.notify?.if ?? "");
-  assert.match(
-    cond,
-    /workflow_run\.event == 'pull_request'/,
-    "notify の if: の式が取れていない"
   );
 });
 
@@ -523,6 +518,14 @@ test("fixture: step の permissions を拾う", () => {
     "      - run: echo ok\n        permissions:\n          contents: write\n"
   );
   assert.deepEqual(violations(src), ["step notify[0] permissions"]);
+});
+
+test("fixture: step の if: false を拾う", () => {
+  const src = fixture(
+    "      - run: echo ok\n",
+    "      - if: false\n        run: echo ok\n"
+  );
+  assert.deepEqual(violations(src), ["step notify[0] if"]);
 });
 
 test("fixture: step の if: の conclusion を拾う", () => {
