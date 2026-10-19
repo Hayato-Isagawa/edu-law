@@ -126,6 +126,12 @@ PR に @メンション付きコメントを 1 件付け、GitHub Mobile の通�
 起こさない)を待ち続けて通知が消えるので、フィルタを素通りさせると退行を検出できない。
 YAML 側は `workflows:` の列挙が「`on:` に `pull_request` を持つ workflow の `name:`」と過不足なく
 一致することも見る(PR 起動の workflow を足したのに列挙し忘れると、その完了では再判定が走らない)。
+token の権限(workflow 直下は `checks: read` / `pull-requests: write` だけ、job / step には `permissions` を
+置かない)と `if:` の `conclusion` は、字面ではなく **`yaml` でパースした結果**(マージキー `<<:` も展開)で
+見る。字面だと `"permissions":` / `? permissions` のような YAML として等価な書き方も、step の `if:` や
+notify より前に置いた別の job も素通りした(#273)。判定は関数に
+切り出し、その書き方を fixture で与えて規則ごとに発火することも確かめている(実ファイルでは違反 0 しか
+見えず、判定を無効にしても緑のまま通るため)。
 
 **この相互固定で塞げるのは「片方だけを静かに薄める」までで、限界が 2 つある**(いずれも実測):
 
