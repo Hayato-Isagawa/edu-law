@@ -398,12 +398,20 @@ test("token の権限は check-run の参照とコメント投稿だけ", () => 
 });
 
 test("PR 由来の run だけを、Dependabot を除いて扱う", () => {
-  const src = yaml();
-  assert.match(src, /github\.event\.workflow_run\.event == 'pull_request'/);
-  assert.match(
-    src,
-    /github\.event\.workflow_run\.triggering_actor\.login != 'dependabot\[bot\]'/
+  // 字面ではなく notify の if の値で見る(コメント行に移しただけの式を拾わない)。
+  // 部分一致だと `… != 'dependabot[bot]' || true` のように字面を残したまま条件を
+  // 無効にできるので、空白を詰めた式全体を固定する(#336)。式を変えるときはこの期待値も直す
+  const cond = String(
+    YAML.parse(yaml(), { merge: true }).jobs?.notify?.if ?? ""
+  )
+    .replace(/\s+/g, " ")
+    .trim();
+  assert.equal(
+    cond,
+    "github.event.workflow_run.event == 'pull_request' && " +
+      "github.event.workflow_run.triggering_actor.login != 'dependabot[bot]'"
   );
+  const src = yaml();
   assert.doesNotMatch(
     src,
     /workflow_run\.conclusion == 'success'\s*&&/,
