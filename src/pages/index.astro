@@ -192,19 +192,16 @@ const highlights = [
         featuredScenes.map(({ scene, categoryTitle }) => {
           const lawCount = scene.lawSlugs.length;
           const guideCount = scene.guides?.length ?? 0;
-          const titleId = `featured-${scene.slug}-title`;
           return (
             <li>
               <a
                 href={`/scenes/#${scene.slug}`}
-                aria-labelledby={titleId}
                 class="group block h-full rounded-xl border border-line bg-card p-5 space-y-3 motion-safe:transition motion-safe:duration-200 motion-safe:ease-out hover:border-accent focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
               >
                 <Kicker as="div" tone="sub" size="2xs">
                   {categoryTitle}
                 </Kicker>
                 <h3
-                  id={titleId}
                   class="font-black text-base leading-snug motion-safe:transition group-hover:text-accent group-focus-visible:text-accent"
                 >
                   {scene.title}
