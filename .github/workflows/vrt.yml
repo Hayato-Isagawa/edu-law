@@ -38,9 +38,10 @@ on:
       #
       # **ただし gate にはならない。** VRT は required check ではなく
       # (required は "Build site" と "Playwright E2E"。ADR 0032)、dependabot-auto-merge.yml の
-      # `gh pr merge --auto` は required しか待たない。遅い方の E2E でも成功時の中央値は 121 秒
-      # (2026-09-18〜10-19 の 92 件)、VRT は 6 分前後かかる(4 projects)ので、非 major の bump は
-      # VRT の結果が出る前にマージされる。得られるのは事後に差分画像が残ることだけ。
+      # `gh pr merge --auto` は required しか待たない。非 major の bump は VRT が赤くても
+      # マージされ、VRT は 6 分前後かかる(4 projects)ので、多くは結果が出る前にマージされる
+      # (2026-09-18〜10-19 の Dependabot PR 35 件のうち、E2E が VRT より後に終わったのは 5 件)。
+      # 得られるのは事後に差分画像が残ることだけ。
       - "package-lock.json"
       - "vrt/**"
       - "playwright.vrt.config.ts"

@@ -9,9 +9,11 @@
 
 ADR 0004 は required check を「Build site」1 本とし、「`Build site` のみでは検知できない退行(視覚回帰・a11y 退行)が patch / minor auto-merge で 2 件以上発生した場合、E2E を required に追加する ADR を起こす」と定めた。当時は E2E が無かった。
 
-2026-10-19、`@axe-core/playwright` 4.13.0 → 4.14.0 の Dependabot PR(#331)が、E2E の赤のまま auto-merge された。axe-core 4.14.0 が `label-content-name-mismatch` を既定で有効にし、トップの場面カードが serious として落ちていた。`gh pr merge --auto` は required しか待たないので、E2E の結果はマージに効かない。
+2026-10-19、`@axe-core/playwright` 4.13.0 → 4.14.0 の Dependabot PR(#331)が、E2E の結果を待たずに auto-merge された(マージ 00:12:43Z、E2E は 00:13:50Z に開始して 00:15:58Z に failure)。axe-core 4.14.0 が `label-content-name-mismatch` を既定で有効にし、トップの場面カードが serious として落ちていた。`gh pr merge --auto` は required しか待たないので、E2E の結果はマージに効かない。
 
-赤は main でも見えなかった。auto-merge は GITHUB_TOKEN で main に入るので、その push では E2E が起動しない。Dependabot PR には ci-summary の通知も付かない(`ci-summary.yml` の `if:` が `dependabot[bot]` を除外)。main の E2E が赤いことは、次に人がマージした #333 の push で初めて表に出た。違反の修正は #337。
+auto-merge は GITHUB_TOKEN で main に入るので、その push では E2E が起動しない。赤を知らせる通知も無い。ci-summary は Actions がすべて成功したときにしか通知せず、Dependabot PR はそもそも対象から外している(`ci-summary.yml` の `if:`)。
+
+赤が最初に表に出たのは、次の PR #333 の E2E だった。#333 と #335 は人がマージしたが、どちらも E2E が failure のままマージできた。E2E が required でない限り、人の PR でも赤は止まらない。違反の修正は #337。
 
 サイト自体はこのとき退行していない。既存のマークアップが新しい検査に引っかかっただけなので、ADR 0004 の条件(退行 2 件)を文言どおりに数えれば 0 件になる。
 
@@ -51,10 +53,10 @@ checks: [{ context: "Build site", app_id: 15368 }, { context: "Playwright E2E", 
 
 ### コスト
 
-- マージできるまでの律速が Build site(2026-09-28 時点で 49 秒)から E2E に移る。2026-09-18〜10-19 の直近 100 run のうち、成功した 92 件の所要(run の作成から最終更新まで)は中央値 121 秒、90 パーセンタイル 324 秒、最大 653 秒
-- Playwright / apt のインストールが遅れると、その間はすべての PR がマージできない。`e2e.yml` のコメントに、ファミリー横断で 28 分を超えた実例がある。`enforce_admins: false` なので管理者はバイパスできる(ADR 0004 の hotfix 経路)
-- E2E が赤い Dependabot PR は、誰かが直すまで open のまま残る。ci-summary は Dependabot PR を通知しないので、放置されうる
-- flaky による失敗は、2026-08-08〜10-19 の 251 run で 0 件。この期間の失敗 5 件は、すべて 10-19 の axe 4.14 由来
+- マージできるまでの律速が E2E に移る。2026-09-18〜10-19 に PR で成功した E2E 65 件の所要(run の作成から最終更新まで)は、中央値 126 秒、90 パーセンタイル 387 秒(nearest-rank)、最大 653 秒
+- Playwright / apt のインストールが遅れると、その間はすべての PR がマージできない。このリポでも 2026-08-19 に、「Install Playwright system deps」のステップで約 3 時間 56 分止まった試行がある(当時は timeout が無かった。今は `timeout-minutes: 45` で打ち切る)。`enforce_admins: false` なので、管理者はバイパスできるはず(ADR 0004 の hotfix 経路。実際にバイパスして確かめてはいない)
+- E2E が赤い Dependabot PR は、誰かが直すまで open のまま残る。赤を知らせる通知は無いので、放置されうる
+- flaky による失敗は、2026-08-08〜10-19 の 251 run で 0 件(再実行で上書きされた試行は数えていない)。この期間の失敗 5 件は、すべて 10-19 の axe 4.14 由来
 
 ## 撤回 / 再検討の条件
 
