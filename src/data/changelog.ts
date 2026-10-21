@@ -29,6 +29,21 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-10-21",
+    items: [
+      {
+        type: "update",
+        text: "個人情報保護法ページに、令和8年の改正法についての個人情報保護委員会の案内ページへのリンクを加えました。改正法の条文・概要と、政令・ガイドライン等の検討状況をここからたどれます",
+        links: [
+          {
+            label: "個人情報保護法",
+            href: "/laws/personal-information-protection-act/",
+          },
+        ],
+      },
+    ],
+  },
+  {
     date: "2026-10-18",
     items: [
       {
