@@ -89,13 +89,20 @@ git switch -c <type>/<short-description> --no-track origin/main
 # 例: feat/ijime-law-page, fix/e-gov-link, chore/deps-bump
 ```
 
-`.claude/hooks/branch-guard.sh` が Claude Code 経由の `Edit` / `Write` / `MultiEdit` を `main` / `master` で拒否します。
+`.claude/hooks/branch-guard.sh` が Claude Code 経由の `Edit` / `Write` / `MultiEdit` を `main` / `master` で拒否します。任意のツール経由のコミットは `.githooks/pre-commit` が `main` / `master` で拒否します。
+
+`.githooks/` は clone ごとに 1 回、`npm run prepare` で有効にしてください(`package.json` の `prepare` スクリプトが `core.hooksPath` を設定します)。`.npmrc` の `ignore-scripts=true` により `npm install` / `npm ci` は `prepare` を走らせないため、インストールだけでは有効になりません。確認:
+
+```bash
+git config core.hooksPath        # .githooks と表示されれば有効
+```
 
 ## 開発環境
 
 ```bash
 mise install
 npm ci
+npm run prepare  # Git フックを有効化(clone ごとに 1 回。上記「ブランチ運用」)
 npm run dev      # 開発サーバー
 npm run build    # ビルド
 npm run lint     # oxlint

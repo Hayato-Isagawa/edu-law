@@ -7,7 +7,7 @@
 # of defence -- it just fails at commit time instead of after a round trip.
 #
 # Bypass for the rare hotfix case: `git commit --no-verify`.
-# Auto-installed via `npm install` (see package.json `scripts.prepare`).
+# Enable once per clone with `npm run prepare` (sets core.hooksPath; see CONTRIBUTING.md).
 
 set -euo pipefail
 

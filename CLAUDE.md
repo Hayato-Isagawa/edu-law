@@ -22,6 +22,7 @@ Node.js 24 系を `.tool-versions` で固定。[mise](https://mise.jdx.dev/) を
 ```bash
 mise install
 npm ci
+npm run prepare   # Git フックを有効化(clone ごとに 1 回。.npmrc の ignore-scripts=true で npm ci は prepare を走らせない)
 ```
 
 `package.json` の `engines.node` は `>=24.0.0`。
