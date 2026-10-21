@@ -55,6 +55,7 @@ cd edu-law
 
 mise install   # .tool-versions に従って Node 24 を導入
 npm ci         # 依存関係をロックから厳密復元
+npm run prepare  # Git フックを有効化(clone ごとに 1 回。.npmrc の ignore-scripts=true により npm ci では有効にならない)
 
 npm run dev    # 開発サーバー(localhost:4324。ファミリー各リポで固定・4321 は未設定プロジェクト用に空けている)
 npm run build  # 本番ビルド
