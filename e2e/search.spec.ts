@@ -38,6 +38,42 @@ test.describe("検索", () => {
     expect(await target.count()).toBeGreaterThan(0);
   });
 
+  test("モバイルメニューの検索欄から送信すると /search/?q= で結果が出る", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/");
+    await page.locator("#menu-toggle").click();
+    // メニューは開いた 50ms 後に最初のリンクへフォーカスを移す。Enter の直前に
+    // それが割り込むと、Enter がリンクに当たって送信されない
+    await expect(page.locator("#mobile-menu a").first()).toBeFocused();
+    const input = page.locator("#mobile-menu-search-input");
+    await input.fill("いじめ");
+
+    // 本番(Cloudflare)は /search?q= を 307 で /search/ へ回すが、serve は
+    // リダイレクトせず 200 を返す。到着後の URL ではなく、送信が最初に出した
+    // リクエストのパスを見る(serve がリダイレクトするようになっても通らない)。
+    const navigation = page.waitForRequest(
+      (req) => req.isNavigationRequest() && req.url().includes("q=")
+    );
+    await input.press("Enter");
+    const url = new URL((await navigation).url());
+    expect(url.pathname).toBe("/search/");
+    expect(url.searchParams.get("q")).toBe("いじめ");
+
+    // 検索ページが ?q= を読んで検索を走らせたことまで見る
+    await expect(page.locator(".pagefind-ui__search-input")).toHaveValue(
+      "いじめ"
+    );
+    await expect(
+      page
+        .locator(
+          '.pagefind-ui__result-link[href^="/laws/bullying-prevention-act/"]'
+        )
+        .first()
+    ).toBeVisible();
+  });
+
   test("該当の無い語では 0 件になる", async ({ page }) => {
     await page.goto("/search/");
 
