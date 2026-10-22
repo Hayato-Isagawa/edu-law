@@ -89,7 +89,7 @@ git switch -c <type>/<short-description> --no-track origin/main
 # 例: feat/ijime-law-page, fix/e-gov-link, chore/deps-bump
 ```
 
-`.claude/hooks/branch-guard.sh` が Claude Code 経由の `Edit` / `Write` / `MultiEdit` を `main` / `master` で拒否します。任意のツール経由のコミットは `.githooks/pre-commit` が `main` / `master` で拒否します。
+`.claude/hooks/branch-guard.sh` が Claude Code 経由の `Edit` / `Write` / `MultiEdit` を `main` / `master` で拒否します。このリポの `.claude/settings.json` には配線していないため、発火するのはメンテナの環境だけです(グローバルなディスパッチャから呼ぶ)。任意のツール経由のコミットは `.githooks/pre-commit` が `main` / `master` で拒否します。
 
 `.githooks/` は clone ごとに 1 回、`npm run prepare` で有効にしてください(`package.json` の `prepare` スクリプトが `core.hooksPath` を設定します)。`.npmrc` の `ignore-scripts=true` により `npm install` / `npm ci` は `prepare` を走らせないため、インストールだけでは有効になりません。確認:
 
