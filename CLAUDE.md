@@ -135,6 +135,7 @@ token の権限(workflow 直下は `checks: read` / `pull-requests: write` だ�
 notify より前に置いた別の job も素通りした(#273)。判定は関数に切り出し、その書き方を fixture で与えて
 規則ごとに発火することも確かめている(実ファイルでは違反 0 しか見えず、判定を無効にしても緑のまま
 通るため)。
+YAML 側の `workflows:` の列挙と、それと突き合わせる各 workflow のトリガー・`name:` は、パース結果で読む。`on:` が読めない形と、マージキー(`<<:`)を使った workflow は落とす。マージキーを展開すると、GitHub(展開しない)と読みが食い違って黙って緑になりうるため。
 
 `dependabot-auto-merge-workflow.test.mjs` も同じ口。job の `if:`(作成者・head のリポ・actor の 3 条件と、
 zizmor の `bot-conditions` を理由つきで抑止するコメント)を行ごと固定する。抑止は条件を書き換えても残るので、
