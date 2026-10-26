@@ -125,6 +125,7 @@ PR に @メンション付きコメントを 1 件付け、GitHub Mobile の通�
 取り出して bash で走らせ、`gh` はスタブに差し替える。`--jq` のフィルタは**実 jq に通す** —
 `.app.slug == "github-actions"` の絞り込みが無いと Cloudflare の check-run(`workflow_run` を
 起こさない)を待ち続けて通知が消えるので、フィルタを素通りさせると退行を検出できない。
+重複防止の印は github-actions[bot] のコメントからだけ拾うことも見る(公開リポなので、誰でも印を先に書ける)。
 YAML 側は `workflows:` の列挙が「`on:` に `pull_request` を持つ workflow の `name:`」と過不足なく
 一致することも見る(PR 起動の workflow を足したのに列挙し忘れると、その完了では再判定が走らない)。
 token の権限(workflow 直下は `checks: read` / `pull-requests: write` だけ、job / step には `permissions` を
