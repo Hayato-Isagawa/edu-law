@@ -40,12 +40,12 @@ npm run check    # Astro 型チェック(同上)
 npm run check:sources # 公式解説の書名が正本と 5 つの写し先で一致しているか(同上)
 npm run test:hooks # .claude/hooks/ の回帰テスト(同上・下限つき)
 npm run test:content # check:sources の回帰テスト(同上・下限つき)
-npm run test:workflows # link-check の通知分岐・VRT の撮影対象・撮影設定・ベースライン配線・ci-summary の通知判定の回帰テスト(同上・下限つき)
+npm run test:workflows # link-check の通知分岐・VRT の撮影対象・撮影設定・ベースライン配線・ci-summary の通知判定・dependabot-auto-merge の job の if: の回帰テスト(同上・下限つき)
 npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
 
-### `test:workflows` — link-check の通知分岐と VRT の撮影対象・撮影設定・ベースライン配線・ci-summary の通知判定
+### `test:workflows` — link-check の通知分岐と VRT の撮影対象・撮影設定・ベースライン配線・ci-summary の通知判定・dependabot-auto-merge の job の if:
 
 `link-check.yml` に埋め込まれた「検出をどう届けるか」の判定を固定する。**壊れても静かに壊れる** —
 lychee は走り、レポートもアーティファクトに残り、job も緑のまま**通知だけ**が消える。姉妹リポ
@@ -135,6 +135,10 @@ token の権限(workflow 直下は `checks: read` / `pull-requests: write` だ�
 notify より前に置いた別の job も素通りした(#273)。判定は関数に切り出し、その書き方を fixture で与えて
 規則ごとに発火することも確かめている(実ファイルでは違反 0 しか見えず、判定を無効にしても緑のまま
 通るため)。
+
+`dependabot-auto-merge-workflow.test.mjs` も同じ口。job の `if:`(作成者・head のリポ・actor の 3 条件と、
+zizmor の `bot-conditions` を理由つきで抑止するコメント)を行ごと固定する。抑止は条件を書き換えても残るので、
+actor だけの判定に戻しても zizmor は何も出さない(1.31.1 で実測)。
 
 **この相互固定で塞げるのは「片方だけを静かに薄める」までで、限界が 2 つある**(いずれも実測):
 
