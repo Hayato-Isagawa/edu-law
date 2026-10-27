@@ -40,12 +40,12 @@ npm run check    # Astro 型チェック(同上)
 npm run check:sources # 公式解説の書名が正本と 5 つの写し先で一致しているか(同上)
 npm run test:hooks # .claude/hooks/ の回帰テスト(同上・下限つき)
 npm run test:content # check:sources の回帰テスト(同上・下限つき)
-npm run test:workflows # link-check の通知分岐・VRT の撮影対象・撮影設定・ベースライン配線・ci-summary の通知判定・dependabot-auto-merge の job の if: の回帰テスト(同上・下限つき)
+npm run test:workflows # link-check の通知分岐・VRT の撮影対象・撮影設定・ベースライン配線・ci-summary の通知判定・dependabot-auto-merge の job の if:・cf-purge のビルドの扱いの回帰テスト(同上・下限つき)
 npm run test:e2e # Playwright(a11y + 機能テスト。要: 先に npm run build)
 npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮影・比較。権威ある比較は CI、後述)
 ```
 
-### `test:workflows` — link-check の通知分岐と VRT の撮影対象・撮影設定・ベースライン配線・ci-summary の通知判定・dependabot-auto-merge の job の if:
+### `test:workflows` — link-check の通知分岐と VRT の撮影対象・撮影設定・ベースライン配線・ci-summary の通知判定・dependabot-auto-merge の job の if:・cf-purge のビルドの扱い
 
 `link-check.yml` に埋め込まれた「検出をどう届けるか」の判定を固定する。**壊れても静かに壊れる** —
 lychee は走り、レポートもアーティファクトに残り、job も緑のまま**通知だけ**が消える。姉妹リポ
@@ -75,6 +75,13 @@ okinawa-in-data では open な link-check Issue があると後続の検出を�
 action だけが exit 1 する**ので、`exit_code` だけを見ていると通知が skip され、`continue-on-error`
 で job も緑になる＝週次チェックが恒久的に no-op になる。`steps.lychee.outcome` は
 `continue-on-error` 適用**前**の結果なので、そこで拾っている。
+
+`cf-purge-workflow.test.mjs` も同じ口。`cf-purge.yml` は Workers Builds の `build_outcome` を見て purge するかを決める。
+本番に出なかったビルド(`fail` / `terminated`)と期限切れは赤、`skipped` の後は置き換えた新しいビルドを追い、ビルドを
+確かめられないとき(tag を引けない・API が 401 / 403 / 404・一時的な失敗の連続・429 のまま期限)は purge してから赤で
+終わる(ADR 0033。edu-watch の cf-purge とテストの移植)。`run:` を取り出して bash で走らせ、`curl`・`sleep`・`date` を
+スタブに、jq は実物に通す。期限・間隔・回数はステップの `env` から読む。値ごとのテストは、行頭の `test(` を数える
+下限の検査に合わせて、ループではなく 1 行ずつ登録している。
 
 `test:workflows` / `test:hooks` / `test:content` は `assert-test-files.mjs` /
 `assert-test-results.mjs` を通している。`node --test` は「glob が 0 件」「中身が空」「全件 skip」の
