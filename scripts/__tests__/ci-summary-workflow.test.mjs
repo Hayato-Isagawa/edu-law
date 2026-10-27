@@ -577,39 +577,117 @@ test("同じ commit の判定は head_sha で直列化する", () => {
   assert.match(yaml(), /^ {2}cancel-in-progress: false$/m);
 });
 
+// ---- トリガーと列挙の読み方 ----
+// トリガーと列挙は、マージキーを展開せずに読み(`merge: false`)、マージキーを使っていれば落とす。
+// GitHub Actions はマージキーを展開しない(actions/runner#1182 の回答。2026-10 時点)のに、yaml は
+// `!!merge <<:` と `%YAML 1.1` の下の `<<:` を `merge: false` でも展開する(2.9.1 で実測)ので、読みが食い違って黙って緑になりうる
+// (`workflow_run` の `<<: {workflows: …}` を列挙と読む、など)。権限の検査が `merge: true` で読む
+// 理由(禁じる権限を見落とさない)とは別の話なので、そちらは変えない。
+
+// yaml 2.9.1 の判定(schema/yaml-1.1/merge.js の identify)が展開する形を含めて拾う。2.9.1 では、
+// 展開される形のキーの値が Symbol("<<") になる。引用符付きの "<<" も拾うので、yaml より広い
+const isMergeKey = (key) =>
+  YAML.isScalar(key) &&
+  (key.value === "<<" ||
+    (typeof key.value === "symbol" && key.value.description === "<<") ||
+    key.tag === "tag:yaml.org,2002:merge");
+
+/** マージキーを使っている位置を返す。キーをエイリアスで書いた形も、参照先を解決して拾う */
+function mergeKeyPaths(src) {
+  const parsed = YAML.parseDocument(src, { merge: false });
+  const found = [];
+  YAML.visit(parsed, {
+    Pair(_, pair, ancestors) {
+      const key = YAML.isAlias(pair.key) ? pair.key.resolve(parsed) : pair.key;
+      if (isMergeKey(key)) found.push(pathOf(ancestors));
+    },
+  });
+  return found;
+}
+
+function pathOf(ancestors) {
+  let at = "";
+  ancestors.forEach((node, i) => {
+    if (YAML.isPair(node))
+      at += (at ? "." : "") + String(node.key?.value ?? node.key);
+    else if (YAML.isSeq(node))
+      at += `[${node.items.indexOf(ancestors[i + 1])}]`;
+  });
+  return at || "(root)";
+}
+
+const parseWorkflow = (src) => YAML.parse(src, { merge: false });
+
+/**
+ * `on:` のトリガー名を返す。1 行形(`on: pull_request`)・列(`on: [push, pull_request]`)・
+ * マップ形のどれでも読み、`on:` の中に列 0 のコメントがあっても読める。読めない形は null —
+ * 空の `on:`・空の列やマップ・文字列でない要素を含む列・`%YAML 1.1` の下(キーの `on` が
+ * 真偽値 true として読まれ、`on` が無くなる)・`true:` と書いた形など。呼ぶ側は null を
+ * 「起動しない」と読まずに落とすこと
+ */
+function triggerNames(on) {
+  if (typeof on === "string" && on.trim()) return [on.trim()];
+  if (
+    Array.isArray(on) &&
+    on.length > 0 &&
+    on.every((t) => typeof t === "string" && t.trim())
+  )
+    return on.map((t) => t.trim());
+  if (on !== null && typeof on === "object" && !Array.isArray(on)) {
+    const keys = Object.keys(on);
+    if (keys.length > 0) return keys;
+  }
+  return null;
+}
+
+/**
+ * workflow 1 本について、PR で起動するならその name を、しないなら null を返す。
+ * トリガーはパースした `on` から読み(triggerNames)、`if:` 式や ci-summary 自身の
+ * `workflow_run.event == 'pull_request'` は拾わない。name か on: が読めなければ落とす —
+ * 黙って null にすると、その workflow が列挙の照合から外れて緑のまま通る。
+ */
+function prWorkflowName(src, label) {
+  assert.deepEqual(mergeKeyPaths(src), [], `${label} がマージキーを使っている`);
+  const wf = parseWorkflow(src);
+  assert.ok(
+    typeof wf?.name === "string" && wf.name.trim(),
+    `${label} に name: が無い`
+  );
+  const triggers = triggerNames(wf.on);
+  assert.ok(triggers, `${label} の on: が読めない: ${JSON.stringify(wf.on)}`);
+  return triggers.includes("pull_request") ? wf.name.trim() : null;
+}
+
+/**
+ * ci-summary の `workflows:` を名前の列として読む。生の文字列を split すると、引用符付きの
+ * name だけが片側で外れて食い違う。
+ */
+function listedWorkflows(src, label) {
+  assert.deepEqual(mergeKeyPaths(src), [], `${label} がマージキーを使っている`);
+  const listed = parseWorkflow(src)?.on?.workflow_run?.workflows;
+  assert.ok(
+    Array.isArray(listed) &&
+      listed.length > 0 &&
+      listed.every((n) => typeof n === "string" && n.trim()),
+    `${label} の workflows: が名前の列として読めない: ${JSON.stringify(listed)}`
+  );
+  return listed.map((n) => n.trim());
+}
+
 test("on: は workflow_run だけで、workflows: の列挙は PR で起動する workflow の name と過不足なく一致する", () => {
   // PR 起動の workflow を足したのにここへ足し忘れると、その完了では再判定が走らない。
-  // トリガーはパースした `on` から読む。1 行形・フロー形・ブロック形のどれでも、`on:` の中に
-  // 列 0 のコメントがあっても拾い、`if:` 式や ci-summary 自身の `workflow_run.event == 'pull_request'`
-  // は拾わない。`on` が読めない形(`%YAML 1.1` の下ではキーの `on` が真偽値として読まれ、`on` が無くなる)は落とす。
-  const expected = [];
-  for (const f of fs
+  // 期待側は prWorkflowName、列挙の側は listedWorkflows で、どちらもパース結果から読む。
+  const expected = fs
     .readdirSync(WORKFLOWS_DIR)
-    .filter((n) => /\.ya?ml$/.test(n))) {
-    if (f === "ci-summary.yml") continue;
-    const wf = YAML.parse(
-      fs.readFileSync(path.join(WORKFLOWS_DIR, f), "utf8"),
-      { merge: true }
-    );
-    assert.ok(
-      typeof wf?.name === "string" && wf.name.trim(),
-      `${f} に name: が無い`
-    );
-    const on = wf.on;
-    const triggers =
-      typeof on === "string"
-        ? [on]
-        : Array.isArray(on)
-          ? on
-          : on !== null && typeof on === "object"
-            ? Object.keys(on)
-            : assert.fail(`${f} の on: が読めない: ${JSON.stringify(on)}`);
-    if (triggers.includes("pull_request")) expected.push(wf.name.trim());
-  }
-  const listed = yaml().match(/^ {4}workflows: \[(.*)\]$/m);
-  assert.ok(listed, "workflows: [...] の 1 行形が読めない");
-  const actual = listed[1].split(",").map((s) => s.trim());
-  assert.deepEqual(actual.sort(), expected.sort());
+    .filter((n) => /\.ya?ml$/.test(n) && n !== "ci-summary.yml")
+    .map((f) =>
+      prWorkflowName(fs.readFileSync(path.join(WORKFLOWS_DIR, f), "utf8"), f)
+    )
+    .filter((name) => name !== null);
+  assert.deepEqual(
+    listedWorkflows(yaml(), "ci-summary.yml").sort(),
+    expected.sort()
+  );
   // workflow_run: の行の ignore[dangerous-triggers] は on: 全体に効き、ここに足したトリガーの指摘も
   // zizmor から消える(1.31.1 で実測)。トリガーを足すなら、抑止を外して zizmor を当て直すこと。
   assert.deepEqual(
@@ -617,4 +695,105 @@ test("on: は workflow_run だけで、workflows: の列挙は PR で起動す�
     ["workflow_run"],
     "on: に workflow_run 以外のトリガーがある(抑止がその指摘も黙らせる)"
   );
+});
+
+// ---- prWorkflowName / listedWorkflows の fixture(実ファイルでは通らない分岐を試す)----
+
+const FIXTURE_JOBS =
+  "jobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo ok\n";
+
+test("prWorkflowName は 1 行形・列・マップ形の on: を読み、PR で起動するものだけ name を返す", () => {
+  const ifOnly = FIXTURE_JOBS.replace(
+    "    runs-on",
+    "    if: github.event_name == 'pull_request'\n    runs-on"
+  );
+  for (const [label, src, expected] of [
+    ["1 行形", `name: Build\non: pull_request\n${FIXTURE_JOBS}`, "Build"],
+    ["列", `name: Build\non: [push, pull_request]\n${FIXTURE_JOBS}`, "Build"],
+    [
+      "マップ形(列 0 のコメントを挟む)",
+      `name: Build\non:\n  push:\n# c\n  pull_request:\n    paths: [src/**]\n${FIXTURE_JOBS}`,
+      "Build",
+    ],
+    [
+      "引用符付きの name",
+      `name: "Build"\non: pull_request\n${FIXTURE_JOBS}`,
+      "Build",
+    ],
+    [
+      "pull_request を含まない",
+      `name: Build\non: [push]\n${FIXTURE_JOBS}`,
+      null,
+    ],
+    [
+      "if: にだけ pull_request とある",
+      `name: Build\non: push\n${ifOnly}`,
+      null,
+    ],
+  ]) {
+    assert.equal(prWorkflowName(src, label), expected, label);
+  }
+});
+
+test("prWorkflowName は読めない on: とマージキーで落ちる(黙って「起動しない」にしない)", () => {
+  for (const [label, head, message] of [
+    ["空の on:", "name: Build\non:\n", /on: が読めない/],
+    ["空のマップ", "name: Build\non: {}\n", /on: が読めない/],
+    ["空の列", "name: Build\non: []\n", /on: が読めない/],
+    [
+      "文字列でない要素を含む列",
+      "name: Build\non: [push, 1]\n",
+      /on: が読めない/,
+    ],
+    [
+      "%YAML 1.1 の下(キーの on が真偽値として読まれる)",
+      "%YAML 1.1\n---\nname: Build\non: pull_request\n",
+      /on: が読めない/,
+    ],
+    ["true: と書いた形", "name: Build\ntrue: pull_request\n", /on: が読めない/],
+    ["name: が無い", "on: pull_request\n", /name: が無い/],
+    [
+      "マージキー(!!merge は merge: false でも展開される)",
+      "name: Build\non:\n  push:\n  !!merge <<: {pull_request: null}\n",
+      /マージキーを使っている/,
+    ],
+  ]) {
+    assert.throws(
+      () => prWorkflowName(head + FIXTURE_JOBS, label),
+      message,
+      label
+    );
+  }
+});
+
+test("listedWorkflows は workflows: を名前の列として読み、読めない形とマージキーで落ちる", () => {
+  const ci = (workflows) =>
+    `name: CI summary\non:\n  workflow_run:\n${workflows}    types: [completed]\njobs: {}\n`;
+  assert.deepEqual(
+    listedWorkflows(ci('    workflows: ["Build", Checks]\n'), "引用符付き"),
+    ["Build", "Checks"]
+  );
+  assert.deepEqual(
+    listedWorkflows(
+      ci("    workflows:\n      - Build\n      - Checks\n"),
+      "ブロック形"
+    ),
+    ["Build", "Checks"]
+  );
+  for (const [label, workflows, message] of [
+    [
+      "文字列でない要素",
+      "    workflows: [Build, 1]\n",
+      /名前の列として読めない/,
+    ],
+    ["空の列", "    workflows: []\n", /名前の列として読めない/],
+    ["workflows: が無い", "", /名前の列として読めない/],
+    [
+      "マージキー",
+      "    !!merge <<: {workflows: [Build]}\n",
+      /マージキーを使っている/,
+    ],
+  ]) {
+    assert.throws(() => listedWorkflows(ci(workflows), label), message, label);
+  }
 });
