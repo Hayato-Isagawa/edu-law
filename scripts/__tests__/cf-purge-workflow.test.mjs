@@ -35,9 +35,12 @@ const PROD = "6fbfbb65-46dd-47cf-b5a6-59678827502e";
 const PREVIEW_TRIGGER = "b5e6b0e3-d1a9-4ac1-9add-444655be1634";
 const T0 = 1_800_000_000;
 
-// マージキー(`<<:`)は GitHub Actions が展開しないので、展開せずに読む(actions/runner#1182)
-const doc = () =>
-  YAML.parse(fs.readFileSync(WORKFLOW, "utf8"), { merge: false });
+// マージキー(`<<:`)は GitHub Actions が展開しないので、展開せずに読む(actions/runner#1182)。
+// ただし yaml は `!!merge <<:` と `%YAML 1.1` の下の `<<:` を `merge: false` でも展開する
+// (ci-summary-workflow.test.mjs)ので、読みが GitHub と食い違わないよう、マージキーを
+// 使っていること自体を下のテストで落とす
+const source = () => fs.readFileSync(WORKFLOW, "utf8");
+const doc = () => YAML.parse(source(), { merge: false });
 const job = () => doc().jobs.purge;
 const step = () => {
   const steps = job().steps;
@@ -794,6 +797,15 @@ test("自分のビルドの期限が、作成から成功までの実測の最�
   );
 });
 
+test("全体の期限が、skipped から置き換えたビルドの停止までの実測の最長(約 27 分)に届く", () => {
+  // main の skipped 44 件で、skipped のビルドの作成から置き換えたビルドの停止までの最長は
+  // 1617 秒(2026-10-27 に計測)
+  assert.ok(
+    KNOBS.TOTAL_SECONDS >= 27 * 60,
+    `TOTAL_SECONDS ${KNOBS.TOTAL_SECONDS} では実測の最長に届かない`
+  );
+});
+
 test("全体の期限は自分のビルドの期限より長い", () => {
   assert.ok(KNOBS.TOTAL_SECONDS > KNOBS.OWN_BUILD_SECONDS);
 });
@@ -814,4 +826,24 @@ test("job の timeout-minutes が、期限を越えうる最大の時間より�
 test("Purge ステップに continue-on-error が無い(exit 1 が job に伝わる)", () => {
   assert.equal(Object.hasOwn(step(), "continue-on-error"), false);
   assert.equal(Object.hasOwn(job(), "continue-on-error"), false);
+});
+
+// 判定は ci-summary-workflow.test.mjs の mergeKeyPaths と同じ。yaml が展開する形
+// (`!!merge`・`%YAML 1.1`)と、キーをエイリアスで書いた形も拾う
+const isMergeKey = (key) =>
+  YAML.isScalar(key) &&
+  (key.value === "<<" ||
+    (typeof key.value === "symbol" && key.value.description === "<<") ||
+    key.tag === "tag:yaml.org,2002:merge");
+
+test("cf-purge.yml がマージキーを使っていない", () => {
+  const parsed = YAML.parseDocument(source(), { merge: false });
+  let found = 0;
+  YAML.visit(parsed, {
+    Pair(_, pair) {
+      const key = YAML.isAlias(pair.key) ? pair.key.resolve(parsed) : pair.key;
+      if (isMergeKey(key)) found++;
+    },
+  });
+  assert.equal(found, 0, "cf-purge.yml がマージキーを使っている");
 });
