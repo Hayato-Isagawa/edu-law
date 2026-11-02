@@ -1322,9 +1322,9 @@ test("npm script check:sources が、引数なしで検査スクリプトを呼�
 });
 
 /** `test:workflows` の口で走るべきテストの総数。**守る対象から導出しない**(下記) */
-const WORKFLOW_TESTS = 184;
+const WORKFLOW_TESTS = 189;
 
-test("test:workflows の口にあるテストファイルが 6 本である", () => {
+test("test:workflows の口にあるテストファイルが 7 本である", () => {
   // ファイルを足すと下限に静かな余裕が生まれる(実測: ダミーを 3 本足しても
   // `test:workflows` は緑のまま通った)。消したときは下の完全一致も ENOENT で
   // 落ちるが、**足したときに落ちるのはここだけ**。
@@ -1340,6 +1340,7 @@ test("test:workflows の口にあるテストファイルが 6 本である", ()
     "link-check-workflow.test.mjs",
     "vrt-baseline.test.mjs",
     "vrt-targets.test.mjs",
+    "zizmor-workflow.test.mjs",
   ]);
 });
 
@@ -1359,6 +1360,7 @@ test("npm script test:workflows が、実測ちょうどの下限で 2 段を通
     "link-check-workflow.test.mjs",
     "vrt-baseline.test.mjs",
     "vrt-targets.test.mjs",
+    "zizmor-workflow.test.mjs",
   ]
     .map((name) => readRoot(`scripts/__tests__/${name}`))
     .reduce((sum, text) => sum + (text.match(/^test\(/gm) ?? []).length, 0);
