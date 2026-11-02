@@ -86,9 +86,10 @@ action だけが exit 1 する**ので、`exit_code` だけを見ていると通
 
 `zizmor-workflow.test.mjs` も同じ口。`zizmor.yml` の、検査を黙って無効にできる設定を固定する —
 zizmor-action の `with:` が `advanced-security: false`・CI 用の空の設定を渡す `config:`・`collect: all` の 3 つだけ
-であること、その設定(`rules: {}`)を action より前の step で書くこと、step にも job にも `continue-on-error` /
-`if:` が無いこと、トリガーが `pull_request`・週 1 回の `schedule`・`workflow_dispatch` であること、マージキーを
-使っていないこと。どれが崩れても job は緑のまま検査だけが効かなくなる。
+であること、その設定(`rules: {}`)を action より前の step で書くこと、トリガーが `pull_request`・週 1 回の `schedule`・
+`workflow_dispatch` であること、マージキーを使っていないこと、そして workflow 全体が決まった形であること(`env` の `ZIZMOR_OFFLINE`・`continue-on-error`・`if`・Checkout の中身も足せない)。
+どれが崩れても job は緑のまま検査だけが効かなくなる。`uses:` は Dependabot が上げるので形だけを見る(同じ action の
+古い SHA への差し替えは通る)。
 
 `test:workflows` / `test:hooks` / `test:content` は `assert-test-files.mjs` /
 `assert-test-results.mjs` を通している。`node --test` は「glob が 0 件」「中身が空」「全件 skip」の
