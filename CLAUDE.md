@@ -19,8 +19,6 @@
 
 Node.js 24 系を `.tool-versions` で固定。[mise](https://mise.jdx.dev/) を推奨。
 
-**Node の版を上げるときは、Cloudflare 側のビルド変数 `NODE_VERSION` も同じ値に上げる。** Workers Builds は `.tool-versions` を読むが、その版ではビルドしない(2026-11-12 実測: 24.22.2 を指定しても既定の 24.22.1 で走った)。ビルドの版を決めるのは Worker `edu-law` の `NODE_VERSION` で、本番(`main`)とプレビュー(それ以外のブランチ)の 2 つのトリガーそれぞれに設定する。また `.tool-versions` が出たばかりの版を指していると、Workers Builds のツールのインストール段階でビルドが落ちる(2026-11 の 24.22.3 は通るまで 1 日以上かかった)。`.tool-versions` を上げる PR は、プレビュービルドが通ってからマージする。
-
 ```bash
 mise install
 npm ci
@@ -28,6 +26,15 @@ npm run prepare   # Git フックを有効化(clone ごとに 1 回。.npmrc の
 ```
 
 `package.json` の `engines.node` は `>=24.0.0`。
+
+**Node の版を上げるときは、Cloudflare 側のビルド変数 `NODE_VERSION` も同じ値に上げる。** Workers Builds は `.tool-versions` を読むが、その版ではビルドしない(2026-11-12 実測: 24.22.2 を指定しても既定の 24.22.1 で走った)。ビルドの版を決めるのは Worker `edu-law` の `NODE_VERSION` で、本番(`main`)とプレビュー(それ以外のブランチ)の 2 つのトリガーに別々に持つ。また出たばかりの版は、Workers Builds のツールのインストール段階でビルドが落ちる(2026-11 の 24.22.3 は通るまで 1 日以上かかった)。このため次の順で上げる。
+
+1. プレビュー側のトリガーの `NODE_VERSION` を新しい版にする
+2. `.tool-versions` を上げる PR を出し、プレビュービルドが通るのを確かめる(ツールのインストール段階で落ちたら、時間を置いて再実行する)
+3. 本番側のトリガーの `NODE_VERSION` を上げる
+4. PR をマージする
+
+本番側を先に上げると、その版が入るまで `main` のビルドが落ちうる(2026-11-12 に `.node-version` で 24.22.3 を指定したビルドは、ツールのインストール段階で落ちた)。手順 1 の後、その版が入るまでは、他のブランチのプレビュービルドも同じ理由で落ちうる。
 
 ## ビルド・テスト
 
