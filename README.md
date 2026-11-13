@@ -47,13 +47,13 @@
 
 ## セットアップ
 
-Node.js 24 系を `.tool-versions` で固定(`nodejs 24.22.3`)。[mise](https://mise.jdx.dev/) を推奨。
+Node.js 26 系を `.tool-versions` で固定(`nodejs 26.13.1`)。[mise](https://mise.jdx.dev/) を推奨。
 
 ```bash
 git clone https://github.com/Hayato-Isagawa/edu-law.git
 cd edu-law
 
-mise install   # .tool-versions に従って Node 24 を導入
+mise install   # .tool-versions に従って Node 26 を導入
 npm ci         # 依存関係をロックから厳密復元
 npm run prepare  # Git フックを有効化(clone ごとに 1 回。.npmrc の ignore-scripts=true により npm ci では有効にならない)
 
