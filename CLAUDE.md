@@ -19,6 +19,8 @@
 
 Node.js 24 系を `.tool-versions` で固定。[mise](https://mise.jdx.dev/) を推奨。
 
+**Node の版を上げるときは、Cloudflare 側のビルド変数 `NODE_VERSION` も同じ値に上げる。** Workers Builds は `.tool-versions` を読むが、その版ではビルドしない(2026-11-12 実測: 24.22.2 を指定しても既定の 24.22.1 で走った)。ビルドの版を決めるのは Worker `edu-law` の `NODE_VERSION` で、本番(`main`)とプレビュー(それ以外のブランチ)の 2 つのトリガーそれぞれに設定する。また `.tool-versions` が出たばかりの版を指していると、Workers Builds のツールのインストール段階でビルドが落ちる(2026-11 の 24.22.3 は通るまで 1 日以上かかった)。`.tool-versions` を上げる PR は、プレビュービルドが通ってからマージする。
+
 ```bash
 mise install
 npm ci
