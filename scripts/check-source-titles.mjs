@@ -466,8 +466,8 @@ export function collectProseFiles(root) {
   const out = [];
   const lawsDir = path.join(root, LAWS_DIR);
   const walk = (dir) => {
-    for (const entry of readdirSync(dir, { withFileTypes: true }).sort(
-      (a, b) => (a.name < b.name ? -1 : 1)
+    for (const entry of readdirSync(dir, { withFileTypes: true }).sort((a, b) =>
+      a.name < b.name ? -1 : 1
     )) {
       const p = path.join(dir, entry.name);
       // symlink は `isDirectory()` が偽になるので、実体を見て分岐する。
