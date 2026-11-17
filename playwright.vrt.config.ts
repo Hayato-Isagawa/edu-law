@@ -94,6 +94,7 @@ export default defineConfig({
   webServer: {
     command: `npx serve ${dist} -l 4175`,
     port: 4175,
-    reuseExistingServer: !process.env.CI,
+    // 残っている別のサーバーを使わない(理由は playwright.config.ts)。
+    reuseExistingServer: false,
   },
 });

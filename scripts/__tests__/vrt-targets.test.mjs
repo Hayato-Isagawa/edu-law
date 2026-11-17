@@ -44,12 +44,14 @@ import { targets, shotOptions } from "../../vrt/targets.mjs";
 // クエリを変えると ESM のモジュールキャッシュを跨げる。
 const CONFIG_URL = new URL("../../playwright.vrt.config.ts", import.meta.url)
   .href;
+const E2E_CONFIG_URL = new URL("../../playwright.config.ts", import.meta.url)
+  .href;
 let configReads = 0;
-async function readConfig(env = {}) {
+async function readConfig(env = {}, url = CONFIG_URL) {
   const saved = { ...process.env };
   Object.assign(process.env, env);
   try {
-    return (await import(`${CONFIG_URL}?read=${configReads++}`)).default;
+    return (await import(`${url}?read=${configReads++}`)).default;
   } finally {
     for (const key of Object.keys(env)) {
       if (key in saved) process.env[key] = saved[key];
@@ -595,7 +597,7 @@ test("比較設定が VRT ジョブの環境でも同じ値になる", async () 
   }
 });
 
-test("撮影の断面とリトライが固定されている", () => {
+test("撮影の断面とリトライが固定されている", async () => {
   // **断面が減っても件数は減らない。** mobile の viewport を desktop と同じにする /
   // `colorScheme` を 4 つとも light にすると、80 件は撮り続けたまま同じ画像を 2 度撮る
   // ことになり、モバイルやダークの崩れは一切写らなくなる(`targets` の path 重複を
@@ -647,8 +649,19 @@ test("撮影の断面とリトライが固定されている", () => {
   assert.deepEqual(vrtConfig.webServer, {
     command: "npx serve dist -l 4175",
     port: 4175,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
   });
+  // **CI の有無でも読み直す。** `reuseExistingServer: !process.env.CI` に戻すと、このガードが
+  // 走る CI では `false` と一致して素通りする(実測)。E2E の config も同じ理由で固定する —
+  // 同じポートに残った別のサーバーを再利用すると、別のビルドを検査して通る。
+  for (const env of [{ CI: "" }, { CI: "true", GITHUB_ACTIONS: "true" }]) {
+    assert.deepEqual((await readConfig(env)).webServer, vrtConfig.webServer);
+    assert.deepEqual((await readConfig(env, E2E_CONFIG_URL)).webServer, {
+      command: "npx serve dist -l 4178",
+      port: 4178,
+      reuseExistingServer: false,
+    });
+  }
   // **config のキー集合と reporter も固定する。** `globalSetup` やカスタム reporter から
   // dist の起動スクリプトを書き換えれば `-dark` は light を描く(実測)。ガードの `--list`
   // は `globalSetup` を実行せず、reporter は `--reporter=json` の指定が config の値を

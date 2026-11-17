@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
 // ポートはファミリー各リポで固定する(evi 4173 / watch 4174 / law の VRT 4175 /
-// okinawa の preview 4176 / portfolio の VRT 4177)。別プロジェクトのサーバーに
+// okinawa の E2E 4176 / portfolio の VRT 4177)。別プロジェクトのサーバーに
 // 当たると、別サイトを検査して通ってしまう。
 const PORT = 4178;
 
@@ -25,6 +25,8 @@ export default defineConfig({
     // 実行のたびに npm から最新版を取ってきて走らせることになる。
     command: `npx serve dist -l ${PORT}`,
     port: PORT,
-    reuseExistingServer: !process.env.CI,
+    // 同じポートに別の作業ツリーや別セッションのサーバーが残っていると、それを使って
+    // 別のビルドを検査してしまう。使わずに、起動の時点で止める。
+    reuseExistingServer: false,
   },
 });
