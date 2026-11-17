@@ -103,7 +103,9 @@ const ACTIONS_GREEN = [
  *
  * @param checkRuns  `commits/{sha}/check-runs` が返す check_runs。
  * @param comments   `issues/{n}/comments` が返す既存コメント。文字列なら github-actions[bot] の
- *                   本文、`{ body, login }` なら作者も指定する。null なら API エラー(fixture 無し → exit 1)。
+ *                   本文、`{ body, login, type, association }` なら作者も指定する(省いた項目は
+ *                   github-actions[bot] の値。実 API では user.type が Bot、author_association が NONE)。
+ *                   null なら API エラー(fixture 無し → exit 1)。
  * @param pulls      `commits/{sha}/pulls` が返す PR。`prFromEvent` が空のときだけ引かれる。
  * @param prFromEvent  `workflow_run.pull_requests[0].number` に相当する env。
  * @param self       `SELF`(job 名)。同名の check-run は除外される。
@@ -131,9 +133,17 @@ function runStep({
       path.join(dir, "comments.json"),
       JSON.stringify(
         comments.map((c) => {
-          const { body, login = "github-actions[bot]" } =
-            typeof c === "string" ? { body: c } : c;
-          return { body, user: { login } };
+          const {
+            body,
+            login = "github-actions[bot]",
+            type = "Bot",
+            association = "NONE",
+          } = typeof c === "string" ? { body: c } : c;
+          return {
+            body,
+            user: { login, type },
+            author_association: association,
+          };
         })
       )
     );
@@ -337,10 +347,26 @@ test("マーカーの後ろに大量のコメントがあっても、重複を�
 });
 
 test("同じ sha のマーカーでも github-actions[bot] 以外が書いたものは数えない", () => {
-  for (const login of ["someone", "dependabot[bot]", "github-actions"]) {
-    const r = runStep({ comments: [{ body: `✅ 前回\n${MARKER}`, login }] });
-    assert.equal(r.code, 0, `${login}: ${r.out}`);
-    assert.ok(r.commentedBody, `${login}: 投稿されなかった`);
+  // type と association は、オーナーと bot は実 API の値(2026-11-17 にこのリポのコメントで確認)、
+  // someone と github-actions はリポに関わりの無い人を想定した値。user.type の値 1 つ、または
+  // ここに並べた author_association の値 1 つで絞る書き換えは、どれかが赤にする。両者を組み合わせて
+  // ここに無い組(User かつ CONTRIBUTOR など)で絞る形と、fixture に無い項目や値で絞る形は見ていない。
+  for (const author of [
+    { login: "someone", type: "User", association: "NONE" },
+    { login: "github-actions", type: "User", association: "NONE" },
+    { login: "Hayato-Isagawa", type: "User", association: "OWNER" },
+    { login: "dependabot[bot]", type: "Bot", association: "CONTRIBUTOR" },
+    {
+      login: "cloudflare-workers-and-pages[bot]",
+      type: "Bot",
+      association: "NONE",
+    },
+  ]) {
+    const r = runStep({
+      comments: [{ body: `✅ 前回\n${MARKER}`, ...author }],
+    });
+    assert.equal(r.code, 0, `${author.login}: ${r.out}`);
+    assert.ok(r.commentedBody, `${author.login}: 投稿されなかった`);
   }
 });
 
