@@ -348,9 +348,10 @@ test("マーカーの後ろに大量のコメントがあっても、重複を�
 
 test("同じ sha のマーカーでも github-actions[bot] 以外が書いたものは数えない", () => {
   // type と association は、オーナーと bot は実 API の値(2026-11-17 にこのリポのコメントで確認)、
-  // someone と github-actions はリポに関わりの無い人を想定した値。user.type の値 1 つ、または
-  // ここに並べた author_association の値 1 つで絞る書き換えは、どれかが赤にする。両者を組み合わせて
-  // ここに無い組(User かつ CONTRIBUTOR など)で絞る形と、fixture に無い項目や値で絞る形は見ていない。
+  // someone と github-actions はリポに関わりの無い人を想定した値。user.type か、ここに並べた
+  // author_association の値の 1 つを or で足して緩める書き換えは、どれかが赤にする。--jq の式を狭める形・
+  // 組み合わせ(User かつ CONTRIBUTOR など)・fixture に無い項目や値で絞る形はここでは見ず、下の完全一致の
+  // テストが止める(止められない形は下のテストのコメント)。
   for (const author of [
     { login: "someone", type: "User", association: "NONE" },
     { login: "github-actions", type: "User", association: "NONE" },
@@ -367,6 +368,79 @@ test("同じ sha のマーカーでも github-actions[bot] 以外が書いたも
     });
     assert.equal(r.code, 0, `${author.login}: ${r.out}`);
     assert.ok(r.commentedBody, `${author.login}: 投稿されなかった`);
+  }
+});
+
+test("印を探す取得と照合は完全一致で固定する(字面と、gh に実際に渡る呼び出し)", () => {
+  // 例を並べる fixture では、fixture に無い項目や組み合わせで絞り込みを緩める・狭める
+  // 書き換えを塞ぎきれない(#399)。取得・照合の 3 行をそのまま固定し、comments への代入も
+  // 1 か所に限る。式を変えるときはこの期待値も直す
+  const jq = '.[] | select(.user.login == "github-actions[bot]") | .body';
+  const lines = extractRunBlock(WORKFLOW)
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l !== "" && !l.startsWith("#"));
+  const assigns = lines.filter((l) => /\bcomments\+?=/.test(l));
+  assert.equal(assigns.length, 1, `comments への代入: ${assigns.join(" / ")}`);
+  const i = lines.indexOf(assigns[0]);
+  assert.deepEqual(lines.slice(i - 1, i + 2), [
+    'marker="<!-- ci-summary: ${SHA} -->"',
+    `comments=$(gh api --paginate "repos/\${GH_REPO}/issues/\${pr}/comments" --jq '${jq}')`,
+    'if [[ "$comments" == *"$marker"* ]]; then',
+  ]);
+
+  // 字面を残したまま別の変数で 2 回目の照合を足す形や、gh を関数で包んで --jq を差し替える形は、
+  // 上では止まらない。スタブが記録した gh の呼び出しから check-runs の取得と投稿(先頭が投稿の
+  // 呼び出しと一致する 1 行と、本文の改行で分かれた印の行)を除くと、コメント一覧の取得 1 回
+  // (--jq は上の式)だけが残ることを見る。PR 番号を pulls から引く取得は、その経路でだけ式ごと
+  // 除く。パスで絞らないので、別のパス(issues/comments・pulls/{n}/comments など)から取る形も
+  // ここで赤になる。投稿まで進む経路(PR 番号をイベントから取るか pulls から引くか × bot の
+  // コメントが無いか有るか)を 4 通り回し、その経路が通る分岐に足した照合も拾う。見えないのは、
+  // この 4 通りが通らない条件(コメントの長さ・環境変数など)の分岐に足した照合、固定した 3 行を
+  // `if false` などで死んだコードにして別の照合に差し替える形、スタブを通らない呼び出し(curl・
+  // `command -p gh`・絶対パスの gh など)
+  const checkRuns = `api --paginate repos/example/repo/commits/${SHA}/check-runs --jq `;
+  const pullsRead = `api repos/example/repo/commits/${SHA}/pulls --jq .[0].number // empty`;
+  const post = "api repos/example/repo/issues/42/comments -f body=";
+  for (const [label, opts] of [
+    ["PR 番号はイベントから・bot のコメントなし", {}],
+    [
+      "PR 番号は pulls から・bot のコメントなし",
+      { prFromEvent: "", pulls: [{ number: 42 }] },
+    ],
+    [
+      "PR 番号はイベントから・bot の別のコメントあり",
+      { comments: ["bot の別のコメント"] },
+    ],
+    [
+      "PR 番号は pulls から・bot の別のコメントあり",
+      {
+        prFromEvent: "",
+        pulls: [{ number: 42 }],
+        comments: ["bot の別のコメント"],
+      },
+    ],
+  ]) {
+    const r = runStep(opts);
+    assert.equal(r.code, 0, `${label}: ${r.out}`);
+    assert.ok(r.commentedBody, `${label}: 投稿まで進んでいない`);
+    assert.equal(
+      r.ghArgs.filter((a) => a.startsWith(post)).length,
+      1,
+      `${label}: ${r.ghArgs.join(" / ")}`
+    );
+    const others = r.ghArgs.filter(
+      (a) =>
+        !a.startsWith(checkRuns) &&
+        !a.startsWith(post) &&
+        a !== MARKER &&
+        !(opts.prFromEvent === "" && a === pullsRead)
+    );
+    assert.deepEqual(
+      others,
+      [`api --paginate repos/example/repo/issues/42/comments --jq ${jq}`],
+      label
+    );
   }
 });
 
