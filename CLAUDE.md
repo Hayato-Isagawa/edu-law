@@ -153,9 +153,16 @@ PR に @メンション付きコメントを 1 件付け、GitHub Mobile の通�
 絞り込みを緩める・狭める書き換えを塞ぎきれない。#399)。加えて、投稿まで進む 4 つの経路(PR 番号をイベントから
 取るか pulls から引くか × bot のコメントが無いか有るか)でステップを走らせ、gh のスタブが記録した呼び出しから
 check-runs の取得・PR 番号の取得・投稿を除くと、コメント一覧の取得 1 回(`--jq` は同じ式)だけが残ることを見る。
-パスで絞らないので、別のエンドポイントから取る形も、その経路が通る分岐に足した照合も赤になる。見えないのは、
+パスで絞らないので、別のエンドポイントから取る形も、その経路が通る分岐に足した照合も赤になる。この照合だけでは、
 4 つの経路が通らない条件(コメントの長さ・環境変数など)の分岐に足した照合、固定した 3 行を `if false` などで
-死んだコードにして別の照合に差し替える形、スタブを通らない呼び出し(`curl`・`command -p gh`・絶対パスの gh など)。
+死んだコードにして別の照合に差し替える形、スタブを通らない呼び出し(`curl`・`command -p gh`・絶対パスの gh など)が
+見えない。ステップの外からも通知は黙って止められる(`defaults.run.shell` を `bash -n {0}` に・`env` の `BASH_ENV` /
+`SHELLOPTS`・`types` / `branches` の変更・`if: false` の job への `needs:` など)。経路を回して見る方式ではこれが
+閉じないので、**zizmor と同じく workflow 全体を固定し**、run は `scripts/__tests__/fixtures/ci-summary/notify-run.sh` の
+写しと 1 文字ずつ比べる(テストが走らせる本文も同じ写しと比べる。写しを置かない原則の例外。#401)。上の形はどれもここで
+赤になる(実測。run のコメント 1 文字・env の値・ステップや job への `shell:` / `if:` / `continue-on-error:` /
+`container:` / `strategy` の追加も赤)。**run を変えるときは、この fixture もコピーで直す**(手で書き写さない)。
+それ以外を変えるときは、テストの期待値を直す(`workflows:` の列挙に workflow を足すときもここを直すことになる)。
 YAML 側は `workflows:` の列挙が「`on:` に `pull_request` を持つ workflow の `name:`」と過不足なく
 一致することも見る(PR 起動の workflow を足したのに列挙し忘れると、その完了では再判定が走らない)。
 token の権限(workflow 直下は `checks: read` / `pull-requests: write` だけ、job / step には `permissions` を
