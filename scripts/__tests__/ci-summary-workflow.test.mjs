@@ -4,10 +4,13 @@
 // 崩れて通知が消えても workflow は exit 0 のまま、PR の check 一覧にも出ない
 // (run は既定ブランチの sha に紐づく)。気づく手段は「通知が来なかった」しかない。
 //
-// 写しを置かず、**ワークフローに埋まっている本体**を取り出して走らせる。gh はスタブに
-// 差し替え、`--jq` のフィルタは実 jq に通す — `.app.slug == "github-actions"` の絞り込みが
+// **ワークフローに埋まっている本体**を取り出して走らせる。gh はスタブに差し替え、`--jq` の
+// フィルタは実 jq に通す — `.app.slug == "github-actions"` の絞り込みが
 // 無いと、Cloudflare Workers Builds の check-run(workflow_run を起こさない)を待ち続けて
 // 再判定の機会が無いまま通知が消える。フィルタを素通りさせると、その退行を検出できない。
+//
+// それとは別に、workflow 全体を写しで固定している(run の写しは fixtures/ci-summary/
+// notify-run.sh)。理由は下の「workflow 全体が決まった形」のテスト。
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -22,6 +25,12 @@ import YAML from "yaml";
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WORKFLOWS_DIR = path.join(HERE, "..", "..", ".github", "workflows");
 const WORKFLOW = path.join(WORKFLOWS_DIR, "ci-summary.yml");
+const NOTIFY_RUN_FIXTURE = path.join(
+  HERE,
+  "fixtures",
+  "ci-summary",
+  "notify-run.sh"
+);
 const yaml = () => fs.readFileSync(WORKFLOW, "utf8");
 
 /**
@@ -395,10 +404,10 @@ test("印を探す取得と照合は完全一致で固定する(字面と、gh �
   // (--jq は上の式)だけが残ることを見る。PR 番号を pulls から引く取得は、その経路でだけ式ごと
   // 除く。パスで絞らないので、別のパス(issues/comments・pulls/{n}/comments など)から取る形も
   // ここで赤になる。投稿まで進む経路(PR 番号をイベントから取るか pulls から引くか × bot の
-  // コメントが無いか有るか)を 4 通り回し、その経路が通る分岐に足した照合も拾う。見えないのは、
+  // コメントが無いか有るか)を 4 通り回し、その経路が通る分岐に足した照合も拾う。ここで見えないのは、
   // この 4 通りが通らない条件(コメントの長さ・環境変数など)の分岐に足した照合、固定した 3 行を
   // `if false` などで死んだコードにして別の照合に差し替える形、スタブを通らない呼び出し(curl・
-  // `command -p gh`・絶対パスの gh など)
+  // `command -p gh`・絶対パスの gh など)。これらは次のテスト(workflow 全体の固定)で赤になる
   const checkRuns = `api --paginate repos/example/repo/commits/${SHA}/check-runs --jq `;
   const pullsRead = `api repos/example/repo/commits/${SHA}/pulls --jq .[0].number // empty`;
   const post = "api repos/example/repo/issues/42/comments -f body=";
@@ -442,6 +451,72 @@ test("印を探す取得と照合は完全一致で固定する(字面と、gh �
       label
     );
   }
+});
+
+test("workflow 全体が決まった形(run は fixture の写しと完全一致)", () => {
+  // 上の検査は経路を回して見る方式なので、回していない条件(コメントの長さ・環境変数など)の
+  // 分岐に足した照合や、固定した 3 行を死んだコードにして別の変数で照合し直す形を塞げない(#401)。
+  // ステップの外からも通知は黙って止められる(`defaults.run.shell` を `bash -n {0}` に・
+  // `env` の `BASH_ENV` / `SHELLOPTS`・`types` / `branches` の変更・`if: false` の job への
+  // `needs:` など)。写しを置かない原則の例外として、zizmor のテストと同じく workflow 全体を
+  // 固定し、run は fixture の写しと 1 文字ずつ比べる。テストが走らせる本文(extractRunBlock)も
+  // 同じ写しと比べる。run を変えるときは fixture もコピーで直す(手で書き写さない)。それ以外を
+  // 変えるときは下の期待値を直す。素の `<<:` は余計なキーとしてここで赤になる。`!!merge <<:` と
+  // `%YAML 1.1` の下の `<<:` は yaml が展開してしまい、パース結果の比較では緑になりうるので、
+  // マージキーを使っていること自体もここで落とす(mergeKeyPaths)。行区切りに使われうる単独の CR・U+0085・U+2028・U+2029 は、yaml と GitHub で
+  // 読みが食い違いうるので、ファイルに置くこと自体を落とす
+  assert.doesNotMatch(
+    yaml().replace(/\r\n/g, "\n"),
+    /[\r\u0085\u2028\u2029]/,
+    "行区切りに使われうる文字がある"
+  );
+  assert.deepEqual(mergeKeyPaths(yaml()), [], "マージキーを使っている");
+  const expected = fs.readFileSync(NOTIFY_RUN_FIXTURE, "utf8");
+  assert.deepEqual(YAML.parse(yaml(), { merge: false }), {
+    name: "CI summary",
+    on: {
+      workflow_run: {
+        workflows: [
+          "Build",
+          "E2E Tests",
+          "VRT",
+          "Security Audit",
+          "Dependabot auto-merge",
+          "zizmor",
+        ],
+        types: ["completed"],
+      },
+    },
+    permissions: { checks: "read", "pull-requests": "write" },
+    concurrency: {
+      group: "ci-summary-${{ github.event.workflow_run.head_sha }}",
+      "cancel-in-progress": false,
+    },
+    jobs: {
+      notify: {
+        if:
+          "github.event.workflow_run.event == 'pull_request' && " +
+          "github.event.workflow_run.triggering_actor.login != 'dependabot[bot]'",
+        "runs-on": "ubuntu-latest",
+        "timeout-minutes": 5,
+        steps: [
+          {
+            name: "Comment on the PR when every Actions check on the commit has succeeded",
+            env: {
+              GH_TOKEN: "${{ github.token }}",
+              GH_REPO: "${{ github.repository }}",
+              SHA: "${{ github.event.workflow_run.head_sha }}",
+              PR_FROM_EVENT:
+                "${{ github.event.workflow_run.pull_requests[0].number }}",
+              SELF: "${{ github.job }}",
+            },
+            run: expected,
+          },
+        ],
+      },
+    },
+  });
+  assert.equal(extractRunBlock(WORKFLOW), expected, "テストが走らせる本文");
 });
 
 test("別の sha のマーカーしか無ければ投稿する(再 push は別扱い)", () => {
