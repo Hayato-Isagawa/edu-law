@@ -1,6 +1,6 @@
 # 0023. ビジュアルリグレッションテスト(VRT)を視覚変更 PR に限定して導入する(edu-evidence ADR 0024 ミラー)
 
-- 状態: 採用
+- 状態: 採用(差分の判定と projects は [0034](0034-vrt-exact-match-no-retry-dark.md) で上書き。ゲートの `paths` と 2 ビルド差分は [0027](0027-content-neutral-vrt-baseline.md)、対象 URL・ポート・clip / mask の逃がし・e2e の記述は 0034 で訂正)
 - 日付: 2026-06-26
 - 関連 PR: test/visual-regression-testing
 - 関連 ADR: edu-evidence 0024(原本・本 ADR のミラー元) / 0008(レイアウト骨格) / 0014(カード角丸)
