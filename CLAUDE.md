@@ -6,7 +6,7 @@
 
 - **自前の法解釈はしない。** サイトが提供するのは「法令本文への e-Gov リンク + 公式解説の見出し整理 + 公式 URL への誘導」のみ
 - 法解釈・現場助言は弁護士・行政書士の領域。本サイトはそれらへの**入口**を整理することに徹する
-- 引用は **公共データ利用規約 第 1.0 版** の範囲内に限り、出典・URL・取得日を必ず明記する(具体的な引用ルール ADR は別途起票)
+- 引用は **公共データ利用規約 第 1.0 版** の範囲内に限り、出典・URL・取得日を必ず明記する(引用ルールは ADR 0002、根拠の規約を公共データ利用規約へ移したのは ADR 0012)
 
 ## ブランド
 
@@ -17,7 +17,7 @@
 
 ## 環境
 
-Node.js 26 系を `.tool-versions` で固定。[mise](https://mise.jdx.dev/) を推奨。
+Node.js 26 系を `.tool-versions` で固定(edu-evidence ADR 0046)。[mise](https://mise.jdx.dev/) を推奨。
 
 ```bash
 mise install
@@ -25,9 +25,9 @@ npm ci
 npm run prepare   # Git フックを有効化(clone ごとに 1 回。.npmrc の ignore-scripts=true で npm ci は prepare を走らせない)
 ```
 
-`package.json` の `engines.node` は `>=26.0.0`。
+`package.json` の `engines.node` は `>=26.0.0`(edu-evidence ADR 0047)。
 
-**Node の版を上げるときは、Cloudflare 側のビルド変数 `NODE_VERSION` も同じ値に上げる。** Workers Builds は `.tool-versions` を読むが、その版ではビルドしない(2026-11-12 実測: 24.22.2 を指定しても既定の 24.22.1 で走った)。ビルドの版を決めるのは Worker `edu-law` の `NODE_VERSION` で、`.node-version` より優先される(2026-11-13 実測: `.node-version` に 26.13.1 を置いても `NODE_VERSION` の 24.22.3 で走った)。ダッシュボードのビルド変数は、本番(`main`)とプレビュー(それ以外のブランチ)の 2 つのトリガーに同じ値をまとめて保存する。出たばかりの版は、Workers Builds のツールのインストール段階でビルドが落ちる(2026-11 の 24.22.3 は通るまで 1 日以上かかった)。Workers Builds の npm は `package.json` の `packageManager` でしか変わらず、無ければ既定の 10.9.2 になる。新しい Node に同梱の npm の版(nodejs.org の `dist/index.json` の `npm` 欄)に合わせる。このため次の順で上げる。
+**Node の版を上げるときは、Cloudflare 側のビルド変数 `NODE_VERSION` も同じ値に上げる。** Workers Builds は `.tool-versions` を読むが、その版ではビルドしない(2026-11-12 実測: 24.22.2 を指定しても既定の 24.22.1 で走った)。ビルドの版を決めるのは Worker `edu-law` の `NODE_VERSION` で、`.node-version` より優先される(2026-11-13 実測: `.node-version` に 26.13.1 を置いても `NODE_VERSION` の 24.22.3 で走った)。ダッシュボードのビルド変数は、本番(`main`)とプレビュー(それ以外のブランチ)の 2 つのトリガーに同じ値をまとめて保存する。出たばかりの版は、Workers Builds のツールのインストール段階でビルドが落ちる(2026-11 の 24.22.3 は通るまで 1 日以上かかった)。Workers Builds の npm は `package.json` の `packageManager` でしか変わらず、無ければ既定の 10.9.2 になる(`packageManager` を置く決定は edu-evidence ADR 0047)。新しい Node に同梱の npm の版(nodejs.org の `dist/index.json` の `npm` 欄)に合わせる。このため次の順で上げる。
 
 1. ダッシュボードで `NODE_VERSION` を新しい版にする(本番とプレビューの両方に入る)
 2. `.tool-versions` と、`package.json` の `packageManager` を上げる PR を出し、プレビュービルドのログの `Detected the following tools from environment:` に `nodejs@<新しい版>` と `npm@<同梱の版>` が出て、成功するのを確かめる。ツールのインストール段階で落ちたら、`NODE_VERSION` を元の版に戻し、時間を置いてやり直す
@@ -58,8 +58,8 @@ npm run vrt      # ビジュアルリグレッションテスト(現 dist を撮
 `link-check.yml` に埋め込まれた「検出をどう届けるか」の判定を固定する。**壊れても静かに壊れる** —
 lychee は走り、レポートもアーティファクトに残り、job も緑のまま**通知だけ**が消える。姉妹リポ
 okinawa-in-data では open な link-check Issue があると後続の検出を捨てており、2026-08-17 に
-見つかった 404 が 2 日間どこにも出なかった(okinawa-in-data#107 / #110。このリポも同じコードを
-共有していた)。
+見つかった 404 が 2 日間どこにも出なかった(塞いだ後の形は okinawa-in-data の
+`.github/workflows/link-check.yml`。このリポも同じコードを共有していた)。
 
 テストはワークフローから `run:` ブロックを取り出して bash で走らせ、`gh` をスタブして渡された
 引数を全部記録する。**写しを置かないので、ワークフロー側を変えるとテスト対象も変わる** —
@@ -171,7 +171,7 @@ YamlDotNet は改行と読む)。共通ファイル `scripts/__tests__/workflow-
 実ディレクトリを走査して「運ぶ・`paths` で監視する・描画に入らないと明言する」の三択を強制している。
 
 `ci-summary-workflow.test.mjs` も同じ口。`ci-summary.yml`(PR の Actions が全部成功したときだけ
-PR に @メンション付きコメントを 1 件付け、GitHub Mobile の通知を 1 回にまとめる)は失敗時に何もしない
+PR に @メンション付きコメントを 1 件付け、GitHub Mobile の通知を 1 回にまとめる。方針は ADR 0036)は失敗時に何もしない
 設計なので、判定が崩れて通知が消えても workflow は exit 0 のまま。link-check と同じく `run:` を
 取り出して bash で走らせ、`gh` はスタブに差し替える。`--jq` のフィルタは**実 jq に通す** —
 `.app.slug == "github-actions"` の絞り込みが無いと Cloudflare の check-run(`workflow_run` を
@@ -477,7 +477,7 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
 
 ## ビジュアルリグレッションテスト(VRT)
 
-共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー。**ADR に載る設定値・対象 URL・ポートは導入時のもので、現行は以下**)。**ピクセル一致は VRT、コントラストは `e2e/a11y.spec.ts` が見る。別系統なので、片方が捕まえたものをもう片方が捕まえるとは限らない** — 省庁バッジの色変更(#160)は a11y が検出し、VRT は取り逃がしていた:
+共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー。**ADR 0023 に載る設定値・対象 URL・ポートは導入時のもので、現行は以下**。判定を完全一致にしリトライを外しダークも撮る決定は ADR 0034)。**ピクセル一致は VRT、コントラストは `e2e/a11y.spec.ts` が見る。別系統なので、片方が捕まえたものをもう片方が捕まえるとは限らない** — 省庁バッジの色変更(#160)は a11y が検出し、VRT は取り逃がしていた:
 
 - **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 × ライト / ダークの 4 projects、`threshold: 0`、`maxDiffPixels: 0`、`retries: 0`、アニメーション無効)。**`maxDiffPixelRatio` は外した**(理由は次項)。**`scripts/__tests__/vrt-targets.test.mjs` が config を import して、`expect.toHaveScreenshot` の 4 キー・projects の viewport・`retries`・`ignoreSnapshots` / `updateSnapshots` を固定している**。**spec 側からの上書きは見ていない**(残る穴。前掲)
 - **残る盲点**: pixelmatch の `includeAA`(既定 false・Playwright は上書きしない)により、アンチエイリアスと判定された画素は `threshold: 0` でも差分に数えない。**エッジだけが変わる変更は通る**
@@ -496,7 +496,7 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
   **CI も #202 の run でベースライン 76 passed(2.4 分)/ 比較 76 passed(2.6 分)・収束失敗 0**。
   内訳の実測値は `playwright.vrt.config.ts` のコメント
 - **リトライは入れない**。安定化ループでも収まらなかった問題まで握り潰すことになる
-- ADR 0023 が挙げている「CI で揺れが残る場合は該当ページを viewport clip / mask にフォールバックする」は、`fullPage` を固定した今は required check を赤にする。取るなら `vrt/targets.mjs` の `shotOptions` と `scripts/__tests__/vrt-targets.test.mjs` を同時に直すこと
+- ADR 0023 が挙げている「CI で揺れが残る場合は該当ページを viewport clip / mask にフォールバックする」は、`fullPage` を固定した今は required check を赤にする。取るなら `vrt/targets.mjs` の `shotOptions` と `scripts/__tests__/vrt-targets.test.mjs` を同時に直すこと(ADR 0034 の訂正表)
 - **対象**: `vrt/pages.spec.ts` がテンプレート代表 20 URL(トップ / about / 検索 / 場面ハブ / 法令一覧・詳細 / ガイド一覧 + 個別ガイド 12 本 / 404)をフルページ撮影 = 4 projects(desktop / mobile × ライト / ダーク)で 80 件。**ダークは `data-theme` を直接立てず `colorScheme` で与える** — `Layout.astro` の起動スクリプトが localStorage → `prefers-color-scheme` の順に見て `data-theme` を決めるので、エミュレーションを使えばその経路ごと撮れる。左上の画素で実測すると light は `#faf9f5`、dark は `#16181d`(= `--color-bg` のダーク値)。**代表 URL が静かに減る経路は `scripts/__tests__/vrt-targets.test.mjs` が見ている**(上の「配線の検査は、守る対象と違う口に置く」)。件数は下限ではなく **20 に固定**してあるので、テンプレートを追加して代表 URL を 1 行追記したら、**あちらの件数とこの行の両方を直すことになる**(実際に `/search` の追加と `/changelog` の除外で 2 世代ぶん古いまま残っていた)。**`/changelog` は入れない** — PR ごとに 1 件増えるので、内容の追加だけで毎回赤になり、**本当の崩れが埋もれる**(トップの「最近の更新」も撮影前にリストだけ隠す。理由は `vrt/pages.spec.ts` 冒頭)
 - **ゲート**: `.github/workflows/vrt.yml` が `pull_request` の `paths` で描画に効くパスに限定起動する。`src/content/**` だけの PR では走らない(`workflow_dispatch` で手動実行可)。`src/data/**` はベースラインへ運ぶ素材なので `paths` には無い(ADR 0027)。依存の更新でも起動する。**ただし gate にはならない** — VRT は required check ではなく、`dependabot-auto-merge.yml` の `gh pr merge --auto` は required しか待たないので、非 major の bump は VRT が赤くてもマージされ、多くは VRT の結果が出る前にマージされる(required は Build site と Playwright E2E〈ADR 0032〉。2026-09-18〜10-19 の Dependabot PR 35 件のうち、E2E が VRT より後に終わったのは 5 件。VRT は **5 分 58 秒**かかる。ダークを足して撮影が倍になった分がそのまま job に乗り、以前の 3〜4 分から伸びた)。得られるのは事後に差分画像が残ることだけ。**列挙の正典は同ファイルで、ここには写さない** — 写すと片方だけが古くなる(現に #153 / #159 の 2 世代ぶんずれていた)。除外の否定パターンは順序に意味があるので、足すときは同ファイルのコメントを読むこと
 - **比較方式(案A + コンテンツ中立)**: CI 内で main と PR を両方ビルドし、同一 Linux 環境で撮影・比較する。ベースライン PNG はコミットしない(`vrt/__screenshots__/` は gitignore)。システムフォント描画の macOS↔Linux 差を回避するため。
@@ -508,7 +508,7 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
 ## ホスティング
 
 Cloudflare Workers の静的アセット配信(Workers Builds が GitHub `main` を監視して自動デプロイ)。
-設定は `wrangler.jsonc`。2026-08-05 に Cloudflare Pages から移行した。
+設定は `wrangler.jsonc`。2026-08-05 に Cloudflare Pages から移行した(edu-evidence ADR 0032)。
 ドメイン: `law.edu-evidence.org`(`edu-evidence.org` サブドメイン)
 セキュリティヘッダー: `public/_headers`(Workers でもそのまま解釈される)
 リダイレクト: `public/_redirects`(同上)
