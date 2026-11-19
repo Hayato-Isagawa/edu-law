@@ -477,7 +477,7 @@ e-Gov の法令 ID は不透明(`418AC0000000120` = 教育基本法)で、1 文�
 
 ## ビジュアルリグレッションテスト(VRT)
 
-共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー。判定を完全一致にしリトライを外しダークも撮る決定は ADR 0034。**ADR に載る設定値・対象 URL・ポートは導入時のもので、現行は以下**)。**ピクセル一致は VRT、コントラストは `e2e/a11y.spec.ts` が見る。別系統なので、片方が捕まえたものをもう片方が捕まえるとは限らない** — 省庁バッジの色変更(#160)は a11y が検出し、VRT は取り逃がしていた:
+共有レイアウト(`src/layouts/`)・コンポーネント(`src/components/`)・`global.css` の改修による視覚回帰を、目視に頼らず差分画像で検出する仕組み(ADR 0023、edu-evidence ADR 0024 のミラー。**ADR 0023 に載る設定値・対象 URL・ポートは導入時のもので、現行は以下**。判定を完全一致にしリトライを外しダークも撮る決定は ADR 0034)。**ピクセル一致は VRT、コントラストは `e2e/a11y.spec.ts` が見る。別系統なので、片方が捕まえたものをもう片方が捕まえるとは限らない** — 省庁バッジの色変更(#160)は a11y が検出し、VRT は取り逃がしていた:
 
 - **設定**: `playwright.vrt.config.ts`(`testDir: vrt/`、desktop 1280 / mobile 390 × ライト / ダークの 4 projects、`threshold: 0`、`maxDiffPixels: 0`、`retries: 0`、アニメーション無効)。**`maxDiffPixelRatio` は外した**(理由は次項)。**`scripts/__tests__/vrt-targets.test.mjs` が config を import して、`expect.toHaveScreenshot` の 4 キー・projects の viewport・`retries`・`ignoreSnapshots` / `updateSnapshots` を固定している**。**spec 側からの上書きは見ていない**(残る穴。前掲)
 - **残る盲点**: pixelmatch の `includeAA`(既定 false・Playwright は上書きしない)により、アンチエイリアスと判定された画素は `threshold: 0` でも差分に数えない。**エッジだけが変わる変更は通る**

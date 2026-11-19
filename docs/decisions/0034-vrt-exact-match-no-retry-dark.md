@@ -10,9 +10,9 @@
 ADR 0023 は VRT を `maxDiffPixelRatio 0.01`・desktop / mobile の 2 projects で導入した。導入時の
 `playwright.vrt.config.ts` は CI で `retries: 2` も持っていた(ADR の本文には無い)。
 
-その後、判定・リトライ・projects は PR ごとに変わったが、どれも ADR を起こしていない。`CLAUDE.md` は
-「ADR に載る設定値・対象 URL・ポートは導入時のもの」と注記するだけで、変えた理由は PR 本文と
-`playwright.vrt.config.ts` のコメントにしか残っていない。本 ADR はそれを決定として記録する。
+その後、判定・リトライ・projects は PR ごとに変わったが、どれも ADR を起こしていない。変えた理由は PR 本文・
+`playwright.vrt.config.ts` のコメント・`CLAUDE.md` の VRT の節に書かれているが、決定として記録した ADR は無く、
+`CLAUDE.md` は「ADR に載る設定値・対象 URL・ポートは導入時のもの」と注記している。本 ADR はそれを決定として記録する。
 
 ### 経緯
 
@@ -22,7 +22,7 @@ ADR 0023 は VRT を `maxDiffPixelRatio 0.01`・desktop / mobile の 2 projects 
 | #162 | 2026-08-09 | 比率を 0.001 に、`retries: 0` に | #160 で省庁バッジの色を変えたが VRT は検出しなかった。同一ビルド同士の撮り比べはノイズ 0 |
 | #197 | 2026-08-27 | `threshold: 0` + `maxDiffPixels: 0`。比率は外す | 下の「比率をやめた理由」 |
 | #202 | 2026-08-28 | ダークを足して desktop / mobile × ライト / ダークの 4 projects に | ダークは 1 枚も撮っていなかった |
-| #204 | 2026-08-28 | (#202 のレビュー反映) | CI で 4 projects のノイズ 0 を実測。job は 3〜4 分から 5 分 58 秒に伸びた |
+| #204 | 2026-08-28 | ガードのテストが config を環境ごとに 1 本ずつ読み直すよう直した | CI で 4 projects のノイズ 0 を実測。job は 3〜4 分から 5 分 58 秒に伸びた |
 
 #162 は #160 を「文字が小さく比率 0.01 に届かなかった」と説明したが、#197 がこれを誤りとして訂正している
 (次節)。
@@ -98,7 +98,7 @@ ADR 0027 で訂正済み)。
 | トレードオフ「テンプレートを追加したら `vrt/pages.spec.ts` に代表 URL を 1 行追記する」 | 追記先は `vrt/targets.mjs` |
 | 「ポートは 4173 を新規割当」と、その理由「別リポ・別 CI ジョブで動くため衝突しない」 | 理由が誤っていた。4173 は edu-evidence の Playwright と同じポートで、ローカルでは `reuseExistingServer` により一方が他方のサーバーにつながりうる。#149 で 4175 に変えた |
 | トレードオフ「CI で揺れが残る場合は該当ページを viewport clip / mask にフォールバックする」 | #200 で `fullPage: true` を `vrt/targets.mjs` の `shotOptions` に置き、ガードで固定した。clip / mask に替えると required check の「Build site」が赤になる。取るなら同ファイルと `scripts/__tests__/vrt-targets.test.mjs` を同時に変える |
-| 背景・「edu-law 固有の差分」・「なぜこの判断にしたか」の「e2e が存在しない / 無い」 | #160(2026-08-09)で `e2e/a11y.spec.ts` が入り、その後に機能テストも加わった。ピクセルの一致は VRT、コントラストは a11y が見る |
+| 背景・「edu-law 固有の差分」・「なぜこの判断にしたか」の「e2e が存在しない / 無い」 | #160(2026-08-08 UTC)で `e2e/a11y.spec.ts` が入り、その後に機能テストも加わった。ピクセルの一致は VRT、コントラストは a11y が見る |
 
 ## 撤回 / 再検討の条件
 
