@@ -21,6 +21,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isDeepStrictEqual } from "node:util";
 import YAML from "yaml";
+import {
+  ambiguousYaml,
+  mergeKeyPaths,
+  parseWorkflow,
+  triggerNames,
+} from "./workflow-yaml.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WORKFLOWS_DIR = path.join(HERE, "..", "..", ".github", "workflows");
@@ -463,16 +469,12 @@ test("workflow 全体が決まった形(run は fixture の写しと完全一致
   // 同じ写しと比べる。run を変えるときは fixture もコピーで直す(手で書き写さない)。それ以外を
   // 変えるときは下の期待値を直す。素の `<<:` は余計なキーとしてここで赤になる。`!!merge <<:` と
   // `%YAML 1.1` の下の `<<:` は yaml が展開してしまい、パース結果の比較では緑になりうるので、
-  // マージキーを使っていること自体もここで落とす(mergeKeyPaths)。行区切りに使われうる単独の CR・U+0085・U+2028・U+2029 は、yaml と GitHub で
-  // 読みが食い違いうるので、ファイルに置くこと自体を落とす
-  assert.doesNotMatch(
-    yaml().replace(/\r\n/g, "\n"),
-    /[\r\u0085\u2028\u2029]/,
-    "行区切りに使われうる文字がある"
-  );
+  // マージキーを使っていること自体もここで落とす(mergeKeyPaths)。yaml と GitHub の runner とで読みが食い違いうる
+  // 書き方(行区切りに使われうる文字・未知のタグ・`%YAML` など)も、パース結果の比較では見えないので先に落とす(ambiguousYaml)
+  assert.deepEqual(ambiguousYaml(yaml()), []);
   assert.deepEqual(mergeKeyPaths(yaml()), [], "マージキーを使っている");
   const expected = fs.readFileSync(NOTIFY_RUN_FIXTURE, "utf8");
-  assert.deepEqual(YAML.parse(yaml(), { merge: false }), {
+  assert.deepEqual(parseWorkflow(yaml()), {
     name: "CI summary",
     on: {
       workflow_run: {
@@ -758,62 +760,7 @@ test("同じ commit の判定は head_sha で直列化する", () => {
 // `!!merge <<:` と `%YAML 1.1` の下の `<<:` を `merge: false` でも展開する(2.9.1 で実測)ので、読みが食い違って黙って緑になりうる
 // (`workflow_run` の `<<: {workflows: …}` を列挙と読む、など)。権限の検査が `merge: true` で読む
 // 理由(禁じる権限を見落とさない)とは別の話なので、そちらは変えない。
-
-// yaml 2.9.1 の判定(schema/yaml-1.1/merge.js の identify)が展開する形を含めて拾う。2.9.1 では、
-// 展開される形のキーの値が Symbol("<<") になる。引用符付きの "<<" も拾うので、yaml より広い
-const isMergeKey = (key) =>
-  YAML.isScalar(key) &&
-  (key.value === "<<" ||
-    (typeof key.value === "symbol" && key.value.description === "<<") ||
-    key.tag === "tag:yaml.org,2002:merge");
-
-/** マージキーを使っている位置を返す。キーをエイリアスで書いた形も、参照先を解決して拾う */
-function mergeKeyPaths(src) {
-  const parsed = YAML.parseDocument(src, { merge: false });
-  const found = [];
-  YAML.visit(parsed, {
-    Pair(_, pair, ancestors) {
-      const key = YAML.isAlias(pair.key) ? pair.key.resolve(parsed) : pair.key;
-      if (isMergeKey(key)) found.push(pathOf(ancestors));
-    },
-  });
-  return found;
-}
-
-function pathOf(ancestors) {
-  let at = "";
-  ancestors.forEach((node, i) => {
-    if (YAML.isPair(node))
-      at += (at ? "." : "") + String(node.key?.value ?? node.key);
-    else if (YAML.isSeq(node))
-      at += `[${node.items.indexOf(ancestors[i + 1])}]`;
-  });
-  return at || "(root)";
-}
-
-const parseWorkflow = (src) => YAML.parse(src, { merge: false });
-
-/**
- * `on:` のトリガー名を返す。1 行形(`on: pull_request`)・列(`on: [push, pull_request]`)・
- * マップ形のどれでも読み、`on:` の中に列 0 のコメントがあっても読める。読めない形は null —
- * 空の `on:`・空の列やマップ・文字列でない要素を含む列・`%YAML 1.1` の下(キーの `on` が
- * 真偽値 true として読まれ、`on` が無くなる)・`true:` と書いた形など。呼ぶ側は null を
- * 「起動しない」と読まずに落とすこと
- */
-function triggerNames(on) {
-  if (typeof on === "string" && on.trim()) return [on.trim()];
-  if (
-    Array.isArray(on) &&
-    on.length > 0 &&
-    on.every((t) => typeof t === "string" && t.trim())
-  )
-    return on.map((t) => t.trim());
-  if (on !== null && typeof on === "object" && !Array.isArray(on)) {
-    const keys = Object.keys(on);
-    if (keys.length > 0) return keys;
-  }
-  return null;
-}
+// mergeKeyPaths・parseWorkflow・triggerNames は、ほかの workflow のテストと共通の workflow-yaml.mjs に置いている。
 
 /**
  * workflow 1 本について、PR で起動するならその name を、しないなら null を返す。

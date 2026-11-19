@@ -1,0 +1,112 @@
+// ワークフローのテストが、マージキー・トリガー・列挙をパース結果で読むときと、手元の yaml と GitHub の runner とで
+// 読みが食い違いうる書き方を落とすときの共通部分。
+// `*.test.mjs` ではないので、node --test の対象にはならない。
+
+import YAML from "yaml";
+
+/**
+ * ワークフローを読む(`merge: false`)。
+ *
+ * GitHub Actions はマージキーを展開しない(actions/runner#1182 で runner の COLLABORATOR が
+ * 「Merge keys are part of YAML 1.1 but not YAML 1.2」と回答。2026-10 時点)。`merge: true` で読むと
+ * `<<: {id: lychee, continue-on-error: true}` のように GitHub では効かない値が「ある」と
+ * 見えて、「あること」を求める規則が緩む。ただし `!!merge <<:` と、`%YAML 1.1` の下の
+ * `<<:` は `merge: false` でも yaml が展開する(2.9.1 で実測)。なので規則の側は `mergeKeyPaths` を必ず併用し、
+ * マージキーを使っていること自体を違反にする。
+ */
+export const parseWorkflow = (src) => YAML.parse(src, { merge: false });
+
+// yaml 2.9.1 の判定(schema/yaml-1.1/merge.js の identify)が展開する形を含めて拾う。2.9.1 では、
+// 展開される形のキーの値が Symbol("<<") になる。引用符付きの "<<" も拾うので、yaml より広い
+const isMergeKey = (key) =>
+  YAML.isScalar(key) &&
+  (key.value === "<<" ||
+    (typeof key.value === "symbol" && key.value.description === "<<") ||
+    key.tag === "tag:yaml.org,2002:merge");
+
+/**
+ * マージキーを使っている位置を返す(例: `jobs.notify`)。
+ * 展開された後の値では `!!merge` や `%YAML 1.1` の形が見えないので、文書の木で探す。
+ * キーをエイリアスで書いた形(`&k <<` を置いて `*k :`)も、参照先を解決して拾う。
+ * yaml はこの形を展開しないが、値が `<<` の下に隠れて「無いこと」を求める検査が素通りする。
+ */
+export function mergeKeyPaths(src) {
+  const doc = YAML.parseDocument(src, { merge: false });
+  const found = [];
+  YAML.visit(doc, {
+    Pair(_, pair, ancestors) {
+      const key = YAML.isAlias(pair.key) ? pair.key.resolve(doc) : pair.key;
+      if (isMergeKey(key)) found.push(pathOf(ancestors));
+    },
+  });
+  return found;
+}
+
+function pathOf(ancestors) {
+  let at = "";
+  ancestors.forEach((node, i) => {
+    if (YAML.isPair(node))
+      at += (at ? "." : "") + String(node.key?.value ?? node.key);
+    else if (YAML.isSeq(node))
+      at += `[${node.items.indexOf(ancestors[i + 1])}]`;
+  });
+  return at || "(root)";
+}
+
+/**
+ * `on:` のトリガー名を返す。1 行形(`on: pull_request`)・列(`on: [push, pull_request]`)・
+ * マップ形のどれでも読み、`on:` の中に列 0 のコメントがあっても読める。読めない形は null —
+ * 空の `on:`・空の列やマップ・文字列でない要素を含む列・`%YAML 1.1` の下(キーの `on` が
+ * 真偽値 true として読まれ、`on` が無くなる)・`true:` と書いた形など。呼ぶ側は null を
+ * 「起動しない」と読まずに落とすこと。マージキーは呼ぶ側が `mergeKeyPaths` で落とす
+ */
+export function triggerNames(on) {
+  if (typeof on === "string" && on.trim()) return [on.trim()];
+  if (
+    Array.isArray(on) &&
+    on.length > 0 &&
+    on.every((t) => typeof t === "string" && t.trim())
+  )
+    return on.map((t) => t.trim());
+  if (on !== null && typeof on === "object" && !Array.isArray(on)) {
+    const keys = Object.keys(on);
+    if (keys.length > 0) return keys;
+  }
+  return null;
+}
+
+/**
+ * 手元の yaml と GitHub の runner とで読みが食い違いうる書き方のうち、次のものを返す(空なら、どれも無い)。
+ * テストは手元の yaml や行単位の取り出しで workflow を読むので、どれもテストが緑のまま本番の挙動だけを変えうる。
+ *
+ * - 単独の CR・U+0085・U+2028・U+2029: yaml はコメントの中ではコメントの続きとして読むが、runner が使う
+ *   YamlDotNet(`CharacterAnalyzer.IsBreak`)は改行として読む
+ * - yaml のエラーと警告(未知のタグ・未知のディレクティブなど): yaml は警告を出して読み進める
+ * - 明示したタグ: actions/runner の `YamlObjectReader` は、スカラーに付いた未知のタグや、引用符付きの
+ *   値に付いた bool / int / float / null のタグで例外を投げ、マップや列に付いたタグは見ない(yaml は
+ *   `!!set` を Set として読む)。`!!int "5"` のように yaml が警告を出さずに値へ解決するものもあるので、
+ *   workflow では使わないタグを、付いていること自体で落とす
+ * - `%YAML` と `%TAG` のディレクティブ: yaml は警告を出さずに受けるが、runner が pin する YamlDotNet 5.3.0 は
+ *   `%YAML 1.2` を例外にし、`%YAML 1.1` の下では yaml が `yes` を true と読む。workflow では使わないので落とす
+ *
+ * github.com のサーバーが runner と同じ実装で workflow を読むかは未検証。
+ */
+export function ambiguousYaml(src) {
+  const found = [];
+  if (/[\r\u0085\u2028\u2029]/.test(src.replace(/\r\n/g, "\n")))
+    found.push("行区切りに使われうる文字がある");
+  const doc = YAML.parseDocument(src, { merge: false });
+  for (const e of [...doc.errors, ...doc.warnings])
+    found.push(`yaml: ${e.message}`);
+  if (doc.directives?.yaml?.explicit) found.push("%YAML ディレクティブがある");
+  if (Object.keys(doc.directives?.tags ?? {}).some((h) => h !== "!!"))
+    found.push("%TAG ディレクティブがある");
+  if (doc.directives?.tags?.["!!"] !== "tag:yaml.org,2002:")
+    found.push("%TAG で !! を差し替えている");
+  YAML.visit(doc, {
+    Node(_, node) {
+      if (node.tag) found.push(`タグ: ${node.tag}`);
+    },
+  });
+  return found;
+}

@@ -99,6 +99,27 @@ zizmor-action の `with:` が `advanced-security: false`・CI 用の空の設定
 どれが崩れても job は緑のまま検査だけが効かなくなる。`uses:` は Dependabot が上げるので形だけを見る(同じ action の
 古い SHA への差し替えは通る)。
 
+**手元の yaml と GitHub の runner とで読みが食い違いうる書き方は、全部の workflow で落とす**(#403)。workflow の
+テストは手元の `yaml` パッケージでパースした値を比べるので、yaml が同じ値に読む書き方はテストを緑のまま通る —
+`runs-on: !foo ubuntu-latest`(未知のタグ。yaml は警告を出すだけで値は `ubuntu-latest`)・`timeout-minutes: !!int "5"`・
+`%YAML 1.1` の下の `0b101`・コメントの中の単独 CR / U+0085 / U+2028 / U+2029(yaml はコメントの続き、runner の
+YamlDotNet は改行と読む)。共通ファイル `scripts/__tests__/workflow-yaml.mjs` の `ambiguousYaml` が、yaml のエラーと
+警告・明示したタグ・`%YAML` / `%TAG` ディレクティブ・行区切りに使われうる文字を返す。マージキーの判定(`mergeKeyPaths`)と
+トリガーの読み方(`parseWorkflow` / `triggerNames`)も同じファイルに置き、各テストは写しを持たずに import する
+(`*.test.mjs` ではないので、口のファイル数には入らない)。
+
+- **当てるのは `.github/workflows/*.yml` の全部**(`zizmor-workflow.test.mjs` の末尾。1 本も無ければ赤)。テストごとに
+  当てる形は取らない — テストが読んでいるのに判定を当てない workflow が残るため。全体を固定するテスト(ci-summary・
+  zizmor)も、比べる前に当てる
+- **判定そのものは fixture のテストで確かめる**(同じファイルの末尾)。実ファイルでは「何も無い」ことしか見えず、
+  判定が no-op に落ちても緑のまま通るため
+- **キーの重複は、yaml が検出するものだけを拾う。** 同じ字面のキー(`name: x` と `name: y`)は yaml のエラーになるが、
+  エイリアスで書いたキーの重複(`&k t: 99` と `*k : 5`)と、型の違うキーの重複(`1:` と `"1":`)は yaml が検出せず、
+  判定も空を返す(yaml 2.9.1 で実測)
+- **GitHub 側の挙動は未検証。** actions/runner の `YamlObjectReader` は未知のタグで例外を投げるが、github.com の
+  サーバーが workflow を同じ実装で読むかは確かめられない(サーバー側のパーサーは公開されていない)。食い違いが
+  無いことを確かめたのではなく、食い違いうる書き方を使わせない形
+
 `test:workflows` / `test:hooks` / `test:content` は `assert-test-files.mjs` /
 `assert-test-results.mjs` を通している。`node --test` は「glob が 0 件」「中身が空」「全件 skip」の
 どれでも exit 0 で終わるので、守っているつもりのガードが no-op に落ちても気づけないため。
