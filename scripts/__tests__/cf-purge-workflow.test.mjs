@@ -18,7 +18,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import YAML from "yaml";
+import { mergeKeyPaths, parseWorkflow } from "./workflow-yaml.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WORKFLOW = path.join(
@@ -37,10 +37,10 @@ const T0 = 1_800_000_000;
 
 // マージキー(`<<:`)は GitHub Actions が展開しないので、展開せずに読む(actions/runner#1182)。
 // ただし yaml は `!!merge <<:` と `%YAML 1.1` の下の `<<:` を `merge: false` でも展開する
-// (ci-summary-workflow.test.mjs)ので、読みが GitHub と食い違わないよう、マージキーを
+// (workflow-yaml.mjs)ので、読みが GitHub と食い違わないよう、マージキーを
 // 使っていること自体を下のテストで落とす
 const source = () => fs.readFileSync(WORKFLOW, "utf8");
-const doc = () => YAML.parse(source(), { merge: false });
+const doc = () => parseWorkflow(source());
 const job = () => doc().jobs.purge;
 const step = () => {
   const steps = job().steps;
@@ -828,22 +828,12 @@ test("Purge ステップに continue-on-error が無い(exit 1 が job に伝わ
   assert.equal(Object.hasOwn(job(), "continue-on-error"), false);
 });
 
-// 判定は ci-summary-workflow.test.mjs の mergeKeyPaths と同じ。yaml が展開する形
-// (`!!merge`・`%YAML 1.1`)と、キーをエイリアスで書いた形も拾う
-const isMergeKey = (key) =>
-  YAML.isScalar(key) &&
-  (key.value === "<<" ||
-    (typeof key.value === "symbol" && key.value.description === "<<") ||
-    key.tag === "tag:yaml.org,2002:merge");
-
+// 判定は workflow-yaml.mjs の mergeKeyPaths。yaml が展開する形(`!!merge`・`%YAML 1.1`)と、
+// キーをエイリアスで書いた形も拾う
 test("cf-purge.yml がマージキーを使っていない", () => {
-  const parsed = YAML.parseDocument(source(), { merge: false });
-  let found = 0;
-  YAML.visit(parsed, {
-    Pair(_, pair) {
-      const key = YAML.isAlias(pair.key) ? pair.key.resolve(parsed) : pair.key;
-      if (isMergeKey(key)) found++;
-    },
-  });
-  assert.equal(found, 0, "cf-purge.yml がマージキーを使っている");
+  assert.deepEqual(
+    mergeKeyPaths(source()),
+    [],
+    "cf-purge.yml がマージキーを使っている"
+  );
 });
