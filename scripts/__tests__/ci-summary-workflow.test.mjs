@@ -470,7 +470,7 @@ test("workflow 全体が決まった形(run は fixture の写しと完全一致
   // 変えるときは下の期待値を直す。素の `<<:` は余計なキーとしてここで赤になる。`!!merge <<:` と
   // `%YAML 1.1` の下の `<<:` は yaml が展開してしまい、パース結果の比較では緑になりうるので、
   // マージキーを使っていること自体もここで落とす(mergeKeyPaths)。yaml と GitHub の runner とで読みが食い違いうる
-  // 書き方(行区切りに使われうる文字・未知のタグ・`%YAML` など)も、パース結果の比較では見えないので先に落とす(ambiguousYaml)
+  // 書き方も、パース結果の比較では見えないので先に落とす。何を拾うかと理由は共通ファイルの ambiguousYaml
   assert.deepEqual(ambiguousYaml(yaml()), []);
   assert.deepEqual(mergeKeyPaths(yaml()), [], "マージキーを使っている");
   const expected = fs.readFileSync(NOTIFY_RUN_FIXTURE, "utf8");

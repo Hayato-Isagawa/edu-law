@@ -148,7 +148,7 @@ test("全部の workflow が、手元の yaml と GitHub で読みが食い違�
     );
 });
 
-test("fixture: ambiguousYaml は区切り文字・yaml のエラーと警告・タグ・ディレクティブを拾い、ふつうの書き方は拾わない", () => {
+test("fixture: ambiguousYaml は区切り文字・制御文字・yaml のエラーと警告・タグ・ディレクティブ・コレクション・エイリアス・文字列でないものをキーにした形・キーの重複を拾い、ふつうの書き方は拾わない", () => {
   // 実ファイルでは「何も無い」ことしか見えず、判定が no-op に落ちても緑のまま通るので、書き方ごとに発火を見る
   const base = "name: x\non:\n  push:\n    branches: [main]\n";
   assert.deepEqual(ambiguousYaml(base), [], "ふつうの書き方");
@@ -161,6 +161,11 @@ test("fixture: ambiguousYaml は区切り文字・yaml のエラーと警告・�
     ambiguousYaml(`a: "q"\nb: 'r'\nc: {d: [1, 2]}\ne: &x 1\nf: *x\n`),
     [],
     "引用符・フロー形・アンカー"
+  );
+  assert.deepEqual(
+    ambiguousYaml('a: "x\ty"\nb: |\n  c\td\n'),
+    [],
+    "値の中のタブ"
   );
   for (const [label, src] of [
     ["単独の CR", "# c\rname: x\n"],
@@ -179,6 +184,21 @@ test("fixture: ambiguousYaml は区切り文字・yaml のエラーと警告・�
     ["非特定タグ !", "a: ! 5\n"],
     ["キーの位置のタグ", "!!str k: 1\n"],
     ["列のタグ", "a: !!seq [1]\n"],
+    ["コメントの中の NUL", "# a\u0000b\nname: x\n"],
+    ["タブ・LF・CR 以外の制御文字", "name: a\u0001b\n"],
+    ["DEL", "name: a\u007fb\n"],
+    ["C1 の制御文字(0x80)", "name: a\u0080b\n"],
+    ["C1 の制御文字(0x9F)", "name: a\u009fb\n"],
+    ["列をキーにした形", "[x]: 1\n"],
+    ["マップをキーにした形", "{a: 1}: 2\n"],
+    ["大文字小文字だけが違うキーの重複", "name: x\nName: y\n"],
+    ["エイリアスで書いたキーの重複", "j:\n  &k t: 99\n  *k : 5\n"],
+    ["エイリアスをキーにした形", "x: &k t\nj:\n  *k : 1\n"],
+    ["型の違うキーの重複", 'env:\n  1: x\n  "1": y\n'],
+    ["null のキー", "env:\n  null: x\n"],
+    ["~ のキー", "env:\n  ~: x\n"],
+    ["数値のキー", "env:\n  1: x\n"],
+    ["真偽値のキー", "env:\n  true: x\n"],
     ["%YAML 1.2", "%YAML 1.2\n---\nname: x\n"],
     ["%YAML 1.1", "%YAML 1.1\n---\nname: x\n"],
     ["%TAG", "%TAG !e! tag:example.com,2000:\n---\nname: x\n"],
@@ -189,4 +209,20 @@ test("fixture: ambiguousYaml は区切り文字・yaml のエラーと警告・�
   ]) {
     assert.notDeepEqual(ambiguousYaml(src), [], label);
   }
+});
+
+test("fixture: mergeKeyPaths は素の <<・引用符付きの <<・!!merge・%YAML 1.1 の <<・エイリアスで書いた << を拾い、ふつうのキーは拾わない", () => {
+  // 実ファイルでは「無い」ことしか見えず、判定の条件を 1 つ外しても緑のまま通るので、書き方ごとに発火を見る。
+  // `!!merge` のタグの条件は、yaml 2.9.1 ではタグ付きのキーの値が必ず Symbol("<<") になるので、Symbol の条件と
+  // 重なっていて単独では固定できない(別の版の yaml に備えた重ねがけとして残す)
+  assert.deepEqual(mergeKeyPaths("a: 1\nb:\n  c: 2\n"), [], "ふつうのキー");
+  for (const [label, src] of [
+    ["素の <<", "x: &a {k: 1}\nj:\n  <<: *a\n"],
+    ["引用符付きの <<", 'j:\n  "<<": {k: 1}\n'],
+    ["!!merge", "j:\n  !!merge <<: {k: 1}\n"],
+    ["<< 以外のキーに付けた !!merge", "j:\n  !!merge x: {k: 1}\n"],
+    ["%YAML 1.1 の <<", "%YAML 1.1\n---\nx: &a {k: 1}\nj:\n  <<: *a\n"],
+    ["エイリアスで書いた <<", "x: &m <<\nj:\n  *m : {k: 1}\n"],
+  ])
+    assert.notDeepEqual(mergeKeyPaths(src), [], label);
 });
