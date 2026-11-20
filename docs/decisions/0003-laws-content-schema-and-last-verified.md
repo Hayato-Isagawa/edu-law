@@ -1,6 +1,6 @@
 # 0003. 法令コンテンツコレクションのスキーマと lastVerified 必須化
 
-- 状態: 採用
+- 状態: 採用(`order` の上限 `max(6)` は [0005](0005-expand-initial-scope-child-welfare-act.md) で 7 に、[0020](0020-expand-scope-education-opportunity-act-and-school-refusal-scene.md) で 11 から 12 に上げた)
 - 日付: 2026-05-12
 - 関連 PR: TBD(`feat/laws-content-schema`)
 

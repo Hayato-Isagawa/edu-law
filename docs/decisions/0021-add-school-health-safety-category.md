@@ -1,6 +1,6 @@
 # 0021. 「学校の保健・安全」カテゴリの新設と学校保健安全法の場面化
 
-- 状態: 採用
+- 状態: 採用(`school-health-safety` の場面は [0031](0031-child-protection-guide-section.md) で 3 つに(`lawSlugs: []` の場面を追加))
 - 日付: 2026-06-18
 - 関連 PR: TBD(`content/add-school-health-safety-scenes`)
 - 関連 ADR: 0010(教師を守るスコープ・自前解釈ゼロ)・0016(教師ガイド 3 グループ・カテゴリ閾値 ≤6)・0018(場面軸 IA)・0020(教育機会確保法の追加と不登校場面)

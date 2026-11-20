@@ -1,7 +1,7 @@
 # 0018. 場面軸 IA への再編とグローバルナビへの場面レンズ追加
 
 - 日付: 2026-06-15
-- ステータス: 採択
+- ステータス: 採択(決定 3 の場面カテゴリは [0021](0021-add-school-health-safety-category.md) で 4 から 5 に改訂。決定 2 の場面数は [0020](0020-expand-scope-education-opportunity-act-and-school-refusal-scene.md)・[0021](0021-add-school-health-safety-category.md)・[0031](0031-child-protection-guide-section.md) で増え、決定 7 の個別ガイドは [0031](0031-child-protection-guide-section.md) で 12 本に)
 - 関連 PR: feat/scene-based-ia
 
 ## 背景

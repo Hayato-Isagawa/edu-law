@@ -1,6 +1,6 @@
 # 0002. 引用ルールと運用ポリシー
 
-- 状態: 採用
+- 状態: 採用(「政府標準利用規約 第 2.0 版の運用」節は [0012](0012-migrate-to-public-data-license.md) で上書き)
 - 日付: 2026-05-08
 - 関連 PR: TBD(`feat/citation-rules-adr`)
 

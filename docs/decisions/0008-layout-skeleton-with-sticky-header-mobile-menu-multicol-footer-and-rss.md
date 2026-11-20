@@ -1,7 +1,7 @@
 # 0008. Layout skeleton: sticky Header + mobile menu + multi-col Footer + RSS
 
 - 日付: 2026-05-19
-- ステータス: 採択(決定 5 の `Organization` の `sameAs` 姉妹サイト URL は [0030](0030-organization-jsonld-no-sister-relation.md) で上書き。スコープ外の読了バー・トップへ戻るボタン・検索ボックスは [0035](0035-adopt-search-reading-progress-back-to-top.md) で採用)
+- ステータス: 採択(決定 5 の `Organization` の `sameAs` 姉妹サイト URL は [0030](0030-organization-jsonld-no-sister-relation.md) で上書き。決定 7 の RSS は [0017](0017-changelog-as-update-source.md) で changelog 駆動に置き換え。フッターのナビには [0018](0018-scene-based-ia.md) で「場面から探す」を加えた。スコープ外の読了バー・トップへ戻るボタン・検索ボックスは [0035](0035-adopt-search-reading-progress-back-to-top.md) で採用)
 - 関連 PR: feat/header-footer-meta-stage3
 
 ## 背景

@@ -10,6 +10,7 @@
 - **新規 ADR では番号で参照しない** — 規範の内容を本文に書き切るか、リポジトリ内の文書を指す
 - **姉妹リポの文書を指すときはリポ名を前置する**(`edu-evidence ADR 0011` / `edu-evidence PR #136` / edu-evidence の `docs/CONTENT_GUIDELINES.md` のように)。文脈でリポが分からない裸の `NNNN` / `PR #N` / `docs/…` は本リポのものと読まれるので、前置の欠落を補うのは「誤植修正」にあたる(辿れないだけの `rule N` と違い、別の文書を指してしまう誤りなので)
 - 決定を覆す場合は新規 ADR を起こし、旧 ADR の「状態」を `撤回(####で上書き)` に変える
+- 決定の一部だけを変える(値を変える・足す・置き換える)場合も新規 ADR を起こす。旧 ADR は本文を書き換えず、「状態」(古い ADR では「ステータス」)の値もそのままにして、行末の括弧に、どこをどの ADR で変えたかを書く(例: 0008)。索引の行にも ` — ` に続けて同じ関係を添える。新規 ADR が旧 ADR を番号で挙げていなくても、旧 ADR の決定が変わるなら同じ扱いにする。書くのは ADR が変えた部分で、ADR を経ずに変わった部分は書かない。旧 ADR と変えた ADR のどちらかが撤回済みなら書かない
 - 対象: ブランド体系、技術選定、コンテンツポリシー、引用規約、運営方針
 
 ## 対象外
@@ -41,14 +42,14 @@
 
 ## 索引
 
-- [0001. 初期スタックと BRAND.md ミラー方針の採択](0001-initial-stack-and-mirror-brand.md)
-- [0002. 引用ルールと運用ポリシー](0002-citation-rules-and-policy.md)
-- [0003. 法令コンテンツコレクションのスキーマと lastVerified 必須化](0003-laws-content-schema-and-last-verified.md)
-- [0004. Dependabot patch/minor 自動マージ運用と main ブランチ保護](0004-dependabot-auto-merge-policy.md)
-- [0005. 初期スコープの拡張(児童福祉法を 7 法令目として追加)](0005-expand-initial-scope-child-welfare-act.md)
-- [0006. ダークモードはシステム追従デフォルト + 手動切替トグル(`data-theme` 属性)で提供する](0006-dark-mode-data-theme-with-system-default.md)
-- [0007. トップページを法令の目次・台帳として設計する(カード型から行型 + 3px アクセントバーへの置換)](0007-top-page-as-law-index.md)
-- [0008. Layout skeleton: sticky Header + mobile menu + multi-col Footer + RSS](0008-layout-skeleton-with-sticky-header-mobile-menu-multicol-footer-and-rss.md) — 決定 5 の `sameAs` は 0030 で上書き、スコープ外の読了バー・トップへ戻るボタン・検索は 0035 で採用
+- [0001. 初期スタックと BRAND.md ミラー方針の採択](0001-initial-stack-and-mirror-brand.md) — Astro の版は 0025、対象法令は 0005・0020 で追加
+- [0002. 引用ルールと運用ポリシー](0002-citation-rules-and-policy.md) — 「政府標準利用規約 第 2.0 版の運用」節は 0012 で上書き
+- [0003. 法令コンテンツコレクションのスキーマと lastVerified 必須化](0003-laws-content-schema-and-last-verified.md) — `order` の上限は 0005・0020 で引き上げ
+- [0004. Dependabot patch/minor 自動マージ運用と main ブランチ保護](0004-dependabot-auto-merge-policy.md) — required check は 0032 で「Playwright E2E」を追加、「Build site」の中身は 0028 で拡張
+- [0005. 初期スコープの拡張(児童福祉法を 7 法令目として追加)](0005-expand-initial-scope-child-welfare-act.md) — 法令数と `order` の上限は 0020 で 12 に
+- [0006. ダークモードはシステム追従デフォルト + 手動切替トグル(`data-theme` 属性)で提供する](0006-dark-mode-data-theme-with-system-default.md) — ダークの `--color-ink` は 0019 で上書き
+- [0007. トップページを法令の目次・台帳として設計する(カード型から行型 + 3px アクセントバーへの置換)](0007-top-page-as-law-index.md) — 引用の根拠は 0012、Highlights は 0009・0026、「最近の更新」は 0017、法令数の表記は 0020 で変更
+- [0008. Layout skeleton: sticky Header + mobile menu + multi-col Footer + RSS](0008-layout-skeleton-with-sticky-header-mobile-menu-multicol-footer-and-rss.md) — 決定 5 の `sameAs` は 0030 で上書き、決定 7 の RSS は 0017 で置き換え、フッターのナビは 0018 で追加、スコープ外の読了バー・トップへ戻るボタン・検索は 0035 で採用
 - [0009. Highlights セクションの選定基準と表示順](0009-highlights-selection-criteria.md) — 定常状態の件数は 0026 で 12 件に拡張(選定基準は有効)
 - [0010. ガイド一覧の新設と「教師を守る」スコープの追加](0010-guides-index-and-teacher-protection-scope.md)
 - [0011. 「子供への指導・対応」と「教師を守る」の 2 入口 IA(トップでの分岐)](0011-two-entrance-ia-child-guidance-and-teacher-protection.md) — 撤回(0018 で上書き)
@@ -56,12 +57,12 @@
 - [0013. 「教師を守る」入口の独立ページ化](0013-protect-teachers-entrance-page.md) — 撤回(0018 で上書き)
 - [0014. カード border-radius を rounded-xl に統一(姉妹サイト規約の継承)](0014-card-border-radius-rounded-xl.md)
 - [0015. 「子供への指導・対応」入口の独立ページ化(2 入口の対称化)](0015-child-guidance-entrance-page.md) — 撤回(0018 で上書き)
-- [0016. 「教師を守る」入口のガイドを性質別 3 グループに再編](0016-protect-teachers-guide-subgroups.md)
+- [0016. 「教師を守る」入口のガイドを性質別 3 グループに再編](0016-protect-teachers-guide-subgroups.md) — 決定 2 の `/protect-teachers/` は 0018 で削除、決定 3 の帰属先は 0031 で拡張
 - [0017. 更新情報の正本を changelog データに一元化し、RSS・トップ新着を導出する](0017-changelog-as-update-source.md)
-- [0018. 場面軸 IA への再編とグローバルナビへの場面レンズ追加](0018-scene-based-ia.md)
+- [0018. 場面軸 IA への再編とグローバルナビへの場面レンズ追加](0018-scene-based-ia.md) — 決定 3 のカテゴリは 0021 で 4 → 5、決定 2 の場面数は 0020・0021・0031、決定 7 のガイド数は 0031 で変更
 - [0019. ダーク本文 ink を react.dev の gray-15(`#D0D3DC`)に統一する](0019-dark-ink-react-dev-gray-15.md)
 - [0020. 初期スコープの拡張(教育機会確保法を 12 法令目として追加)と不登校場面の新設](0020-expand-scope-education-opportunity-act-and-school-refusal-scene.md)
-- [0021. 「学校の保健・安全」カテゴリの新設と学校保健安全法の場面化](0021-add-school-health-safety-category.md)
+- [0021. 「学校の保健・安全」カテゴリの新設と学校保健安全法の場面化](0021-add-school-health-safety-category.md) — `school-health-safety` の場面は 0031 で追加
 - [0022. changelog の文体(敬体)と粒度をファミリー統一する](0022-unify-changelog-register-and-granularity.md)
 - [0023. ビジュアルリグレッションテスト(VRT)を視覚変更 PR に限定して導入する(edu-evidence ADR 0024 ミラー)](0023-visual-regression-testing.md) — 差分の判定と projects は 0034 で上書き(ゲートの `paths` と 2 ビルド差分は 0027、対象 URL・ポートほかは 0034 で訂正)
 - [0024. Cloudflare Web Analytics を手動スニペット方式で導入し CSP を最小限緩和する(edu-evidence ADR 0026 ミラー)](0024-web-analytics-beacon-and-csp.md)
