@@ -1,6 +1,6 @@
 # 0004. Dependabot patch/minor 自動マージ運用と main ブランチ保護
 
-- 状態: 採用
+- 状態: 採用(required check は [0032](0032-e2e-required-check.md) で「Playwright E2E」を加えた。本 ADR の撤回 / 再検討の条件の 1 項目目を、件数の到達を待たずに適用したもの。「Build site」の中身には [0028](0028-oxlint-and-oxfmt.md) で lint と整形検査の step を足した)
 - 日付: 2026-05-14
 - 関連 ADR: 0001(初期スタックとミラーブランド、本 ADR の対象 CI を確定するための前提)
 - 関連 PR: #10(`dependabot-auto-merge.yml` + `build.yml` 導入、2026-05-13 マージ)/ TBD(本 ADR 起票 PR)

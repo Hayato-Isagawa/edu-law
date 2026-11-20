@@ -1,7 +1,7 @@
 # 0009. Highlights セクションの選定基準と表示順
 
 - 日付: 2026-05-20
-- ステータス: 採択
+- ステータス: 採択(定常状態の件数は [0026](0026-highlights-cover-all-laws.md) で 12 件に拡張。選定基準は有効)
 - 関連 PR: feat/highlights-7-laws-coverage
 
 ## 背景

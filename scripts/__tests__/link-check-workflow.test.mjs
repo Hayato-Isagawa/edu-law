@@ -502,7 +502,7 @@ test("gh issue create が失敗したら、ステップごと落ちる", () => {
 // 深さを見ないと「どこかに 1 行あれば緑」になる。実際 `^ +issues: write$` は、
 // job 側を read に落としてワークフロー全体に write を足すと素通りした
 // (実効権限は job 側＝read なので、本番では通知だけが 403 で消える)。
-// 姉妹リポ(portfolio / okinawa-in-data)の同名テストも同じ深さで締めている。
+// 姉妹リポ okinawa-in-data の同名テストも同じ深さで締めている。
 const yaml = () => fs.readFileSync(WORKFLOW, "utf8");
 
 test("通知ステップは lychee が異常終了した回に走る", () => {

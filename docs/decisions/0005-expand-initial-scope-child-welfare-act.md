@@ -1,6 +1,6 @@
 # 0005. 初期スコープの拡張(児童福祉法を 7 法令目として追加)
 
-- 状態: 採用
+- 状態: 採用([0020](0020-expand-scope-education-opportunity-act-and-school-refusal-scene.md) で 12 法令目を加え、`order` の上限を `max(12)` にした)
 - 日付: 2026-05-19
 - 関連 PR: TBD(`content/child-welfare-act-add`)
 - 関連 ADR: 0001(初期スコープ・ミラーブランド)・0003(法令コンテンツスキーマ)

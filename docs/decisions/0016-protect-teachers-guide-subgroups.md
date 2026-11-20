@@ -1,7 +1,7 @@
 # 0016. 「教師を守る」入口のガイドを性質別 3 グループに再編
 
 - 日付: 2026-06-10
-- ステータス: 採択
+- ステータス: 採択(決定 2 の `/protect-teachers/` は [0018](0018-scene-based-ia.md) で削除。決定 3 の帰属先に、[0031](0031-child-protection-guide-section.md) で「教師を守る」の外のセクションを加えた)
 - 関連 PR: feat/protect-teachers-guide-subgroups
 
 ## 背景

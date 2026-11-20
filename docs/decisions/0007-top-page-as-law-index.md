@@ -1,6 +1,6 @@
 # 0007. トップページを法令の目次・台帳として設計する(カード型から行型 + 3px アクセントバーへの置換)
 
-- 状態: 採用
+- 状態: 採用(立場リライトの 3 項目目にある引用の根拠は [0012](0012-migrate-to-public-data-license.md) で公共データ利用規約 第 1.0 版に移行。Highlights の件数と選び方は [0009](0009-highlights-selection-criteria.md) で法令と 1 対 1 に、[0026](0026-highlights-cover-all-laws.md) で 12 件と `soumu` バッジに変更。トップのセクションに [0017](0017-changelog-as-update-source.md) で「最近の更新」を追加。法令数の表記は [0020](0020-expand-scope-education-opportunity-act-and-school-refusal-scene.md) で 11 から 12 に)
 - 日付: 2026-05-19
 - 関連 PR: 本 ADR と同一 PR で確定
 - 関連 ADR: 0001(初期スタックと BRAND.md ミラー方針)・0002(引用ルールと運用ポリシー)・0006(`data-theme` ダークモード)

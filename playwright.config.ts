@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
 // ポートはファミリー各リポで固定する(evi 4173 / watch 4174 / law の VRT 4175 /
-// okinawa の E2E 4176 / portfolio の VRT 4177)。別プロジェクトのサーバーに
+// okinawa の E2E 4176 / ファミリーのもう 1 リポの VRT 4177)。別プロジェクトのサーバーに
 // 当たると、別サイトを検査して通ってしまう。
 const PORT = 4178;
 

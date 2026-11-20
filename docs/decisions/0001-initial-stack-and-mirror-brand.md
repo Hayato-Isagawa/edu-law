@@ -1,6 +1,6 @@
 # 0001. 初期スタックと BRAND.md ミラー方針の採択
 
-- 状態: 採用
+- 状態: 採用(スタックの Astro 6 は [0025](0025-astro-7-migration.md) で 7 に移行。対象法令には [0005](0005-expand-initial-scope-child-welfare-act.md) で 7 法令目、[0020](0020-expand-scope-education-opportunity-act-and-school-refusal-scene.md) で 12 法令目を加えた)
 - 日付: 2026-05-06
 - 関連 PR: #1(本リポジトリの初期立ち上げ PR)
 
