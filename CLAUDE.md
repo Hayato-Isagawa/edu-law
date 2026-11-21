@@ -70,6 +70,12 @@ okinawa-in-data では open な link-check Issue があると後続の検出を�
 - `Run lychee` に `id: lychee` が**ある**こと(消えると `exit_code` が空文字になり毎週 Issue が立つ)
 - `Upload report` が job を落とさないこと(落ちると通知ステップの暗黙の `success()` が偽になる)
 - `output:` とシェルが読むファイル名が一致していること
+- `Run lychee` に job より **5 分以上**短い `timeout-minutes` があること。job の制限に当たると GitHub は
+  job を取り消し、通知ステップの暗黙の `success()` が偽になって Issue が立たない。ステップの制限なら
+  runner は Failed として扱い、`continue-on-error` が job を続けるので「could not produce a report」で
+  届く。差を見るのは、前後のステップと kill を job の制限の内側に収めるため(`<` だけだと 29 / 30 でも
+  通る)。**`npm ci` / build が固まった回と、手動・`concurrency` で取り消された回は、今も通知されない**
+  (run の結果に残るだけ)
 
 通知は 3 分岐。タイトルが実態と食い違わないようにしてある:
 
