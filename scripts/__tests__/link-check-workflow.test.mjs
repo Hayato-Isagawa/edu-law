@@ -927,3 +927,82 @@ test("run: | ブロックは 1 つだけ(テストが別のステップを走ら
     `run: | が ${count} 個ある。extractRunBlock の前提が崩れている`
   );
 });
+
+/**
+ * 名前で指定した 1 ステップの範囲を返す。6 スペース以下の(コメントでない)行の手前まで。
+ * **コメント行では止めない。** YAML ではコメントはマッピングを閉じないので、6 スペース以下の
+ * コメントを挟んだ後ろのキーも同じステップのキーとして効く。
+ * 見つからないと空の範囲を検査して素通りするので、ここで落とす(改名すると起きる)。
+ */
+function stepBlock(name) {
+  const lines = fs.readFileSync(WORKFLOW, "utf8").split("\n");
+  const start = lines.indexOf(`      - name: ${name}`);
+  assert.notEqual(start, -1, `${name} のステップが見つからない`);
+  const out = [lines[start]];
+  for (const line of lines.slice(start + 1)) {
+    if (/^ {0,6}[^\s#]/.test(line)) break;
+    out.push(line);
+  }
+  return out.join("\n");
+}
+
+// 時間切れについて。job の timeout-minutes に当たると GitHub は job を**取り消す**ので、
+// 通知ステップの暗黙の success() が偽になり、Issue は立たない(run の結果に残るだけ)。
+// lychee ステップに job より短い制限を置くと、runner はそのステップを Failed として扱い、
+// continue-on-error が outcome=failure に変えて job を続ける(lychee-action は
+// composite なので actions/runner の CompositeActionHandler.cs が Failed を立て、
+// StepsRunner.cs の ApplyContinueOnError が outcome に残す)。exit_code の output は
+// 書かれないので空文字で届く。
+
+test("lychee の時間制限は job より十分に短い", () => {
+  // 外すか job 以上にすると、固まった回は job ごと取り消されて通知が消える。
+  // **「短い」だけでは足りない。** lychee の前後のステップと、時間切れの kill が job の
+  // 制限の内側に収まらないと、やはり job が先に取り消される(29 / 30 でも `<` は通る)。
+  // 2026-09-28〜11-16 に job が走った 8 回の実測で、前(job 開始 → lychee 開始)は最大 32 秒、
+  // 後(lychee 終了 → job 終了)は最大 9 秒(npm のキャッシュを読んでいた頃の値)。kill は runner が SIGINT で 7.5 秒・SIGTERM で
+  // 2.5 秒待ってから落とし、終了後もストリームを最大 5 秒待つので、合わせて 15 秒ほど
+  // (ProcessInvoker.cs)。npm ci がキャッシュを外すと前が伸びるので、差は 5 分を下限にする。
+  // 5 分は実測からの導出ではなく余裕の判断。
+  // 制限の値そのものは両方ワークフローから読む(テストに写さない)。
+  const MIN_MARGIN_MINUTES = 5;
+  const step = stepBlock("Run lychee").match(/^ {8}timeout-minutes: (\d+)$/m);
+  // job の制限は lychee の job の中だけで探す。ファイル全体だと、手前に足した別の job の
+  // 値で判定してしまう。
+  const lines = yaml().split("\n");
+  const jobStart = lines.indexOf("  lychee:");
+  assert.notEqual(jobStart, -1, "lychee の job が見つからない");
+  const jobEnd = lines.findIndex(
+    (l, i) => i > jobStart && /^ {0,2}[^\s#]/.test(l)
+  );
+  const job = lines
+    .slice(jobStart, jobEnd === -1 ? undefined : jobEnd)
+    .join("\n")
+    .match(/^ {4}timeout-minutes: (\d+)$/m);
+  assert.ok(step, "lychee ステップに timeout-minutes が無い");
+  assert.ok(job, "job の timeout-minutes が読み取れない");
+  // 0 は runner では「制限なし」(StepsRunner.cs の `timeoutMinutes > 0`)なのに、
+  // 差の計算では 30 分の余裕に見える。
+  assert.ok(Number(step[1]) >= 1, "lychee の制限が 0 分(制限なし)になっている");
+  assert.ok(
+    Number(job[1]) - Number(step[1]) >= MIN_MARGIN_MINUTES,
+    `lychee の制限 ${step[1]} 分と job の ${job[1]} 分の差が ${MIN_MARGIN_MINUTES} 分に届かない`
+  );
+});
+
+test("lychee が時間切れになった回は、0 件ではなく未完走として届く", () => {
+  // exit_code は空、outcome は failure。0 件の判定を `${LYCHEE_EXIT_CODE:-0}` のように
+  // 緩めると、この回が「1 本もリンクを見なかった」に化けて設定を疑わせる。
+  const footerOnly =
+    "[Full Github Actions output](https://example.invalid/runs/1)\n";
+  const r = runStep({
+    existing: "",
+    report: footerOnly,
+    exitCode: "",
+    outcome: "failure",
+  });
+  assert.equal(r.code, 0, r.out);
+  const call = calls(r, "issue create")[0];
+  assert.match(call, /could not produce a report/, `分岐が違う: ${call}`);
+  assert.match(r.createdBody, /終了コード: unknown/);
+  assert.match(r.createdBody, /has timed out/, "時間切れを疑う手がかりが無い");
+});
