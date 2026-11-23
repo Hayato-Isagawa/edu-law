@@ -47,7 +47,7 @@
     "pagefind": "^1.6.0",
     "rehype-external-links": "^3.0.0",
     "satori": "^0.63.2",
-    "serve": "^14.2.6",
+    "serve": "^14.2.8",
     "sharp": "^0.35.5",
     "tsx": "^4.23.15",
     "typescript": "^5.0.0",
