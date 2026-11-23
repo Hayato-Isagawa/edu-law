@@ -42,7 +42,7 @@
     "@astrojs/check": "^0.9.12",
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.65.1",
-    "oxfmt": "^0.75.0",
+    "oxfmt": "^0.78.0",
     "oxlint": "^1.92.0",
     "pagefind": "^1.6.0",
     "rehype-external-links": "^3.0.0",
