@@ -208,8 +208,10 @@ body[data-menu="open"] {
   outline-offset: 3px;
 }
 
+/* 下線は線の種類と太さを分けて書く。text-decoration の一括指定にすると、ビルドが太さ入りに
+   まとめ、それを読めない Safari(26.1 以前)では下線ごと消える */
 .link-underline {
-  text-decoration: underline;
+  text-decoration-line: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
   text-decoration-color: var(--color-line);
@@ -221,25 +223,46 @@ body[data-menu="open"] {
 }
 
 /* 本文のリンクは、アクセント色と、背景と 3:1 以上の下線で示す(ADR 0037)。
-   ナビ・見出し・記事のヘッダー・フッターは対象外。
-   印刷は @media print の規則(黒の下線)に任せる */
+   main の外(サイトのヘッダー・フッター)と、main の中のナビ・見出し・ヘッダーは対象外。
+   印刷は @media print の規則(黒の下線)に任せる。
+   ホバーとフォーカスでは、平常時の薄い線(border)を消してから、濃い線を左端から引く。
+   どちらも border の箱の下端に置くので、フォントが変わっても位置がずれない。
+   薄さは背景と 3:1 を割らない範囲で決めている(姉妹サイトと同じ) */
 @media screen {
   main
-    :is(
-      :is(p, dd, figcaption, blockquote) .link-underline,
-      li > .link-underline,
-      .law-body a
-    ):not(:is(h1, h2, h3, h4, nav, header) *) {
+    :is(.link-underline, .law-body a):not(:is(h1, h2, h3, h4, nav, header) *) {
     color: var(--color-accent);
-    text-decoration-color: currentColor;
+    text-decoration-line: none;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 70%, transparent);
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    padding-bottom: 2px;
+    background-origin: border-box;
+    background-size: 0% 2px;
+    background-position: left bottom;
+    transition:
+      border-color 0.15s ease 0.2s,
+      background-size 0.3s ease;
   }
   main
-    :is(
-      :is(p, dd, figcaption, blockquote) .link-underline,
-      li > .link-underline,
-      .law-body a
-    ):not(:is(h1, h2, h3, h4, nav, header) *):is(:hover, :focus-visible) {
-    text-decoration-thickness: 2px;
+    :is(.link-underline, .law-body a):not(:is(h1, h2, h3, h4, nav, header) *):is(:hover, :focus-visible) {
+    border-color: transparent;
+    background-size: 100% 2px;
+    transition:
+      border-color 0.1s ease,
+      background-size 0.3s ease 0.1s;
+  }
+  /* 箱のままだと、折り返した題名の最後の行にしか線が付かず、行送りの分だけ文字からも離れる */
+  main .link-underline.inline-flex:not(:is(h1, h2, h3, h4, nav, header) *) {
+    display: inline;
+  }
+  main .link-underline.inline-flex:not(:is(h1, h2, h3, h4, nav, header) *) > [aria-hidden] {
+    margin-inline-start: 0.25rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    main :is(.link-underline, .law-body a) {
+      transition: none !important;
+    }
   }
 }
 
@@ -279,7 +302,7 @@ body[data-menu="open"] {
 }
 .law-body a {
   color: var(--color-ink);
-  text-decoration: underline;
+  text-decoration-line: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
   text-decoration-color: var(--color-line);
