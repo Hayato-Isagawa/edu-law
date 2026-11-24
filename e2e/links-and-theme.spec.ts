@@ -20,8 +20,13 @@ test.describe("本文のリンク", () => {
             .filter(
               (a) =>
                 getComputedStyle(a).display.startsWith("inline") &&
-                a.matches(".link-underline, .law-body a") &&
-                !a.closest("nav, h1, h2, h3, h4, header")
+                !a.closest("nav, h1, h2, h3, h4, header") &&
+                // 規則のセレクタだけで選ぶと、規則から漏れたリンクが対象にも入らない。
+                // 前後に 8 字以上の本文があるものは、class によらず見る
+                (a.matches(".link-underline, .law-body a") ||
+                  a.parentElement!.textContent!.trim().length -
+                    a.textContent!.trim().length >=
+                    8)
             )
             .map((a) => ({
               text: a.textContent!.trim().slice(0, 20),
@@ -75,7 +80,7 @@ test("折り返した外部リンクは、どの行にも線が付く", async ({
   expect(Math.max(...links.map((l) => l.rects))).toBeGreaterThan(1);
 });
 
-test("フッターのリンクの色は変えない", async ({ page }) => {
+test("フッターのリンクは変えない", async ({ page }) => {
   await page.goto("/");
   const links = page.locator("body > footer .link-underline");
   expect(await links.count()).toBeGreaterThan(0);
@@ -90,6 +95,13 @@ test("フッターのリンクの色は変えない", async ({ page }) => {
   )) {
     expect(color).not.toBe(accent);
   }
+  const lines = await links.evaluateAll((els) =>
+    els.map((el) => {
+      const s = getComputedStyle(el);
+      return `${s.textDecorationLine} ${s.borderBottomWidth}`;
+    })
+  );
+  expect(new Set(lines)).toEqual(new Set(["underline 0px"]));
 });
 
 test.describe("テーマとブラウザの部品", () => {
