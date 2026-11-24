@@ -50,9 +50,16 @@
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
 }
 
+/* スクロールバーや入力欄などブラウザの部品を、OS ではなくサイトのテーマに合わせる。
+   詳細度を上げない(上げると、印刷の :root の light に勝ってしまう) */
+:root {
+  color-scheme: light;
+}
+
 @variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --color-bg: #16181d;
   --color-ink: #d0d3dc;
   --color-sub: #9ba1a8;
@@ -211,6 +218,29 @@ body[data-menu="open"] {
 .link-underline:hover {
   color: var(--color-accent);
   text-decoration-color: var(--color-accent);
+}
+
+/* 本文のリンクは、アクセント色と、背景と 3:1 以上の下線で示す(ADR 0037)。
+   ナビ・見出し・記事のヘッダー・フッターは対象外。
+   印刷は @media print の規則(黒の下線)に任せる */
+@media screen {
+  main
+    :is(
+      :is(p, dd, figcaption, blockquote) .link-underline,
+      li > .link-underline,
+      .law-body a
+    ):not(:is(h1, h2, h3, h4, nav, header) *) {
+    color: var(--color-accent);
+    text-decoration-color: currentColor;
+  }
+  main
+    :is(
+      :is(p, dd, figcaption, blockquote) .link-underline,
+      li > .link-underline,
+      .law-body a
+    ):not(:is(h1, h2, h3, h4, nav, header) *):is(:hover, :focus-visible) {
+    text-decoration-thickness: 2px;
+  }
 }
 
 .law-body h2 {
