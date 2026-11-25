@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { test, expect, type Page } from "@playwright/test";
 
 const theme = (page: Page) => page.locator("html").getAttribute("data-theme");
@@ -155,17 +157,17 @@ test.describe("ナビの現在地", () => {
         ])
       );
 
-  for (const [path, href, value] of [
+  for (const [route, href, value] of [
     ["/", "/", "page"],
     ["/laws/", "/laws/", "page"],
     ["/laws/school-education-act/", "/laws/", "true"],
     ["/guides/legal-hierarchy/", "/guides/", "true"],
     ["/search/", "/search/", "page"],
   ] as const) {
-    test(`${path} では ${href ?? "どの項目も"} ${value ?? "印を付けない"}`, async ({
+    test(`${route} では ${href ?? "どの項目も"} ${value ?? "印を付けない"}`, async ({
       page,
     }) => {
-      await page.goto(path);
+      await page.goto(route);
       let found = 0;
       for (const nav of ["メインナビゲーション", "サイトナビゲーション"]) {
         const expected =
@@ -257,44 +259,50 @@ test.describe("指の端末", () => {
   });
 });
 
-test("外部リンクの「↗」だけが次の行に落ちない", async ({ page }) => {
+test("外部リンクの「↗」だけが次の行に落ちない(全ページ)", async ({ page }) => {
+  test.slow();
+  const dist = path.resolve(process.cwd(), "dist");
+  const routes = (fs.readdirSync(dist, { recursive: true }) as string[])
+    .filter((file) => file.endsWith("index.html"))
+    .map((file) => `/${file.replace(/index\.html$/, "")}`);
+  expect(routes.length).toBeGreaterThan(20);
   await page.setViewportSize({ width: 800, height: 800 });
   let checked = 0;
-  for (const path of ["/laws/", "/about/", "/guides/legal-hierarchy/"]) {
-    await page.goto(path);
+  for (const route of routes) {
+    await page.goto(route);
     // 折り返す位置は幅で変わるので、細かく振る
     const result = await page.evaluate(() => {
       const main = document.querySelector("main")!;
-      const spans = [
-        ...main.querySelectorAll(
-          "a.link-underline.inline-flex > [aria-hidden]"
-        ),
-      ].filter((span) => !span.closest("h1, h2, h3, h4, nav, header"));
+      const arrows = [...main.querySelectorAll("a [aria-hidden]")].filter(
+        (el) => el.textContent!.trim() === "↗"
+      );
       const alone = new Set<string>();
-      for (let width = 260; width <= 420; width += 4) {
+      for (let width = 240; width <= 520; width += 4) {
         main.style.width = `${width}px`;
-        for (const span of spans) {
-          const link = span.parentElement!;
+        for (const arrow of arrows) {
+          const link = arrow.closest("a")!;
           const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
           let last: Text | null = null;
           for (let n = walker.nextNode(); n; n = walker.nextNode()) {
-            if (span.contains(n)) break;
+            if (arrow.contains(n)) break;
             if (n.textContent!.trim()) last = n as Text;
           }
           const end = last!.textContent!.trimEnd().length;
           const range = document.createRange();
           range.setStart(last!, end - 1);
           range.setEnd(last!, end);
-          const arrow = span.getBoundingClientRect();
-          if (arrow.top >= range.getBoundingClientRect().bottom) {
+          if (
+            arrow.getBoundingClientRect().top >=
+            range.getBoundingClientRect().bottom
+          ) {
             alone.add(`${width}px ${link.textContent!.trim()}`);
           }
         }
       }
-      return { count: spans.length, alone: [...alone] };
+      return { count: arrows.length, alone: [...alone].slice(0, 5) };
     });
     checked += result.count;
-    expect(result.alone, path).toEqual([]);
+    expect(result.alone, route).toEqual([]);
   }
-  expect(checked).toBeGreaterThan(20);
+  expect(checked).toBeGreaterThan(100);
 });
