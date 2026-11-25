@@ -300,7 +300,7 @@ spec 冒頭に「ここに値を書き足さない」と置いてある。
 
 ## 機能テスト(E2E)
 
-`e2e/` の残り 6 本。a11y と同じワークフローで走る。
+`e2e/` の残り 7 本。a11y と同じワークフローで走る。
 
 - **`search.spec.ts`** — pagefind が「置いてある」ではなく「引ける」ことを見る。
   検索は `npm run build` 後段の `npx pagefind --site dist` が dist/pagefind/ を作り、
@@ -340,6 +340,8 @@ spec 冒頭に「ここに値を書き足さない」と置いてある。
   OS と逆のテーマを選んでもブラウザの部品の `color-scheme` がサイトのテーマに従い、印刷ではライトに戻ること、
   ダークの検索結果の線とボタンがテーマの色であること(Pagefind の変数を `:root` に置くと
   後から読まれる `pagefind-ui.css` に負ける)
+- **`headers.spec.ts`** — `_headers` の CSP に `frame-ancestors 'none'` と `form-action 'self'` があること。
+  手元の配信は `_headers` を適用しないので、`dist/_headers` を読む
 
 ### 検索テストを書くときの注意
 
