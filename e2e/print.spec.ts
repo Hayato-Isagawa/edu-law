@@ -77,7 +77,7 @@ test.describe("印刷スタイル", () => {
       );
       expect(after).toContain(href!);
 
-      // リンクの下線は文字と同じ色にする(画面では --color-line の薄い灰色。紙では見えにくい)。
+      // リンクの下線は文字と同じ色にする(画面の色のままだと、ナビなどの --color-line は紙で見えにくい)。
       // print の text-decoration: underline がショートハンドで下線色を currentcolor に戻す
       const links = [page.locator("main .link-underline").first()];
       if (path.startsWith("/laws/"))

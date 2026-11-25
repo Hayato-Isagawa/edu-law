@@ -29,6 +29,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-11-24",
+    items: [
+      {
+        type: "fix",
+        text: "本文のリンクに色を付け、下線をはっきり見えるようにしました。ダークモードの検索結果に白い線が出ていたことも直しました",
+      },
+    ],
+  },
+  {
     date: "2026-10-21",
     items: [
       {

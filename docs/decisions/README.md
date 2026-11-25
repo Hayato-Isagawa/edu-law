@@ -78,3 +78,4 @@
 - [0034. VRT の判定を完全一致にし、リトライを外し、ダークも撮る(追認記録)](0034-vrt-exact-match-no-retry-dark.md)
 - [0035. 検索・読了バー・トップへ戻るボタンを採用する(追認記録)](0035-adopt-search-reading-progress-back-to-top.md)
 - [0036. PR の Actions が全部成功したときだけ、PR に 1 回だけ通知する(ci-summary・追認記録)](0036-ci-summary-notify-once-on-success.md)
+- [0037. 本文のリンクをアクセント色と、背景と 3:1 以上の下線で示す](0037-link-underline-contrast.md)
