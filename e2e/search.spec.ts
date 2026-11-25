@@ -44,10 +44,9 @@ test.describe("検索", () => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");
     await page.locator("#menu-toggle").click();
-    // メニューは開いた 50ms 後に最初のリンクへフォーカスを移す。Enter の直前に
-    // それが割り込むと、Enter がリンクに当たって送信されない
-    await expect(page.locator("#mobile-menu a").first()).toBeFocused();
     const input = page.locator("#mobile-menu-search-input");
+    // メニューは開いた 50ms 後に検索欄へフォーカスを移す。入力の途中で割り込ませない
+    await expect(input).toBeFocused();
     await input.fill("いじめ");
 
     // 本番(Cloudflare)は /search?q= を 307 で /search/ へ回すが、serve は

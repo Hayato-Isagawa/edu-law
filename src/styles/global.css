@@ -199,13 +199,25 @@ body[data-menu="open"] {
   pointer-events: auto;
 }
 #back-to-top[data-state="visible"]:hover {
-  background: color-mix(in oklab, var(--color-accent) 85%, black);
+  background: var(--color-accent-hover);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
 }
 #back-to-top:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  #back-to-top {
+    transition:
+      opacity 100ms linear,
+      background-color 100ms linear;
+    transform: none;
+  }
+  #back-to-top[data-state="visible"],
+  #back-to-top[data-state="visible"]:hover {
+    transform: none;
+  }
 }
 
 /* 下線は線の種類と太さを分けて書く。text-decoration の一括指定にすると、ビルドが太さ入りに
@@ -258,6 +270,10 @@ body[data-menu="open"] {
   }
   main .link-underline.inline-flex:not(:is(h1, h2, h3, h4, nav, header) *) > [aria-hidden] {
     margin-inline-start: 0.25rem;
+  }
+  /* 「↗」だけを次の行に落とさない(U+2060 の前後では折り返さない) */
+  main .link-underline.inline-flex:not(:is(h1, h2, h3, h4, nav, header) *) > [aria-hidden]::before {
+    content: "\2060";
   }
   @media (prefers-reduced-motion: reduce) {
     main :is(.link-underline, .law-body a) {
@@ -412,13 +428,14 @@ body[data-menu="open"] {
   border: 1px solid var(--color-line);
   border-radius: 0.5rem;
   color: var(--color-ink);
-  outline: none;
   transition:
     border-color 200ms ease-out,
     box-shadow 200ms ease-out;
 }
 .mobile-menu-search input:focus {
   border-color: var(--color-accent);
+  /* 強制カラーでは box-shadow が消えるので、見えない輪郭を残す(システムの色で描かれる) */
+  outline: 2px solid transparent;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 20%, transparent);
 }
 .mobile-menu-search input::placeholder {
@@ -460,6 +477,40 @@ body[data-menu="open"] {
   outline: 2px solid var(--color-accent);
   outline-offset: 4px;
   border-radius: 2px;
+}
+.mobile-menu-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  color: var(--color-ink);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 150ms ease-out;
+}
+.mobile-menu-theme-toggle:hover,
+.mobile-menu-theme-toggle:focus-visible {
+  color: var(--color-accent);
+}
+.mobile-menu-theme-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.mobile-menu-theme-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-sub);
+}
+.mobile-menu-theme-toggle-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .law-row {

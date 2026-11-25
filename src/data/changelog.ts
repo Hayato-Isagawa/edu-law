@@ -29,6 +29,15 @@ export const typeLabel: Record<ChangeType, { label: string; color: string }> = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "2026-11-25",
+    items: [
+      {
+        type: "fix",
+        text: "一度切り替えたライト / ダークの表示を、端末の設定に合わせる状態へ戻せるようにしました。検索を読み込めなかったときの案内も直しました。スマートフォンのメニューでは、テーマの切替に文字を添え、開いたらすぐ検索できるようにしました",
+      },
+    ],
+  },
+  {
     date: "2026-11-24",
     items: [
       {

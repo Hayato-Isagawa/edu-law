@@ -1,6 +1,6 @@
 # 0006. ダークモードはシステム追従デフォルト + 手動切替トグル(`data-theme` 属性)で提供する
 
-- 状態: 採用(ダークの `--color-ink` の値は [0019](0019-dark-ink-react-dev-gray-15.md) で上書き)
+- 状態: 採用(ダークの `--color-ink` の値は [0019](0019-dark-ink-react-dev-gray-15.md) で上書き、切替先が OS の設定と同じときの保存は [0038](0038-theme-follows-os-again.md) で変更)
 - 日付: 2026-05-19
 - 関連 PR: 本 ADR と同一 PR で確定
 - 関連 ADR: 0001(初期スタックと BRAND.md ミラー方針)

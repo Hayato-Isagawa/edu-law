@@ -199,10 +199,7 @@ const breadcrumbLinkClass =
                   >
                     {link.label}
                     {link.format === "pdf" ? "(PDF)" : ""}
-                    {!isInternal && (
-                      <span aria-hidden="true" class="text-sub text-xs">
-                        ↗
-                      </span>
+                    {!isInternal && (<span aria-hidden="true" class="text-sub text-xs">↗</span>
                     )}
                   </a>
                   <span class="block text-xs text-sub">
