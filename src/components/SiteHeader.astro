@@ -7,13 +7,15 @@ interface Props {
 }
 const { longForm = false } = Astro.props;
 
-const path = Astro.url.pathname;
-const isScenesPage = path.startsWith("/scenes");
-const isLawsPage = path.startsWith("/laws");
-const isGuidesPage = path.startsWith("/guides");
-const isAboutPage = path.startsWith("/about");
-const isChangelogPage = path.startsWith("/changelog");
-const isSearchPage = path.startsWith("/search");
+// ナビの現在地。項目自身のページは page、その下のページは true
+const currentPath = Astro.url.pathname.replace(/\/$/, "");
+const currentFor = (href: string) => {
+  const target = href.replace(/\/$/, "");
+  if (currentPath === target) return "page" as const;
+  return target !== "" && currentPath.startsWith(`${target}/`)
+    ? ("true" as const)
+    : undefined;
+};
 ---
 
 <header class="site-header">
@@ -33,55 +35,55 @@ const isSearchPage = path.startsWith("/search");
     <nav class="hidden lg:flex items-center gap-6 text-sm" aria-label="メインナビゲーション">
       <a
         href="/scenes/"
-        class={isScenesPage
-          ? "text-ink font-semibold"
-          : "text-sub hover:text-ink transition"}
-        aria-current={isScenesPage ? "page" : undefined}
+        class={currentFor("/scenes/")
+          ? "text-ink font-semibold pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"
+          : "text-sub hover:text-ink transition pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"}
+        aria-current={currentFor("/scenes/")}
       >
         場面から探す
       </a>
       <a
         href="/laws/"
-        class={isLawsPage
-          ? "text-ink font-semibold"
-          : "text-sub hover:text-ink transition"}
-        aria-current={isLawsPage ? "page" : undefined}
+        class={currentFor("/laws/")
+          ? "text-ink font-semibold pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"
+          : "text-sub hover:text-ink transition pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"}
+        aria-current={currentFor("/laws/")}
       >
         法令一覧
       </a>
       <a
         href="/guides/"
-        class={isGuidesPage
-          ? "text-ink font-semibold"
-          : "text-sub hover:text-ink transition"}
-        aria-current={isGuidesPage ? "page" : undefined}
+        class={currentFor("/guides/")
+          ? "text-ink font-semibold pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"
+          : "text-sub hover:text-ink transition pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"}
+        aria-current={currentFor("/guides/")}
       >
         ガイド
       </a>
       <a
         href="/about/"
-        class={isAboutPage
-          ? "text-ink font-semibold"
-          : "text-sub hover:text-ink transition"}
-        aria-current={isAboutPage ? "page" : undefined}
+        class={currentFor("/about/")
+          ? "text-ink font-semibold pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"
+          : "text-sub hover:text-ink transition pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"}
+        aria-current={currentFor("/about/")}
       >
         サイトについて
       </a>
       <a
         href="/changelog/"
-        class={isChangelogPage
-          ? "text-ink font-semibold"
-          : "text-sub hover:text-ink transition"}
-        aria-current={isChangelogPage ? "page" : undefined}
+        class={currentFor("/changelog/")
+          ? "text-ink font-semibold pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"
+          : "text-sub hover:text-ink transition pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"}
+        aria-current={currentFor("/changelog/")}
       >
         更新履歴
       </a>
       <a
         href="/search/"
-        class={isSearchPage
-          ? "text-ink"
-          : "text-sub hover:text-ink transition"}
-        aria-current={isSearchPage ? "page" : undefined}
+        class={currentFor("/search/")
+          ? "text-ink pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"
+          : "text-sub hover:text-ink transition pointer-coarse:py-3 pointer-coarse:px-2 pointer-coarse:-mx-2"}
+        aria-current={currentFor("/search/")}
         aria-label="検索"
       >
         <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -145,16 +147,16 @@ const isSearchPage = path.startsWith("/search");
           <h2 class="mobile-menu-section-title">Explore — 探す</h2>
           <ul>
             <li>
-              <a href="/" aria-current={path === "/" ? "page" : undefined}>ホーム</a>
+              <a href="/" aria-current={currentFor("/")}>ホーム</a>
             </li>
             <li>
-              <a href="/scenes/" aria-current={isScenesPage ? "page" : undefined}>場面から探す</a>
+              <a href="/scenes/" aria-current={currentFor("/scenes/")}>場面から探す</a>
             </li>
             <li>
-              <a href="/laws/" aria-current={isLawsPage ? "page" : undefined}>法令一覧</a>
+              <a href="/laws/" aria-current={currentFor("/laws/")}>法令一覧</a>
             </li>
             <li>
-              <a href="/guides/" aria-current={isGuidesPage ? "page" : undefined}>ガイド</a>
+              <a href="/guides/" aria-current={currentFor("/guides/")}>ガイド</a>
             </li>
           </ul>
         </section>
@@ -163,10 +165,10 @@ const isSearchPage = path.startsWith("/search");
           <h2 class="mobile-menu-section-title">About — このサイトについて</h2>
           <ul>
             <li>
-              <a href="/about/" aria-current={isAboutPage ? "page" : undefined}>このサイトについて</a>
+              <a href="/about/" aria-current={currentFor("/about/")}>このサイトについて</a>
             </li>
             <li>
-              <a href="/changelog/" aria-current={isChangelogPage ? "page" : undefined}>更新履歴</a>
+              <a href="/changelog/" aria-current={currentFor("/changelog/")}>更新履歴</a>
             </li>
             <li>
               <a href="/rss.xml">RSS フィード</a>
@@ -187,6 +189,7 @@ const isSearchPage = path.startsWith("/search");
           <ThemeToggle
             id="theme-toggle-mobile"
             class="mobile-menu-theme-toggle"
+            labeled
           />
         </section>
       </nav>
@@ -195,11 +198,7 @@ const isSearchPage = path.startsWith("/search");
   {longForm && (
     <div
       id="reading-progress"
-      role="progressbar"
-      aria-label="ページの読了率"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="0"
+      aria-hidden="true"
       data-progress="0"
     ></div>
   )}
@@ -230,10 +229,10 @@ const isSearchPage = path.startsWith("/search");
         bars[2].style.transform = open ? "translateY(-8px) rotate(-45deg)" : "";
       }
       if (open) {
-        const firstLink = menu.querySelector("a");
-        if (firstLink) {
+        const searchInput = document.getElementById("mobile-menu-search-input");
+        if (searchInput) {
           window.setTimeout(
-            () => firstLink.focus({ preventScroll: true }),
+            () => searchInput.focus({ preventScroll: true }),
             50,
           );
         }

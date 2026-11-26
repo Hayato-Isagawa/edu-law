@@ -47,7 +47,7 @@
 - [0003. 法令コンテンツコレクションのスキーマと lastVerified 必須化](0003-laws-content-schema-and-last-verified.md) — `order` の上限は 0005・0020 で引き上げ
 - [0004. Dependabot patch/minor 自動マージ運用と main ブランチ保護](0004-dependabot-auto-merge-policy.md) — required check は 0032 で「Playwright E2E」を追加、「Build site」の中身は 0028 で拡張
 - [0005. 初期スコープの拡張(児童福祉法を 7 法令目として追加)](0005-expand-initial-scope-child-welfare-act.md) — 法令数と `order` の上限は 0020 で 12 に
-- [0006. ダークモードはシステム追従デフォルト + 手動切替トグル(`data-theme` 属性)で提供する](0006-dark-mode-data-theme-with-system-default.md) — ダークの `--color-ink` は 0019 で上書き
+- [0006. ダークモードはシステム追従デフォルト + 手動切替トグル(`data-theme` 属性)で提供する](0006-dark-mode-data-theme-with-system-default.md) — ダークの `--color-ink` は 0019 で上書き、切替先が OS の設定と同じときの保存は 0038 で変更
 - [0007. トップページを法令の目次・台帳として設計する(カード型から行型 + 3px アクセントバーへの置換)](0007-top-page-as-law-index.md) — 引用の根拠は 0012、Highlights は 0009・0026、「最近の更新」は 0017、法令数の表記は 0020 で変更
 - [0008. Layout skeleton: sticky Header + mobile menu + multi-col Footer + RSS](0008-layout-skeleton-with-sticky-header-mobile-menu-multicol-footer-and-rss.md) — 決定 5 の `sameAs` は 0030 で上書き、決定 7 の RSS は 0017 で置き換え、フッターのナビは 0018 で追加、スコープ外の読了バー・トップへ戻るボタン・検索は 0035 で採用
 - [0009. Highlights セクションの選定基準と表示順](0009-highlights-selection-criteria.md) — 定常状態の件数は 0026 で 12 件に拡張(選定基準は有効)
@@ -79,3 +79,4 @@
 - [0035. 検索・読了バー・トップへ戻るボタンを採用する(追認記録)](0035-adopt-search-reading-progress-back-to-top.md)
 - [0036. PR の Actions が全部成功したときだけ、PR に 1 回だけ通知する(ci-summary・追認記録)](0036-ci-summary-notify-once-on-success.md)
 - [0037. 本文のリンクをアクセント色と、背景と 3:1 以上の下線で示す](0037-link-underline-contrast.md)
+- [0038. テーマの切替で OS と同じ色へ戻したら、OS の設定に従う状態へ戻す](0038-theme-follows-os-again.md)

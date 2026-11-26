@@ -198,11 +198,7 @@ const breadcrumbLinkClass =
                   rel="noopener noreferrer"
                   class={linkClass}
                 >
-                  {link.label}
-                  {link.format === "pdf" ? "(PDF)" : ""}
-                  <span aria-hidden="true" class="text-sub text-xs">
-                    ↗
-                  </span>
+                  {link.label}{link.format === "pdf" ? " (PDF)" : ""}<span aria-hidden="true" class="text-sub text-xs">↗</span>
                 </a>
                 <span class="block text-xs text-sub">
                   {link.publisher}
